@@ -1,18 +1,19 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:openapi/openapi.dart';
+import 'package:provider/provider.dart';
+import 'package:eventapp_mobile/api/api_provider.dart';
+import 'package:eventapp_mobile/screens/eventsearch_screen.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(
+      ChangeNotifierProvider<APIProvider>(
+        create: (context) => APIProvider(),
+        child: const MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
-  final api = Openapi(
-      dio: Dio(BaseOptions(baseUrl: 'https://dionizos-backend-app.azurewebsites.net')),
-      serializers: standardSerializers);
-
+  //final apiProvider = APIProvider();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,41 +21,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Home page with events',
-          api: api
-      ),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title, required this.api});
-  final String title;
-  final Openapi api;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  void strzalDoAPI() async
-  {
-    var res = await widget.api.getEventApi().getEvents();
-    print(res.data);
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    strzalDoAPI();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: const Text('Hello World:) So far nothing'),
+      home: EventSearchWidget(
+          title: 'Home page with events',
+          apiProvider: context.read<APIProvider>()),
     );
   }
 }
