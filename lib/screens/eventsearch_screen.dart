@@ -4,6 +4,7 @@ import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
+import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
 
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget(
@@ -23,42 +24,35 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          "Events",
+        ),
+        actions: <Widget>[], //add actions
       ),
       body: FutureBuilder<Response<BuiltList<Event>>>(
           future: eventsWithApi(),
           builder: (context, response) {
             if (response.hasData) {
-              return Stack(children: <Widget>[
-                Column(
-                  children: [
-                    const SizedBox(height: 10.0),
-                    Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(70)),
-                            border: Border.all(
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              if (response.data!.data!.isNotEmpty)
-                                for (var el in response.data!.data!)
-                                  if (el.title != null) Text(el.title!),
-                              const Divider(
-                                height: 10.0,
-                                thickness: 1.0,
-                              ),
-                            ],
-                          ),
-                        )),
-                  ],
-                )
-              ]);
+              return Stack(
+                children: <Widget>[
+                  SizedBox(
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40.0,
+                        vertical: 10.0,
+                      ),
+                      child: Column(children: <Widget>[
+                        if (response.data!.data!.isNotEmpty)
+                          for (var el in response.data!.data!) SingleEvent(el),
+                      ]),
+                    ),
+                  ),
+                ],
+              );
+              //
             } else {
               return (const Text('NoData'));
             }
