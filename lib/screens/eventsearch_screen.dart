@@ -1,5 +1,5 @@
+import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
@@ -23,12 +23,16 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: PageColor.eventSearch,
       appBar: AppBar(
+        backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
-        title: const Text(
-          "Events",
+        title: const Center(
+          child: Text(
+            "A mobile event App",
+          ),
         ),
-        actions: <Widget>[], //add actions
+        //actions: <Widget>[], //add actions
       ),
       body: FutureBuilder<Response<BuiltList<Event>>>(
           future: eventsWithApi(),
@@ -54,7 +58,10 @@ class _EventSearchWidget extends State<EventSearchWidget> {
               );
               //
             } else {
-              return (const Text('NoData'));
+              return const Center(
+                  child: CircularProgressIndicator(
+                      //color: ,
+                      ));
             }
           }),
     );
