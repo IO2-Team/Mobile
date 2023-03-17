@@ -41,6 +41,7 @@ dependencies:
   dio: ">=4.0.1 <5.0.0"
   openapi:
     path: api
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +92,10 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: MyFont1
+      fonts:
+        - asset: fonts/Nunito-Italic-VariableFont_wght.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
