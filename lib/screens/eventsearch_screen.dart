@@ -58,10 +58,10 @@ class _EventSearchWidget extends State<EventSearchWidget> {
               );
               //
             } else {
-              return const Center(
+              return Center(
                   child: CircularProgressIndicator(
-                      //color: ,
-                      ));
+                color: PageColor.appBar,
+              ));
             }
           }),
     );

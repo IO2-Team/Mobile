@@ -125,7 +125,7 @@ class SingleEvent extends StatelessWidget {
             size: 18.0,
           ),
           Text(
-            DateFormat('hh:mm').format(dateStart),
+            DateFormat('Hm').format(dateStart),
             style: const TextStyle(
               fontSize: 15.0,
             ),
