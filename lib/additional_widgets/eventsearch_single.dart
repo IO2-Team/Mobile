@@ -12,9 +12,12 @@ class SingleEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // conversion - start time of event
+    // conversion - start and end time of event
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
         event.startTime != null ? event.startTime! * 1000 : 0);
+    final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
+        event.endTime != null ? event.endTime! * 1000 : 0);
+
     return Column(
       children: [
         const SizedBox(height: 10.0),
@@ -37,17 +40,58 @@ class SingleEvent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (event.title != null) eventTitle(),
-                    const Divider(
-                      color: Colors.white,
-                      height: 9.0,
+                    if (event.title != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: eventTitle(),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 7, right: 7),
+                      child: Divider(
+                        color: PageColor.divider,
+                        height: 12.0,
+                        thickness: 1.0,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          margin: const EdgeInsets.only(
+                              bottom: 0.0, right: 0.0, left: 0.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              showDate(dateStart, IconsInApp.dateIcon0),
+                              showTime(dateStart),
+                            ],
+                          ),
+                        ),
+                        dashBetweenData(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            showDate(dateFinish, IconsInApp.dateIcon1),
+                            showTime(dateFinish),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      color: PageColor.divider,
+                      height: 12.0,
                       thickness: 1.0,
                     ),
-                    showDate(dateStart),
-                    showTime(dateStart),
                     showCountPlaces(),
                   ],
                 ),
+              ),
+              const Divider(
+                color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                height: 12.0,
+                thickness: 1.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -87,25 +131,49 @@ class SingleEvent extends StatelessWidget {
   ///
   /// widget shows start date
   ///
-  Widget showDate(DateTime dateStart) {
+  Widget showDate(DateTime dateStart, IconData ico) {
     return Padding(
       padding:
           const EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 10.0),
       child: Row(
         children: [
           Icon(
-            IconsInApp.dateIcon,
-            // color: PageColor.answerColor,
+            ico,
             size: 18.0,
+          ),
+          const SizedBox(
+            width: 2,
           ),
           if (event.startTime != null)
             Text(
-              DateFormat('dd MMMM yyyy').format(dateStart),
+              DateFormat('dd.MM.yyyy').format(dateStart),
               style: const TextStyle(
-                fontSize: 15.0,
+                fontSize: 15.5,
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  ///
+  /// Dash between data
+  ///
+  Widget dashBetweenData() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 13.0, left: 7.0, right: 7.0),
+      child: SizedBox(
+        width: 7,
+        height: 2,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            border: Border.all(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              width: 1,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -116,18 +184,20 @@ class SingleEvent extends StatelessWidget {
   Widget showTime(DateTime dateStart) {
     return Padding(
       padding:
-          const EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 10.0),
+          const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
       child: Row(
         children: [
           Icon(
             IconsInApp.clockIcon,
-            // color: PageColor.answerColor,
             size: 18.0,
           ),
+          const SizedBox(
+            width: 1,
+          ),
           Text(
-            DateFormat('hh:mm').format(dateStart),
+            DateFormat('Hm').format(dateStart),
             style: const TextStyle(
-              fontSize: 15.0,
+              fontSize: 13.0,
             ),
           ),
         ],
@@ -146,21 +216,23 @@ class SingleEvent extends StatelessWidget {
         children: [
           Icon(
             IconsInApp.freePlacesIcon2,
-            // color: PageColor.answerColor,
             size: 18.0,
+          ),
+          const SizedBox(
+            width: 2,
           ),
           if (event.freePlace != null)
             Text(
               "${event.freePlace!} places left",
               style: const TextStyle(
-                fontSize: 15.0,
+                fontSize: 15.5,
               ),
             )
           else
             const Text(
               "No places limits",
               style: TextStyle(
-                fontSize: 15.0,
+                fontSize: 15.5,
               ),
             ),
         ],
@@ -220,7 +292,7 @@ class SingleEvent extends StatelessWidget {
             ),
             onPressed: () {},
             child: const Text(
-              'Ticket',
+              'Reserv',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,
