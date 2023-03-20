@@ -29,6 +29,8 @@ class EventApi {
   /// * [freePlace] - No of free places
   /// * [startTime] - Unix time stamp of begin of event
   /// * [endTime] - Unix time stamp of end of event
+  /// * [latitude] - Latitude of event
+  /// * [longitude] - Longitude of event
   /// * [categories] - Unix time stamp of end of event
   /// * [placeSchema] - seralized place schema
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -47,6 +49,8 @@ class EventApi {
     required int freePlace,
     required int startTime,
     required int endTime,
+    required String latitude,
+    required String longitude,
     required BuiltList<int> categories,
     String? placeSchema,
     CancelToken? cancelToken,
@@ -77,6 +81,8 @@ class EventApi {
       if (placeSchema != null) r'placeSchema': encodeQueryParameter(_serializers, placeSchema, const FullType(String)),
       r'startTime': encodeQueryParameter(_serializers, startTime, const FullType(int)),
       r'endTime': encodeQueryParameter(_serializers, endTime, const FullType(int)),
+      r'latitude': encodeQueryParameter(_serializers, latitude, const FullType(String)),
+      r'longitude': encodeQueryParameter(_serializers, longitude, const FullType(String)),
       r'categories': encodeCollectionQueryParameter<int>(_serializers, categories, const FullType(BuiltList, [FullType(int)]), format: ListFormat.multi,),
     };
 

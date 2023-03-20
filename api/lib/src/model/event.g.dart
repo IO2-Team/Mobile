@@ -18,6 +18,10 @@ class _$Event extends Event {
   @override
   final int? endTime;
   @override
+  final String? latitude;
+  @override
+  final String? longitude;
+  @override
   final String? name;
   @override
   final String? placeSchema;
@@ -35,6 +39,8 @@ class _$Event extends Event {
       this.title,
       this.startTime,
       this.endTime,
+      this.latitude,
+      this.longitude,
       this.name,
       this.placeSchema,
       this.status,
@@ -59,6 +65,8 @@ class _$Event extends Event {
         title == other.title &&
         startTime == other.startTime &&
         endTime == other.endTime &&
+        latitude == other.latitude &&
+        longitude == other.longitude &&
         name == other.name &&
         placeSchema == other.placeSchema &&
         status == other.status &&
@@ -73,6 +81,8 @@ class _$Event extends Event {
     _$hash = $jc(_$hash, title.hashCode);
     _$hash = $jc(_$hash, startTime.hashCode);
     _$hash = $jc(_$hash, endTime.hashCode);
+    _$hash = $jc(_$hash, latitude.hashCode);
+    _$hash = $jc(_$hash, longitude.hashCode);
     _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, placeSchema.hashCode);
     _$hash = $jc(_$hash, status.hashCode);
@@ -89,6 +99,8 @@ class _$Event extends Event {
           ..add('title', title)
           ..add('startTime', startTime)
           ..add('endTime', endTime)
+          ..add('latitude', latitude)
+          ..add('longitude', longitude)
           ..add('name', name)
           ..add('placeSchema', placeSchema)
           ..add('status', status)
@@ -120,6 +132,14 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   int? get endTime => _$this._endTime;
   set endTime(int? endTime) => _$this._endTime = endTime;
 
+  String? _latitude;
+  String? get latitude => _$this._latitude;
+  set latitude(String? latitude) => _$this._latitude = latitude;
+
+  String? _longitude;
+  String? get longitude => _$this._longitude;
+  set longitude(String? longitude) => _$this._longitude = longitude;
+
   String? _name;
   String? get name => _$this._name;
   set name(String? name) => _$this._name = name;
@@ -150,6 +170,8 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _title = $v.title;
       _startTime = $v.startTime;
       _endTime = $v.endTime;
+      _latitude = $v.latitude;
+      _longitude = $v.longitude;
       _name = $v.name;
       _placeSchema = $v.placeSchema;
       _status = $v.status;
@@ -183,6 +205,8 @@ class EventBuilder implements Builder<Event, EventBuilder> {
               title: title,
               startTime: startTime,
               endTime: endTime,
+              latitude: latitude,
+              longitude: longitude,
               name: name,
               placeSchema: placeSchema,
               status: status,

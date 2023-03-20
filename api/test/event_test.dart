@@ -32,6 +32,16 @@ void main() {
       // TODO
     });
 
+    // String latitude
+    test('to test the property `latitude`', () async {
+      // TODO
+    });
+
+    // String longitude
+    test('to test the property `longitude`', () async {
+      // TODO
+    });
+
     // String name
     test('to test the property `name`', () async {
       // TODO
