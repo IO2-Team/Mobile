@@ -19,6 +19,8 @@ part 'event.g.dart';
 /// * [title] 
 /// * [startTime] 
 /// * [endTime] 
+/// * [latitude] 
+/// * [longitude] 
 /// * [name] 
 /// * [placeSchema] 
 /// * [status] 
@@ -39,6 +41,12 @@ abstract class Event implements Built<Event, EventBuilder> {
 
   @BuiltValueField(wireName: r'endTime')
   int? get endTime;
+
+  @BuiltValueField(wireName: r'latitude')
+  String? get latitude;
+
+  @BuiltValueField(wireName: r'longitude')
+  String? get longitude;
 
   @BuiltValueField(wireName: r'name')
   String? get name;
@@ -107,6 +115,20 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
       yield serializers.serialize(
         object.endTime,
         specifiedType: const FullType(int),
+      );
+    }
+    if (object.latitude != null) {
+      yield r'latitude';
+      yield serializers.serialize(
+        object.latitude,
+        specifiedType: const FullType(String),
+      );
+    }
+    if (object.longitude != null) {
+      yield r'longitude';
+      yield serializers.serialize(
+        object.longitude,
+        specifiedType: const FullType(String),
       );
     }
     if (object.name != null) {
@@ -194,6 +216,20 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
             specifiedType: const FullType(int),
           ) as int;
           result.endTime = valueDes;
+          break;
+        case r'latitude':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.latitude = valueDes;
+          break;
+        case r'longitude':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.longitude = valueDes;
           break;
         case r'name':
           final valueDes = serializers.deserialize(

@@ -13,6 +13,8 @@ Name | Type | Description | Notes
 **title** | **String** |  | [optional] 
 **startTime** | **int** |  | [optional] 
 **endTime** | **int** |  | [optional] 
+**latitude** | **String** |  | [optional] 
+**longitude** | **String** |  | [optional] 
 **name** | **String** |  | [optional] 
 **placeSchema** | **String** |  | [optional] 
 **status** | [**EventStatus**](EventStatus.md) |  | [optional] 

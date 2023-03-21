@@ -9,7 +9,7 @@ void main() {
   group(EventApi, () {
     // Add new event
     //
-    //Future<Event> addEvent(String sessionToken, String title, String name, int freePlace, int startTime, int endTime, BuiltList<int> categories, { String placeSchema }) async
+    //Future<Event> addEvent(String sessionToken, String title, String name, int freePlace, int startTime, int endTime, String latitude, String longitude, BuiltList<int> categories, { String placeSchema }) async
     test('test addEvent', () async {
       // TODO
     });

@@ -19,7 +19,7 @@ Method | HTTP request | Description
 
 
 # **addEvent**
-> Event addEvent(sessionToken, title, name, freePlace, startTime, endTime, categories, placeSchema)
+> Event addEvent(sessionToken, title, name, freePlace, startTime, endTime, latitude, longitude, categories, placeSchema)
 
 Add new event
 
@@ -34,11 +34,13 @@ final String name = Long description of Event; // String | title of Event
 final int freePlace = 56; // int | No of free places
 final int startTime = 1683034164; // int | Unix time stamp of begin of event
 final int endTime = 1683034164; // int | Unix time stamp of end of event
+final String latitude = 40.4775315; // String | Latitude of event
+final String longitude = -3.7051359; // String | Longitude of event
 final BuiltList<int> categories = ; // BuiltList<int> | Unix time stamp of end of event
 final String placeSchema = placeSchema_example; // String | seralized place schema
 
 try {
-    final response = api.addEvent(sessionToken, title, name, freePlace, startTime, endTime, categories, placeSchema);
+    final response = api.addEvent(sessionToken, title, name, freePlace, startTime, endTime, latitude, longitude, categories, placeSchema);
     print(response);
 } catch on DioError (e) {
     print('Exception when calling EventApi->addEvent: $e\n');
@@ -55,6 +57,8 @@ Name | Type | Description  | Notes
  **freePlace** | **int**| No of free places | 
  **startTime** | **int**| Unix time stamp of begin of event | 
  **endTime** | **int**| Unix time stamp of end of event | 
+ **latitude** | **String**| Latitude of event | 
+ **longitude** | **String**| Longitude of event | 
  **categories** | [**BuiltList&lt;int&gt;**](int.md)| Unix time stamp of end of event | 
  **placeSchema** | **String**| seralized place schema | [optional] 
 
