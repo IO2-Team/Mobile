@@ -21,4 +21,6 @@ class IconsInApp {
       const IconData(0xf06ca, fontFamily: 'MaterialIcons');
   static IconData placeIcon =
       const IconData(0xf193, fontFamily: 'MaterialIcons');
+  static IconData arrowBack =
+      const IconData(0xf572, fontFamily: 'MaterialIcons');
 }

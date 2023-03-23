@@ -1,3 +1,5 @@
+//import 'dart:js';
+import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -6,17 +8,20 @@ import 'package:intl/intl.dart';
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
 ///////////////////////////////////////////////////////////////
-class SingleEvent extends StatelessWidget {
+class SingleEvent extends StatefulWidget {
   final Event event;
   const SingleEvent(this.event, {super.key});
+  State<SingleEvent> createState() => _SingleEvent();
+}
 
+class _SingleEvent extends State<SingleEvent> {
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
-        event.startTime != null ? event.startTime! * 1000 : 0);
+        widget.event.startTime != null ? widget.event.startTime! * 1000 : 0);
     final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
-        event.endTime != null ? event.endTime! * 1000 : 0);
+        widget.event.endTime != null ? widget.event.endTime! * 1000 : 0);
 
     return Column(
       children: [
@@ -40,7 +45,7 @@ class SingleEvent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (event.title != null)
+                    if (widget.event.title != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: eventTitle(),
@@ -120,7 +125,7 @@ class SingleEvent extends StatelessWidget {
   ///
   Widget eventTitle() {
     return Text(
-      event.title!,
+      widget.event.title!,
       style: const TextStyle(
         letterSpacing: 0.4,
         fontSize: 18.0,
@@ -145,7 +150,7 @@ class SingleEvent extends StatelessWidget {
           const SizedBox(
             width: 2,
           ),
-          if (event.startTime != null)
+          if (widget.event.startTime != null)
             Text(
               DateFormat('dd.MM.yyyy').format(dateStart),
               style: const TextStyle(
@@ -219,9 +224,9 @@ class SingleEvent extends StatelessWidget {
           const SizedBox(
             width: 1,
           ),
-          if (event.latitude != null && event.longitude != null)
+          if (widget.event.latitude != null && widget.event.longitude != null)
             Text(
-              "(${event.latitude}, ${event.longitude})",
+              "(${widget.event.latitude}, ${widget.event.longitude})",
               style: const TextStyle(
                 fontSize: 14.5,
               ),
@@ -247,9 +252,9 @@ class SingleEvent extends StatelessWidget {
           const SizedBox(
             width: 2,
           ),
-          if (event.freePlace != null)
+          if (widget.event.freePlace != null)
             Text(
-              "${event.freePlace!} places left",
+              "${widget.event.freePlace!} places left",
               style: const TextStyle(
                 fontSize: 15.5,
               ),
@@ -283,7 +288,12 @@ class SingleEvent extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  this.context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetails(widget.event)));
+            },
             child: const Text(
               'Details',
               style: TextStyle(
