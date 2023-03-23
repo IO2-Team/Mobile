@@ -302,10 +302,10 @@ class _SingleEvent extends State<SingleEvent> {
               ),
             ),
             onPressed: () {
-              //Navigator.push(
-              //  this.context,
-              // MaterialPageRoute(
-              //   builder: (context) => EventDetails(widget.event)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetails(widget.event)));
             },
             child: const Text(
               'Details',
