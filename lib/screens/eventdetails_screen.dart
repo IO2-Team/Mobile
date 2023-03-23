@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -16,6 +15,9 @@ class EventDetails extends StatefulWidget {
 }
 
 class _EventDetails extends State<EventDetails> {
+  final Color textscol = PageColor.texts;
+  final Color textscol2 = PageColor.textsLight;
+
   @override
   Widget build(BuildContext context) {
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
@@ -49,27 +51,71 @@ class _EventDetails extends State<EventDetails> {
           )
         ],
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            viewTitle(widget.event.title),
+            columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
+                IconsInApp.clockIcon, "Start date"),
+            columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
+                IconsInApp.clockIcon, "End date"),
+            columnWithInfoLocation(IconsInApp.placeIcon, "Location"),
+            description(widget.event.name),
+          ],
+        ),
+      ),
+    );
+  }
+
+/////////////////////////////
+  /// Main Widgets in class
+////////////////////////////
+  ///
+  /// widget shows info about title of event
+  ///
+  Widget viewTitle(String? eventTitle) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 60.0, right: 60.0, top: 20),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
-              IconsInApp.clockIcon, "Start date"),
-          columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
-              IconsInApp.clockIcon, "End date"),
-          columnWithInfoLocation(IconsInApp.placeIcon, "Location"),
+        children: [
+          const Text(
+            "Event",
+            style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 0.4,
+              fontSize: 15.0,
+            ),
+          ),
+          if (widget.event.title != null)
+            Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    eventTitle!,
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      color: textscol2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
   }
-/////////////////////////////
-  /// Main Widgets in class
-////////////////////////////
 
+  ///
+  /// widget shows info about start and end of event
+  ///
   Widget columnWithInfoDates(
       IconData dateico, DateTime dateStart, IconData timeico, String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 30),
+      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -87,46 +133,50 @@ class _EventDetails extends State<EventDetails> {
             thickness: 1.0,
           ),
           if (widget.event.startTime != null)
-            Row(
+            Column(
               children: [
                 Row(
                   children: [
                     Icon(
                       dateico,
                       size: 18.0,
+                      color: textscol2,
                     ),
                     const SizedBox(
                       width: 2,
                     ),
                     if (widget.event.startTime != null)
                       Text(
-                        DateFormat('dd.MM.yyyy').format(dateStart),
-                        style: const TextStyle(
+                        DateFormat('dd MMMM yyyy').format(dateStart),
+                        style: TextStyle(
+                          color: textscol,
                           fontSize: 15.5,
                         ),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            timeico,
-                            size: 18.0,
-                          ),
-                          const SizedBox(
-                            width: 1,
-                          ),
-                          if (widget.event.startTime != null)
-                            Text(
-                              DateFormat('Hm').format(dateStart),
-                              style: const TextStyle(
-                                fontSize: 13.0,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 0.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        timeico,
+                        color: textscol2,
+                        size: 18.0,
+                      ),
+                      const SizedBox(
+                        width: 1,
+                      ),
+                      if (widget.event.startTime != null)
+                        Text(
+                          DateFormat('Hm').format(dateStart),
+                          style: TextStyle(
+                            color: textscol,
+                            fontSize: 13.0,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -135,15 +185,18 @@ class _EventDetails extends State<EventDetails> {
     );
   }
 
+  ///
+  /// widget shows info about location of event
+  ///
   Widget columnWithInfoLocation(IconData dateico, String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 30),
+      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               letterSpacing: 0.4,
               fontSize: 22.0,
@@ -160,6 +213,7 @@ class _EventDetails extends State<EventDetails> {
                 Icon(
                   dateico,
                   size: 18.0,
+                  color: textscol2,
                 ),
                 const SizedBox(
                   width: 2,
@@ -168,13 +222,38 @@ class _EventDetails extends State<EventDetails> {
                     widget.event.longitude != null)
                   Text(
                     "(${widget.event.latitude}, ${widget.event.longitude})",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15.0,
+                      color: textscol,
                     ),
                   ),
               ],
             ),
         ],
+      ),
+    );
+  }
+
+  Widget description(String? descript) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(45.0),
+        child: Container(
+          width: 900,
+          //height: 200,
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: PageColor.singleEvent,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            border: Border.all(
+              color: PageColor.eventSearch,
+              width: 0.1,
+            ),
+          ),
+          child: Flexible(
+              child: Text(descript! +
+                  " - lets assume this event description will be much longer than it is now, right?")),
+        ),
       ),
     );
   }

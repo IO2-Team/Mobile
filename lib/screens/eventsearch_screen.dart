@@ -49,8 +49,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         vertical: 10.0,
                       ),
                       child: Column(children: <Widget>[
-                        if (response.data!.data!.isNotEmpty)
-                          for (var el in response.data!.data!) SingleEvent(el),
+                        //   if (response.data!.data!.isNotEmpty)
+                        //   for (var el in response.data!.data!) SingleEvent(el),
                       ]),
                     ),
                   ),

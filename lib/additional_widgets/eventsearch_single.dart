@@ -15,6 +15,9 @@ class SingleEvent extends StatefulWidget {
 }
 
 class _SingleEvent extends State<SingleEvent> {
+  final Color textsCol = PageColor.texts;
+  final Color textsCol2 = PageColor.texts;
+
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
@@ -126,10 +129,11 @@ class _SingleEvent extends State<SingleEvent> {
   Widget eventTitle() {
     return Text(
       widget.event.title!,
-      style: const TextStyle(
+      style: TextStyle(
         letterSpacing: 0.4,
         fontSize: 18.0,
         fontWeight: FontWeight.bold,
+        color: PageColor.texts,
       ),
     );
   }
@@ -145,6 +149,7 @@ class _SingleEvent extends State<SingleEvent> {
         children: [
           Icon(
             ico,
+            color: textsCol2,
             size: 18.0,
           ),
           const SizedBox(
@@ -153,7 +158,8 @@ class _SingleEvent extends State<SingleEvent> {
           if (widget.event.startTime != null)
             Text(
               DateFormat('dd.MM.yyyy').format(dateStart),
-              style: const TextStyle(
+              style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             ),
@@ -175,7 +181,7 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
             border: Border.all(
-              color: const Color.fromARGB(255, 0, 0, 0),
+              color: textsCol,
               width: 1,
             ),
           ),
@@ -195,6 +201,7 @@ class _SingleEvent extends State<SingleEvent> {
         children: [
           Icon(
             IconsInApp.clockIcon,
+            color: textsCol2,
             size: 18.0,
           ),
           const SizedBox(
@@ -202,8 +209,9 @@ class _SingleEvent extends State<SingleEvent> {
           ),
           Text(
             DateFormat('Hm').format(dateStart),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.0,
+              color: textsCol,
             ),
           ),
         ],
@@ -220,6 +228,7 @@ class _SingleEvent extends State<SingleEvent> {
           Icon(
             IconsInApp.placeIcon,
             size: 18.0,
+            color: textsCol2,
           ),
           const SizedBox(
             width: 1,
@@ -227,7 +236,8 @@ class _SingleEvent extends State<SingleEvent> {
           if (widget.event.latitude != null && widget.event.longitude != null)
             Text(
               "(${widget.event.latitude}, ${widget.event.longitude})",
-              style: const TextStyle(
+              style: TextStyle(
+                color: textsCol,
                 fontSize: 14.5,
               ),
             ),
@@ -247,6 +257,7 @@ class _SingleEvent extends State<SingleEvent> {
         children: [
           Icon(
             IconsInApp.freePlacesIcon2,
+            color: textsCol2,
             size: 18.0,
           ),
           const SizedBox(
@@ -255,14 +266,16 @@ class _SingleEvent extends State<SingleEvent> {
           if (widget.event.freePlace != null)
             Text(
               "${widget.event.freePlace!} places left",
-              style: const TextStyle(
+              style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             )
           else
-            const Text(
+            Text(
               "No places limits",
               style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             ),
@@ -289,10 +302,10 @@ class _SingleEvent extends State<SingleEvent> {
               ),
             ),
             onPressed: () {
-              Navigator.push(
-                  this.context,
-                  MaterialPageRoute(
-                      builder: (context) => EventDetails(widget.event)));
+              //Navigator.push(
+              //  this.context,
+              // MaterialPageRoute(
+              //   builder: (context) => EventDetails(widget.event)));
             },
             child: const Text(
               'Details',
