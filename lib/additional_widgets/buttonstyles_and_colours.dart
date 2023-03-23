@@ -19,4 +19,6 @@ class IconsInApp {
       const IconData(0xe03a, fontFamily: 'MaterialIcons');
   static IconData freePlacesIcon2 =
       const IconData(0xf06ca, fontFamily: 'MaterialIcons');
+  static IconData placeIcon =
+      const IconData(0xf193, fontFamily: 'MaterialIcons');
 }

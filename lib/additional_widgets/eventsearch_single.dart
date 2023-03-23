@@ -79,6 +79,7 @@ class SingleEvent extends StatelessWidget {
                         ),
                       ],
                     ),
+                    showPlaceCordinates(),
                     Divider(
                       color: PageColor.divider,
                       height: 12.0,
@@ -183,8 +184,8 @@ class SingleEvent extends StatelessWidget {
   ///
   Widget showTime(DateTime dateStart) {
     return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
+      padding: const EdgeInsets.only(
+          bottom: 10.0, top: 0.0, left: 10.0, right: 10.0),
       child: Row(
         children: [
           Icon(
@@ -200,6 +201,31 @@ class SingleEvent extends StatelessWidget {
               fontSize: 13.0,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget showPlaceCordinates() {
+    return Padding(
+      padding:
+          const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
+      child: Row(
+        children: [
+          Icon(
+            IconsInApp.placeIcon,
+            size: 18.0,
+          ),
+          const SizedBox(
+            width: 1,
+          ),
+          if (event.latitude != null && event.longitude != null)
+            Text(
+              "(${event.latitude}, ${event.longitude})",
+              style: const TextStyle(
+                fontSize: 14.5,
+              ),
+            ),
         ],
       ),
     );
