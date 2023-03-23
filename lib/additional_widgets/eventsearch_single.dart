@@ -1,4 +1,3 @@
-//import 'dart:js';
 import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
@@ -11,12 +10,13 @@ import 'package:intl/intl.dart';
 class SingleEvent extends StatefulWidget {
   final Event event;
   const SingleEvent(this.event, {super.key});
+  @override
   State<SingleEvent> createState() => _SingleEvent();
 }
 
 class _SingleEvent extends State<SingleEvent> {
   final Color textsCol = PageColor.texts;
-  final Color textsCol2 = PageColor.texts;
+  final Color textsCol2 = PageColor.textsLight;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +133,7 @@ class _SingleEvent extends State<SingleEvent> {
         letterSpacing: 0.4,
         fontSize: 18.0,
         fontWeight: FontWeight.bold,
-        color: PageColor.texts,
+        color: textsCol,
       ),
     );
   }
@@ -258,7 +258,7 @@ class _SingleEvent extends State<SingleEvent> {
           Icon(
             IconsInApp.freePlacesIcon2,
             color: textsCol2,
-            size: 18.0,
+            size: 16.0,
           ),
           const SizedBox(
             width: 2,
