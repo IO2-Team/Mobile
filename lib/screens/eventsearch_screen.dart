@@ -5,19 +5,23 @@ import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
+import 'package:provider/provider.dart';
 
 class EventSearchWidget extends StatefulWidget {
-  const EventSearchWidget(
-      {super.key, required this.title, required this.apiProvider});
+  const EventSearchWidget({super.key, required this.title});
   final String title;
-  final APIProvider apiProvider;
+  // final APIProvider apiProvider;
   @override
   State<EventSearchWidget> createState() => _EventSearchWidget();
 }
 
 class _EventSearchWidget extends State<EventSearchWidget> {
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
-    return widget.apiProvider.api.getEventApi().getEvents();
+    return context
+        .read<APIProvider>()
+        .api
+        .getEventApi()
+        .getEvents(); // widget.apiProvider.api.getEventApi().getEvents();
   }
 
   @override

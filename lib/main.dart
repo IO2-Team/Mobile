@@ -21,9 +21,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: EventSearchWidget(
-          title: 'Home page with events',
-          apiProvider: context.read<APIProvider>()),
+      home: const EventSearchWidget(
+        title: 'Home page with events',
+      ),
     );
   }
 }

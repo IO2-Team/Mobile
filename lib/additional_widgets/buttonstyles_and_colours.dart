@@ -6,8 +6,11 @@ class PageColor {
   static final eventSearch = Color.fromARGB(255, 182, 182, 255);
   static final singleEvent = Color.fromARGB(255, 192, 192, 255);
   static final appBar = Color.fromARGB(255, 97, 97, 233);
+  static final texts = Color.fromARGB(255, 22, 22, 100);
+  static final textsLight = Color.fromARGB(255, 97, 97, 233);
   static final ticket = Color.fromARGB(255, 95, 227, 148);
   static final divider = Color.fromARGB(255, 149, 149, 254);
+  static final doneCanceled = Color.fromARGB(255, 176, 176, 198);
 }
 
 class IconsInApp {
@@ -19,4 +22,10 @@ class IconsInApp {
       const IconData(0xe03a, fontFamily: 'MaterialIcons');
   static IconData freePlacesIcon2 =
       const IconData(0xf06ca, fontFamily: 'MaterialIcons');
+  static IconData placeIcon =
+      const IconData(0xf193, fontFamily: 'MaterialIcons');
+  static IconData arrowBack =
+      const IconData(0xf572, fontFamily: 'MaterialIcons');
+  static IconData arrowFront =
+      const IconData(0xf57a, fontFamily: 'MaterialIcons');
 }

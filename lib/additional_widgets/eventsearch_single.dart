@@ -1,3 +1,4 @@
+import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -6,17 +7,24 @@ import 'package:intl/intl.dart';
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
 ///////////////////////////////////////////////////////////////
-class SingleEvent extends StatelessWidget {
+class SingleEvent extends StatefulWidget {
   final Event event;
   const SingleEvent(this.event, {super.key});
+  @override
+  State<SingleEvent> createState() => _SingleEvent();
+}
+
+class _SingleEvent extends State<SingleEvent> {
+  final Color textsCol = PageColor.texts;
+  final Color textsCol2 = PageColor.textsLight;
 
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
-        event.startTime != null ? event.startTime! * 1000 : 0);
+        widget.event.startTime != null ? widget.event.startTime! * 1000 : 0);
     final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
-        event.endTime != null ? event.endTime! * 1000 : 0);
+        widget.event.endTime != null ? widget.event.endTime! * 1000 : 0);
 
     return Column(
       children: [
@@ -40,7 +48,7 @@ class SingleEvent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (event.title != null)
+                    if (widget.event.title != null)
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: eventTitle(),
@@ -79,6 +87,7 @@ class SingleEvent extends StatelessWidget {
                         ),
                       ],
                     ),
+                    showPlaceCordinates(),
                     Divider(
                       color: PageColor.divider,
                       height: 12.0,
@@ -119,11 +128,12 @@ class SingleEvent extends StatelessWidget {
   ///
   Widget eventTitle() {
     return Text(
-      event.title!,
-      style: const TextStyle(
+      widget.event.title!,
+      style: TextStyle(
         letterSpacing: 0.4,
         fontSize: 18.0,
         fontWeight: FontWeight.bold,
+        color: textsCol,
       ),
     );
   }
@@ -139,15 +149,17 @@ class SingleEvent extends StatelessWidget {
         children: [
           Icon(
             ico,
+            color: textsCol2,
             size: 18.0,
           ),
           const SizedBox(
             width: 2,
           ),
-          if (event.startTime != null)
+          if (widget.event.startTime != null)
             Text(
               DateFormat('dd.MM.yyyy').format(dateStart),
-              style: const TextStyle(
+              style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             ),
@@ -169,7 +181,7 @@ class SingleEvent extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(2),
             border: Border.all(
-              color: const Color.fromARGB(255, 0, 0, 0),
+              color: textsCol,
               width: 1,
             ),
           ),
@@ -183,12 +195,13 @@ class SingleEvent extends StatelessWidget {
   ///
   Widget showTime(DateTime dateStart) {
     return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
+      padding: const EdgeInsets.only(
+          bottom: 10.0, top: 0.0, left: 10.0, right: 10.0),
       child: Row(
         children: [
           Icon(
             IconsInApp.clockIcon,
+            color: textsCol2,
             size: 18.0,
           ),
           const SizedBox(
@@ -196,10 +209,38 @@ class SingleEvent extends StatelessWidget {
           ),
           Text(
             DateFormat('Hm').format(dateStart),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.0,
+              color: textsCol,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget showPlaceCordinates() {
+    return Padding(
+      padding:
+          const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
+      child: Row(
+        children: [
+          Icon(
+            IconsInApp.placeIcon,
+            size: 18.0,
+            color: textsCol2,
+          ),
+          const SizedBox(
+            width: 1,
+          ),
+          if (widget.event.latitude != null && widget.event.longitude != null)
+            Text(
+              "(${widget.event.latitude}, ${widget.event.longitude})",
+              style: TextStyle(
+                color: textsCol,
+                fontSize: 14.5,
+              ),
+            ),
         ],
       ),
     );
@@ -216,22 +257,25 @@ class SingleEvent extends StatelessWidget {
         children: [
           Icon(
             IconsInApp.freePlacesIcon2,
-            size: 18.0,
+            color: textsCol2,
+            size: 16.0,
           ),
           const SizedBox(
             width: 2,
           ),
-          if (event.freePlace != null)
+          if (widget.event.freePlace != null)
             Text(
-              "${event.freePlace!} places left",
-              style: const TextStyle(
+              "${widget.event.freePlace!} places left",
+              style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             )
           else
-            const Text(
+            Text(
               "No places limits",
               style: TextStyle(
+                color: textsCol,
                 fontSize: 15.5,
               ),
             ),
@@ -257,7 +301,12 @@ class SingleEvent extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetails(widget.event)));
+            },
             child: const Text(
               'Details',
               style: TextStyle(
