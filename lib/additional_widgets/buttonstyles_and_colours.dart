@@ -28,4 +28,6 @@ class IconsInApp {
       const IconData(0xf572, fontFamily: 'MaterialIcons');
   static IconData arrowFront =
       const IconData(0xf57a, fontFamily: 'MaterialIcons');
+  static IconData burgerMhm =
+      const IconData(0xf0023, fontFamily: 'MaterialIcons');
 }

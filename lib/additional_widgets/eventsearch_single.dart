@@ -32,7 +32,10 @@ class _SingleEvent extends State<SingleEvent> {
         Container(
           padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
-            color: PageColor.singleEvent,
+            color: widget.event.status != null &&
+                    widget.event.status!.name == "inFuture"
+                ? PageColor.singleEvent
+                : PageColor.eventSearch,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: PageColor.eventSearch,
@@ -334,14 +337,17 @@ class _SingleEvent extends State<SingleEvent> {
           width: 300,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: PageColor.ticket,
+              backgroundColor: widget.event.status != null &&
+                      widget.event.status!.name == "inFuture"
+                  ? PageColor.ticket
+                  : PageColor.doneCanceled,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
             onPressed: () {},
             child: const Text(
-              'Reserv',
+              'Reserve',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,
