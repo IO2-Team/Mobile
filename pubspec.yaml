@@ -42,6 +42,7 @@ dependencies:
   openapi:
     path: api
   intl: ^0.18.0
+  http:
 
 dev_dependencies:
   flutter_test:
