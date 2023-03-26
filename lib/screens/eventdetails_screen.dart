@@ -21,7 +21,6 @@ class EventDetails extends StatefulWidget {
 class _EventDetails extends State<EventDetails> {
   final Color textscol = PageColor.texts;
   final Color textscol2 = PageColor.textsLight;
-
   @override
   Widget build(BuildContext context) {
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
