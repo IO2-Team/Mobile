@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
@@ -226,22 +229,60 @@ class _SingleEvent extends State<SingleEvent> {
     return Padding(
       padding:
           const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
-      child: Row(
+      child: Column(
         children: [
-          Icon(
-            IconsInApp.placeIcon,
-            size: 18.0,
-            color: textsCol2,
-          ),
-          const SizedBox(
-            width: 1,
-          ),
           if (widget.event.latitude != null && widget.event.longitude != null)
-            Text(
-              "(${widget.event.latitude}, ${widget.event.longitude})",
-              style: TextStyle(
-                color: textsCol,
-                fontSize: 14.5,
+            Center(
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: FutureBuilder<String>(
+                    future: getAddress(widget.event.latitude!,
+                        widget.event.longitude!), // async work
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return Text('Loading....');
+                        default:
+                          if (snapshot.hasError)
+                            return Text('Error: ${snapshot.error}');
+                          else if (snapshot.data != "")
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10),
+                                  child: Divider(
+                                    color: PageColor.divider,
+                                    height: 12.0,
+                                    thickness: 1.0,
+                                  ),
+                                ),
+                                Icon(
+                                  IconsInApp.placeIcon,
+                                  size: 18.0,
+                                  color: textsCol2,
+                                ),
+                                const SizedBox(
+                                  width: 1,
+                                ),
+                                Text(
+                                  snapshot.data!,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: PageColor.texts,
+                                    fontSize: 14.5,
+                                  ),
+                                ),
+                              ],
+                            );
+                          else
+                            return const SizedBox();
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
         ],
@@ -359,5 +400,12 @@ class _SingleEvent extends State<SingleEvent> {
         ),
       ),
     );
+  }
+
+  Future<String> getAddress(String latitude, String longitude) async {
+    http.Response res = await http.get(Uri.parse(
+        "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
+    Map<String, dynamic> json = jsonDecode(res.body);
+    return json.containsKey("error") ? "" : json["display_name"];
   }
 }

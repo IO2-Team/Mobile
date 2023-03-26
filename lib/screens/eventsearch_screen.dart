@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget({super.key, required this.title});
   final String title;
@@ -25,6 +24,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   late Map<int, bool> categoryIndex = new Map();
   int indexInList = -1;
   int id = -1;
+  bool isNewData = false;
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
     if (id == -1)
       return context
@@ -78,8 +78,13 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           builder: (context, response) {
             if (response.hasData) {
               if (id != -1 && response.data!.data!.isNotEmpty) {
-                for (var el in response.data!.data!)
-                  eventsListbyCategory.add(el);
+                if (!isNewData)
+                  isNewData = true;
+                else {
+                  for (var el in response.data!.data!)
+                    eventsListbyCategory.add(el);
+                  isNewData = false;
+                }
               }
               return Stack(
                 children: <Widget>[
@@ -262,5 +267,3 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 }
-
-
