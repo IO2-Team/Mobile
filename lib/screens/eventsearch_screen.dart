@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
 import 'package:provider/provider.dart';
+import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
 
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget({super.key, required this.title});
@@ -66,10 +68,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         ],
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
-        title: const Center(
-          child: Text(
-            "A mobile event App",
-          ),
+        title: Center(
+          child: Logo(),
         ),
         //actions: <Widget>[], //add actions
       ),
@@ -262,3 +262,5 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 }
+
+

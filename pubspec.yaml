@@ -42,8 +42,11 @@ dependencies:
   openapi:
     path: api
   intl: ^0.18.0
+
+  http:
   geocoding: ^2.1.0
   sliding_up_panel: ^2.0.0+1
+
 
 dev_dependencies:
   flutter_test:
