@@ -6,23 +6,28 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientText(
-        'Dionizos',
-        style: TextStyle(fontSize: 35),
-    gradient: LinearGradient(
-    colors: [PageColor.logo1, PageColor.logo2],
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GradientText(
+          'Dionizos',
+          style: TextStyle(fontSize: 35),
+          gradient: LinearGradient(
+            colors: [PageColor.logo1, PageColor.logo2],
+          ),
+        ),
+      ],
     );
   }
 }
 
-
 class GradientText extends StatelessWidget {
   const GradientText(
-      this.text, {
-        required this.gradient,
-        this.style,
-      });
+    this.text, {
+    required this.gradient,
+    this.style,
+  });
 
   final String text;
   final TextStyle? style;

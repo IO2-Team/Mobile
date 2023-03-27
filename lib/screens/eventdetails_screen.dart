@@ -358,9 +358,13 @@ class _EventDetails extends State<EventDetails> {
   }
 
   Future<String> getAddress(String latitude, String longitude) async {
-    http.Response res = await http.get(Uri.parse(
-        "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
-    Map<String, dynamic> json = jsonDecode(res.body);
-    return json.containsKey("error") ? "" : json["display_name"];
+    try {
+      http.Response res = await http.get(Uri.parse(
+          "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
+      Map<String, dynamic> json = jsonDecode(res.body);
+      return json.containsKey("error") ? "" : json["display_name"];
+    } catch (e) {
+      return "";
+    }
   }
 }

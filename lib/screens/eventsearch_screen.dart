@@ -29,6 +29,15 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   int id = -1;
   // used for waiting for new data
   bool isNewData = false;
+
+// to refresh the screen
+  Future refresh() async {
+    setState(() {
+      id = -1;
+      eventsListbyCategory.clear();
+    });
+  }
+
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
     if (id == -1)
       return context
@@ -57,19 +66,23 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Scaffold(
       backgroundColor: PageColor.eventSearch,
       appBar: AppBar(
-        actions: const [
-          SizedBox(
-            width: 40,
-          )
-        ],
         backgroundColor: PageColor.appBar,
-        automaticallyImplyLeading: false,
-        title: const Center(
-          child: Logo(),
+        automaticallyImplyLeading: true,
+        title: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Logo(),
+              SizedBox(
+                width: 48,
+              )
+            ],
+          ),
         ),
         //actions: <Widget>[], //add actions
       ),
-      endDrawer: Drawer(
+      drawer: Drawer(
+        backgroundColor: Colors.white,
         child: Column(children: <Widget>[
           Expanded(
             child: SafeArea(
@@ -78,38 +91,43 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   SizedBox(
                     height: 64,
                     child: DrawerHeader(
-                      decoration: BoxDecoration(color: Colors.white),
+                      decoration: BoxDecoration(color: PageColor.appBar),
                       child: Column(
                         children: [
                           FractionallySizedBox(
                             widthFactor: 0.8,
-                            child: Center(child: Text("licence and support")),
+                            child: Center(
+                                child: Text(
+                              "License & support",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            )),
                           ),
                         ],
                       ),
                     ),
                   ),
+                  ListTile(
+                    leading: const Icon(Icons.picture_as_pdf_outlined),
+                    title: const Text('License'),
+                    onTap: () {
+                      //    Navigator.of(context)
+                      //      .popUntil((route) => route.isFirst);
+                      ///   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(const LicenseWebView(),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.contact_support),
+                    title: const Text('Support'),
+                    onTap: () {
+                      //  Navigator.of(context)
+                      //      .popUntil((route) => route.isFirst);
+                      //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(SupportScreen(cloudUser: widget.user!,backgroundColor: widget.backgroundColor),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+                    },
+                  ),
                 ],
               ),
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.picture_as_pdf_outlined),
-            title: const Text('License'),
-            onTap: () {
-              //    Navigator.of(context)
-              //      .popUntil((route) => route.isFirst);
-              ///   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(const LicenseWebView(),false,user: widget.user,backgroundColor: widget.backgroundColor),));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.contact_support),
-            title: const Text('Support'),
-            onTap: () {
-              //  Navigator.of(context)
-              //      .popUntil((route) => route.isFirst);
-              //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(SupportScreen(cloudUser: widget.user!,backgroundColor: widget.backgroundColor),false,user: widget.user,backgroundColor: widget.backgroundColor),));
-            },
           ),
         ]),
       ),
@@ -131,33 +149,37 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 children: <Widget>[
                   SizedBox(
                     height: double.infinity,
-                    child: SlidingUpPanel(
-                      panel: Center(child: listOfCategories()),
-                      minHeight: 50.0,
-                      collapsed: Container(
-                        decoration: BoxDecoration(
-                          color: PageColor.appBar,
+                    child: RefreshIndicator(
+                      color: PageColor.appBar,
+                      onRefresh: refresh,
+                      child: SlidingUpPanel(
+                        panel: Center(child: listOfCategories()),
+                        minHeight: 50.0,
+                        collapsed: Container(
+                          decoration: BoxDecoration(
+                            color: PageColor.appBar,
+                          ),
+                          child: Center(
+                            child: slide(),
+                          ),
                         ),
-                        child: Center(
-                          child: slide(),
-                        ),
-                      ),
-                      body: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40.0,
-                          vertical: 10.0,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 160.0),
-                          child: Column(children: <Widget>[
-                            if (id != -1)
-                              for (var el in eventsListbyCategory)
-                                SingleEvent(el),
-                            if (id == -1 && response.data!.data!.isNotEmpty)
-                              for (var el in response.data!.data!)
-                                SingleEvent(el),
-                          ]),
+                        body: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40.0,
+                            vertical: 10.0,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 160.0),
+                            child: Column(children: <Widget>[
+                              if (id != -1)
+                                for (var el in eventsListbyCategory)
+                                  SingleEvent(el),
+                              if (id == -1 && response.data!.data!.isNotEmpty)
+                                for (var el in response.data!.data!)
+                                  SingleEvent(el),
+                            ]),
+                          ),
                         ),
                       ),
                     ),
@@ -225,44 +247,50 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   }
               }
 
-              return Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(children: <Widget>[
-                  Column(
-                    children: [
-                      slide(),
-                    ],
+              return Column(children: <Widget>[
+                Column(
+                  children: [
+                    slide(),
+                  ],
+                ),
+                const Divider(
+                  color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                  height: 20.0,
+                  thickness: 1.0,
+                ),
+                SizedBox(
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        if (response.data!.data!.isNotEmpty)
+                          for (var el in response.data!.data!)
+                            MaterialButton(
+                                onPressed: () {
+                                  if (el.id != null) {
+                                    if (categoryIndex[el.id] != true) {
+                                      setState(() {
+                                        id = el.id!;
+                                        categoryIndex[id] = true;
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  el.name!,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: categoryIndex[el.id!] == true
+                                        ? PageColor.texts
+                                        : Colors.white,
+                                  ),
+                                )),
+                      ],
+                    ),
                   ),
-                  const Divider(
-                    color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                    height: 20.0,
-                    thickness: 1.0,
-                  ),
-                  if (response.data!.data!.isNotEmpty)
-                    for (var el in response.data!.data!)
-                      MaterialButton(
-                          onPressed: () {
-                            if (el.id != null) {
-                              if (categoryIndex[el.id] != true) {
-                                setState(() {
-                                  id = el.id!;
-                                  categoryIndex[id] = true;
-                                });
-                              }
-                            }
-                          },
-                          child: Text(
-                            el.name!,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: categoryIndex[el.id!] == true
-                                  ? PageColor.texts
-                                  : Colors.white,
-                            ),
-                          )),
-                  resetButton(),
-                ]),
-              );
+                ),
+                resetButton(),
+              ]);
             } else {
               return Center(
                   child: CircularProgressIndicator(
