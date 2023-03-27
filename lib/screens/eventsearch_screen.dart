@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures, unnecessary_new, prefer_collection_literals
+
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
@@ -9,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget({super.key, required this.title});
   final String title;
@@ -19,12 +20,15 @@ class EventSearchWidget extends StatefulWidget {
 }
 
 class _EventSearchWidget extends State<EventSearchWidget> {
-  // list for events
+  // list for events for summary
   List<Event> eventsListbyCategory = new List.empty(growable: true);
-  int countCategories = 0;
+  int countCategories = 0; // categories, probably useless in future
+  // Map with categories, is it checked or note
   late Map<int, bool> categoryIndex = new Map();
-  int indexInList = -1;
+// id used for chosen category
   int id = -1;
+  // used for waiting for new data
+  bool isNewData = false;
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
     if (id == -1)
       return context
@@ -68,7 +72,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         ],
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
-        title: Center(
+        title: const Center(
           child: Logo(),
         ),
         //actions: <Widget>[], //add actions
@@ -78,8 +82,14 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           builder: (context, response) {
             if (response.hasData) {
               if (id != -1 && response.data!.data!.isNotEmpty) {
-                for (var el in response.data!.data!)
-                  eventsListbyCategory.add(el);
+                if (!isNewData)
+                  isNewData = true;
+                else {
+                  for (var el in response.data!.data!)
+                    if (!eventsListbyCategory.contains(el))
+                      eventsListbyCategory.add(el);
+                  isNewData = false;
+                }
               }
               return Stack(
                 children: <Widget>[
@@ -92,18 +102,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         decoration: BoxDecoration(
                           color: PageColor.appBar,
                         ),
-                        // collapsed text
                         child: Center(
-                          child: Column(
-                            children: [
-                              slide(),
-                              const Text(
-                                "Categories",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 17),
-                              ),
-                            ],
-                          ),
+                          child: slide(),
                         ),
                       ),
                       body: SingleChildScrollView(
@@ -139,26 +139,40 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 
+  ///
+  ///widget shows slide_up_panel
+  ///
   Widget slide() {
-    return Padding(
-      padding:
-          const EdgeInsets.only(top: 8.0, left: 7.0, right: 7.0, bottom: 8),
-      child: SizedBox(
-        width: 47,
-        height: 4,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2),
-            border: Border.all(
-              color: Colors.white,
-              width: 1,
+    return Column(
+      children: [
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 8.0, left: 7.0, right: 7.0, bottom: 8),
+          child: SizedBox(
+            width: 47,
+            height: 4,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(
+                  color: Colors.white,
+                  width: 1,
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        const Text(
+          "Categories",
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        ),
+      ],
     );
   }
 
+  ///
+  ///widget shows list with available categories
+  ///
   Widget listOfCategories() {
     return Container(
       width: 500, // nieogranicz
@@ -210,7 +224,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                             style: TextStyle(
                               fontSize: 18.0,
                               color: categoryIndex[el.id!] == true
-                                  ? PageColor.doneCanceled
+                                  ? PageColor.texts
                                   : Colors.white,
                             ),
                           )),
@@ -227,6 +241,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 
+  ///
+  ///Button to reset checked categories and load all events
+  ///
   Widget resetButton() {
     return Expanded(
       child: Container(
@@ -262,5 +279,3 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 }
-
-
