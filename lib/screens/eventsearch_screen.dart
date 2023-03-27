@@ -57,14 +57,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Scaffold(
       backgroundColor: PageColor.eventSearch,
       appBar: AppBar(
-        leading: MaterialButton(
-          onPressed: () {},
-          child: Icon(
-            IconsInApp.burgerMhm,
-            color: Colors.white,
-            size: 30,
-          ),
-        ),
         actions: const [
           SizedBox(
             width: 40,
@@ -76,6 +68,50 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           child: Logo(),
         ),
         //actions: <Widget>[], //add actions
+      ),
+      endDrawer: Drawer(
+        child: Column(children: <Widget>[
+          Expanded(
+            child: SafeArea(
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: 64,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: Column(
+                        children: [
+                          FractionallySizedBox(
+                            widthFactor: 0.8,
+                            child: Center(child: Text("licence and support")),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.picture_as_pdf_outlined),
+            title: const Text('License'),
+            onTap: () {
+              //    Navigator.of(context)
+              //      .popUntil((route) => route.isFirst);
+              ///   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(const LicenseWebView(),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.contact_support),
+            title: const Text('Support'),
+            onTap: () {
+              //  Navigator.of(context)
+              //      .popUntil((route) => route.isFirst);
+              //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(SupportScreen(cloudUser: widget.user!,backgroundColor: widget.backgroundColor),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+            },
+          ),
+        ]),
       ),
       body: FutureBuilder<Response<BuiltList<Event>>>(
           future: eventsWithApi(),
@@ -195,10 +231,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   Column(
                     children: [
                       slide(),
-                      const Text(
-                        "Categories",
-                        style: TextStyle(color: Colors.white, fontSize: 17),
-                      ),
                     ],
                   ),
                   const Divider(

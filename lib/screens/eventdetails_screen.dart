@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -52,6 +54,7 @@ class _EventDetails extends State<EventDetails> {
           )
         ],
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           //TODO: Rezerwacja
@@ -93,7 +96,8 @@ class _EventDetails extends State<EventDetails> {
               ],
             ),
             if (widget.event.longitude != null && widget.event.latitude != null)
-              columnWithInfoLocation(IconsInApp.placeIcon, getAddress(widget.event.latitude!, widget.event.longitude!)),
+              columnWithInfoLocation(IconsInApp.placeIcon,
+                  getAddress(widget.event.latitude!, widget.event.longitude!)),
             if (widget.event.name != null) description(widget.event.name!),
           ],
         ),
@@ -110,13 +114,15 @@ class _EventDetails extends State<EventDetails> {
   Widget viewTitle(String eventTitle) {
     return Padding(
       padding:
-      const EdgeInsets.only(left: 60.0, right: 60.0, top: 20, bottom: 20),
-      child: Text(
-        eventTitle,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 35.0,
-          color: textscol,
+          const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
+      child: Center(
+        child: Text(
+          eventTitle,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 30.0,
+            color: textscol,
+          ),
         ),
       ),
     );
@@ -125,8 +131,8 @@ class _EventDetails extends State<EventDetails> {
   ///
   /// widget shows info about start and end of event
   ///
-  Widget columnWithInfoDates(IconData dateico, DateTime dateStart,
-      IconData timeico, String text) {
+  Widget columnWithInfoDates(
+      IconData dateico, DateTime dateStart, IconData timeico, String text) {
     return Container(
       decoration: BoxDecoration(
         color: PageColor.singleEvent,
@@ -199,9 +205,9 @@ class _EventDetails extends State<EventDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             "Location:",
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               letterSpacing: 0.4,
               fontSize: 22.0,
@@ -221,28 +227,29 @@ class _EventDetails extends State<EventDetails> {
                 width: 0.1,
               ),
             ),
-            child: Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder<String>(
-                  future: address, // async work
-                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting: return Text('Loading....');
-                      default:
-                        if (snapshot.hasError)
-                          return Text('Error: ${snapshot.error}');
-                        else
-                          return Text(snapshot.data!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FutureBuilder<String>(
+                future: address, // async work
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('Loading....');
+                    default:
+                      if (snapshot.hasError)
+                        return Text('Error: ${snapshot.error}');
+                      else
+                        return Text(
+                          snapshot.data!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
                             color: textscol,
                             fontSize: 16.5,
                           ),
                         );
-                    }
-                  },
-                ),
+                  }
+                },
               ),
             ),
           ),
@@ -255,52 +262,58 @@ class _EventDetails extends State<EventDetails> {
   /// widget shows long description of event
   ///
   Widget description(String descript) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(
-            left: 15.0, right: 15.0, top: 35.0, bottom: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              "Description:",
-              style: const TextStyle(
-                color: Colors.white,
-                letterSpacing: 0.4,
-                fontSize: 22.0,
-              ),
-            ),
-            const Divider(
-              color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-              height: 12.0,
-              thickness: 1.0,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: PageColor.singleEvent,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.eventSearch,
-                  width: 0.1,
-                ),
-              ),
-              child: Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(14.0),
-                  child: Text(
-                        descript,
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          fontSize: 16.5,
-                          color: textscol,
-                        ),
+    return Column(
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 15.0, right: 15.0, top: 35.0, bottom: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Description:",
+                  style: TextStyle(
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                    fontSize: 22.0,
                   ),
                 ),
-              ),
+                const Divider(
+                  color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                  height: 12.0,
+                  thickness: 1.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: PageColor.singleEvent,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(
+                      color: PageColor.eventSearch,
+                      width: 0.1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14.0),
+                    child: Text(
+                      descript,
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                        fontSize: 16.5,
+                        color: textscol,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(
+          height: 70,
+        )
+      ],
     );
   }
 
@@ -343,13 +356,11 @@ class _EventDetails extends State<EventDetails> {
       ),
     );
   }
-  Future<String> getAddress(String latitude, String longitude) async
-  {
-    http.Response res = await http.get(Uri.parse("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
+
+  Future<String> getAddress(String latitude, String longitude) async {
+    http.Response res = await http.get(Uri.parse(
+        "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
     Map<String, dynamic> json = jsonDecode(res.body);
-    return json.containsKey("error") ? "": json["display_name"];
+    return json.containsKey("error") ? "" : json["display_name"];
   }
 }
-
-
-
