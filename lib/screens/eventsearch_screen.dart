@@ -51,7 +51,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   }
 
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
-    if (id == -1)
+    if (id == -1 || id == -2)
       return context
           .read<APIProvider>()
           .api
@@ -105,7 +105,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   isNewData = false;
                   eventsList.clear();
 
-                  if (categoryIndex[id]!)
+                  if (id != -2)
                     for (var el in response.data!.data!)
                       if (!eventsListsbyCategories[id]!.contains(el)) {
                         eventsListsbyCategories[id]!.add(el);
@@ -382,10 +382,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
               });
             } else {
               setState(() {
-                id = response.data!.data![i].id!;
-                eventsListsbyCategories[id]!.clear();
-                categoryIndex[id] = false;
-                eventsList.clear();
+                id = -2;
+                eventsListsbyCategories[response.data!.data![i].id!]!.clear();
+                categoryIndex[response.data!.data![i].id!] = false;
               });
             }
           }
