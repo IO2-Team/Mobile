@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -57,7 +58,10 @@ class _EventDetails extends State<EventDetails> {
 
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          //TODO: Rezerwacja
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MakeReservationWidget(widget.event)));
         },
         label: const Text(
           'Reservate',

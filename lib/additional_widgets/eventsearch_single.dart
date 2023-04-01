@@ -1,4 +1,5 @@
 import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
+import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -386,7 +387,13 @@ class _SingleEvent extends State<SingleEvent> {
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MakeReservationWidget(widget.event)));
+            },
             child: const Text(
               'Reserve',
               style: TextStyle(

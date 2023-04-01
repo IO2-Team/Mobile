@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class PageColor {
   static final eventSearch = Color.fromARGB(255, 182, 182, 255);
   static final singleEvent = Color.fromARGB(255, 192, 192, 255);
+  static final category = Color.fromARGB(255, 211, 211, 255);
+
   static final appBar = Color.fromARGB(255, 97, 97, 233);
   static final texts = Color.fromARGB(255, 22, 22, 100);
   static final textsLight = Color.fromARGB(255, 97, 97, 233);
   static final ticket = Color.fromARGB(255, 95, 227, 148);
-  static final logo1 = Color.fromARGB(255, 155, 200, 148);
+  static final logo1 = Color.fromARGB(255, 189, 249, 180);
   static final logo2 = Color.fromARGB(255, 50, 250, 50);
   static final divider = Color.fromARGB(255, 149, 149, 254);
   static final doneCanceled = Color.fromARGB(255, 176, 176, 198);

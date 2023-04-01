@@ -1,12 +1,5 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, unnecessary_new, prefer_collection_literals
 
-/// TO DO
-/// sprawdzić czy działa nowy kod XD
-/// dodać że scroll view jest trzywierszowy
-/// uwzględnić filtrację na raz categorii oraz statusu eventu - pytanie jak?? czy każdy event sprawdzać? to chyba dobry pomysł
-/// "burger"
-/// zrobić usuwanie eventów które się odznaczy -> to mozę na koniec
-
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +12,10 @@ import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+///////////////////////////////////////////////////////////////
+/// Widget which shows events list
+///////////////////////////////////////////////////////////////
+
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget({super.key, required this.title});
   final String title;
@@ -29,7 +26,8 @@ class EventSearchWidget extends StatefulWidget {
 
 class _EventSearchWidget extends State<EventSearchWidget> {
   // list for events for summary
-  List<Event> eventsListbyCategory = new List.empty(growable: true);
+  List<Event> eventsList = new List.empty(growable: true);
+  late Map<int, List<Event>> eventsListsbyCategories = new Map();
   int countCategories = 0; // categories, probably useless in future
   // Map with categories, is it checked or note
   late Map<int, bool> categoryIndex = new Map();
@@ -49,7 +47,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   Future refresh() async {
     setState(() {
       id = -1;
-      eventsListbyCategory.clear();
     });
   }
 
@@ -103,12 +100,22 @@ class _EventSearchWidget extends State<EventSearchWidget> {
             if (response.hasData) {
               if (id != -1 && response.data!.data!.isNotEmpty) {
                 if (!isNewData)
-                  isNewData = true;
+                  isNewData = true; //wpp za malo czasu
                 else {
-                  for (var el in response.data!.data!)
-                    if (!eventsListbyCategory.contains(el))
-                      eventsListbyCategory.add(el);
+                  eventsList.clear();
+                  if (categoryIndex[id]!)
+                    for (var el in response.data!.data!)
+                      if (!eventsListsbyCategories[id]!.contains(el)) {
+                        eventsListsbyCategories[id]!.add(el);
+                        eventsList.add(el);
+                      }
+
                   isNewData = false;
+
+                  for (var eKey in categoryIndex.keys)
+                    if (categoryIndex[eKey] == true)
+                      for (var el in eventsListsbyCategories[eKey]!)
+                        if (!eventsList.contains(el)) eventsList.add(el);
                 }
               }
               return Stack(
@@ -119,16 +126,20 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       color: PageColor.appBar,
                       onRefresh: refresh,
                       child: SlidingUpPanel(
-                        maxHeight: 400,
+                        maxHeight: 430,
                         panel: Center(child: filter()),
                         minHeight: 50.0,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(144.0),
-                          topRight: Radius.circular(44.0),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(25.0),
+                          topRight: Radius.circular(25.0),
                         ),
                         collapsed: Container(
                           decoration: BoxDecoration(
                             color: PageColor.divider,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(25.0),
+                              topRight: Radius.circular(25.0),
+                            ),
                           ),
                           child: Center(
                             child: slide(),
@@ -143,12 +154,38 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 160.0),
                             child: Column(children: <Widget>[
-                              if (id != -1)
-                                for (var el in eventsListbyCategory)
-                                  SingleEvent(el),
-                              if (id == -1 && response.data!.data!.isNotEmpty)
+                              if (id != -1 && eventsList.isNotEmpty)
+                                for (var el in eventsList)
+                                  if ((statusIndex["inFuture"] == false &&
+                                          statusIndex["pending"] == false &&
+                                          statusIndex["done"] == false &&
+                                          statusIndex["cancelled"] == false) ||
+                                      (el.status!.name == "inFuture" &&
+                                          statusIndex["inFuture"] == true) ||
+                                      (el.status!.name == "pending" &&
+                                          statusIndex["pending"] == true) ||
+                                      (el.status!.name == "done" &&
+                                          statusIndex["done"] == true) ||
+                                      (el.status!.name == "cancelled" &&
+                                          statusIndex["cancelled"] == true))
+                                    SingleEvent(el),
+                              if ((id == -1 ||
+                                      id != -1 && eventsList.isEmpty) &&
+                                  response.data!.data!.isNotEmpty)
                                 for (var el in response.data!.data!)
-                                  SingleEvent(el),
+                                  if ((statusIndex["inFuture"] == false &&
+                                          statusIndex["pending"] == false &&
+                                          statusIndex["done"] == false &&
+                                          statusIndex["cancelled"] == false) ||
+                                      (el.status!.name == "inFuture" &&
+                                          statusIndex["inFuture"] == true) ||
+                                      (el.status!.name == "pending" &&
+                                          statusIndex["pending"] == true) ||
+                                      (el.status!.name == "done" &&
+                                          statusIndex["done"] == true) ||
+                                      (el.status!.name == "cancelled" &&
+                                          statusIndex["cancelled"] == true))
+                                    SingleEvent(el),
                             ]),
                           ),
                         ),
@@ -192,8 +229,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           ),
         ),
         const Text(
-          "Filter",
-          style: TextStyle(color: Colors.white, fontSize: 17),
+          "Filters",
+          style: TextStyle(color: Colors.white, fontSize: 18),
         ),
       ],
     );
@@ -205,13 +242,19 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   Widget filter() {
     return Container(
       width: 1000, // nieogranicz
-      color: PageColor.divider,
+      decoration: BoxDecoration(
+        color: PageColor.divider,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
+        ),
+      ),
       child: Column(children: <Widget>[
         slide(),
-        const Padding(
-          padding: EdgeInsets.only(right: 8.0, left: 8.0),
+        Padding(
+          padding: const EdgeInsets.only(right: 18.0, left: 18.0),
           child: Divider(
-            color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+            color: PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
             height: 20.0,
             thickness: 1.0,
           ),
@@ -219,7 +262,10 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         Expanded(
           child: Column(
             children: [
-              Text("Categories"),
+              const Text(
+                "Categories",
+                style: TextStyle(color: Colors.white, fontSize: 17),
+              ),
               FutureBuilder<Response<BuiltList<Category>>>(
                   future: categoriesWithApi(),
                   builder: (context, response) {
@@ -227,12 +273,17 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       if (response.data != null &&
                           response.data!.data != null) {
                         countCategories = response.data!.data!.length;
-                        if (id == -1)
+                        if (id == -1) {
+                          // only on start and when resstart button it check if element is new
+
+                          eventsListsbyCategories.clear();
                           for (var el in response.data!.data!) {
-                            if (!categoryIndex.containsKey(el
-                                .id!)) // only when new category, map is updated
-                              categoryIndex.addAll({el.id!: false});
-                          }
+                            categoryIndex.addAll({el.id!: false});
+                            eventsListsbyCategories.addAll({
+                              el.id!: new List.empty(growable: true)
+                            }); // new empty lists added
+                          } // only when new category, map is updated
+                        }
                       }
 
                       return SingleChildScrollView(
@@ -252,7 +303,19 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         ),
         Column(
           children: [
-            Text("Status"),
+            Padding(
+              padding: const EdgeInsets.only(left: 18.0, right: 18),
+              child: Divider(
+                color:
+                    PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
+                height: 20.0,
+                thickness: 1.0,
+              ),
+            ),
+            const Text(
+              "Status",
+              style: TextStyle(color: Colors.white, fontSize: 17),
+            ),
             Center(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -271,89 +334,70 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///widget shows list with available categories
   ///
   Widget showCategories(AsyncSnapshot<Response<BuiltList<Category>>> response) {
-    int i = 0;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
             if (response.data!.data!.isNotEmpty)
-              for (var el in response.data!.data!)
-                MaterialButton(
-                    onPressed: () {
-                      if (el.id != null) {
-                        if (categoryIndex[el.id] != true) {
-                          setState(() {
-                            id = el.id!;
-                            categoryIndex[id] = true;
-                          });
-                        }
-                      }
-                    },
-                    child: Text(
-                      el.name!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: categoryIndex[el.id!] == true
-                            ? PageColor.texts
-                            : Colors.white,
-                      ),
-                    )),
+              for (int i = 0; i <= countCategories ~/ 3; i++)
+                categoryButton(response, i),
           ],
         ),
         Row(
           children: [
             if (response.data!.data!.isNotEmpty)
-              for (var el in response.data!.data!)
-                MaterialButton(
-                    onPressed: () {
-                      if (el.id != null) {
-                        if (categoryIndex[el.id] != true) {
-                          setState(() {
-                            id = el.id!;
-                            categoryIndex[id] = true;
-                          });
-                        }
-                      }
-                    },
-                    child: Text(
-                      el.name!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: categoryIndex[el.id!] == true
-                            ? PageColor.texts
-                            : Colors.white,
-                      ),
-                    )),
+              for (int i = countCategories ~/ 3 + 1;
+                  i <= countCategories * 2 ~/ 3;
+                  i++)
+                categoryButton(response, i),
           ],
         ),
         Row(
           children: [
             if (response.data!.data!.isNotEmpty)
-              for (var el in response.data!.data!)
-                MaterialButton(
-                    onPressed: () {
-                      if (el.id != null) {
-                        if (categoryIndex[el.id] != true) {
-                          setState(() {
-                            id = el.id!;
-                            categoryIndex[id] = true;
-                          });
-                        }
-                      }
-                    },
-                    child: Text(
-                      el.name!,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: categoryIndex[el.id!] == true
-                            ? PageColor.texts
-                            : Colors.white,
-                      ),
-                    )),
+              for (int i = countCategories * 2 ~/ 3 + 1;
+                  i < countCategories;
+                  i++)
+                categoryButton(response, i),
           ],
         ),
       ],
     );
+  }
+
+  ///
+  /// Widget which shows single category
+  ///
+  Widget categoryButton(
+      AsyncSnapshot<Response<BuiltList<Category>>> response, int i) {
+    return MaterialButton(
+        onPressed: () {
+          if (response.data!.data![i].id != null) {
+            if (categoryIndex[response.data!.data![i].id] != true) {
+              setState(() {
+                id = response.data!.data![i].id!;
+                categoryIndex[id] = true;
+              });
+            } else {
+              setState(() {
+                id = response.data!.data![i].id!;
+                eventsListsbyCategories[id]!.clear();
+                categoryIndex[id] = false;
+              });
+            }
+          }
+        },
+        child: Text(
+          response.data!.data![i].name!,
+          style: TextStyle(
+            fontSize: 18.0,
+            color: categoryIndex[response.data!.data![i].id!] == true
+                ? PageColor.logo1
+                : PageColor.category,
+          ),
+        ));
   }
 
   ///
@@ -370,14 +414,19 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   setState(() {
                     statusIndex[el] = true;
                   });
+                } else {
+                  setState(() {
+                    statusIndex[el] = false;
+                  });
                 }
               },
               child: Text(
                 el,
                 style: TextStyle(
                   fontSize: 18.0,
-                  color:
-                      statusIndex[el] == true ? PageColor.texts : Colors.white,
+                  color: statusIndex[el] == true
+                      ? PageColor.logo1
+                      : PageColor.category,
                 ),
               )),
       ],
@@ -403,8 +452,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           onPressed: () {
             setState(() {
               id = -1;
-              eventsListbyCategory.clear();
-              // categoryIndex.clear(); // UWAGA
+              categoryIndex
+                  .clear(); // when reset - all categoires will be reloaded
               for (var name in statusArray) statusIndex[name] = false;
             });
           },
