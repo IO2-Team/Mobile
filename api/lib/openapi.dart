@@ -19,4 +19,5 @@ export 'package:openapi/src/model/event.dart';
 export 'package:openapi/src/model/event_status.dart';
 export 'package:openapi/src/model/login_organizer200_response.dart';
 export 'package:openapi/src/model/organizer.dart';
+export 'package:openapi/src/model/place.dart';
 export 'package:openapi/src/model/reservation_dto.dart';

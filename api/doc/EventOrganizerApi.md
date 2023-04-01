@@ -11,6 +11,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**confirm**](EventOrganizerApi.md#confirm) | **POST** /organizer/{id} | Confirm orginizer account
 [**deleteOrganizer**](EventOrganizerApi.md#deleteorganizer) | **DELETE** /organizer/{id} | Confirm orginizer account
+[**getOrganizer**](EventOrganizerApi.md#getorganizer) | **GET** /organizer | Get organizer account (my account)
 [**loginOrganizer**](EventOrganizerApi.md#loginorganizer) | **GET** /organizer/login | Logs organizer into the system
 [**patchOrganizer**](EventOrganizerApi.md#patchorganizer) | **PATCH** /organizer/{id} | Patch orginizer account
 [**signUp**](EventOrganizerApi.md#signup) | **POST** /organizer | Create orginizer account
@@ -98,6 +99,47 @@ No authorization required
 
  - **Content-Type**: Not defined
  - **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getOrganizer**
+> Organizer getOrganizer(sessionToken)
+
+Get organizer account (my account)
+
+### Example
+```dart
+import 'package:openapi/api.dart';
+
+final api = Openapi().getEventOrganizerApi();
+final String sessionToken = 3424bn3b3tii3t4ibt43in; // String | session Token
+
+try {
+    final response = api.getOrganizer(sessionToken);
+    print(response);
+} catch on DioError (e) {
+    print('Exception when calling EventOrganizerApi->getOrganizer: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **sessionToken** | **String**| session Token | 
+
+### Return type
+
+[**Organizer**](Organizer.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
