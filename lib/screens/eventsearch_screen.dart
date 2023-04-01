@@ -1,5 +1,12 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, unnecessary_new, prefer_collection_literals
 
+/// TO DO
+/// sprawdzić czy działa nowy kod XD
+/// dodać że scroll view jest trzywierszowy
+/// uwzględnić filtrację na raz categorii oraz statusu eventu - pytanie jak?? czy każdy event sprawdzać? to chyba dobry pomysł
+/// "burger"
+/// zrobić usuwanie eventów które się odznaczy -> to mozę na koniec
+
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +33,13 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   int countCategories = 0; // categories, probably useless in future
   // Map with categories, is it checked or note
   late Map<int, bool> categoryIndex = new Map();
+  final Map<String, bool> statusIndex = {
+    "inFuture": false,
+    "pending": false,
+    "done": false,
+    "cancelled": false
+  };
+  final Set<String> statusArray = {"inFuture", "pending", "done", "cancelled"};
 // id used for chosen category
   int id = -1;
   // used for waiting for new data
@@ -106,7 +120,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       onRefresh: refresh,
                       child: SlidingUpPanel(
                         maxHeight: 400,
-                        panel: Center(child: listOfCategories()),
+                        panel: Center(child: filter()),
                         minHeight: 50.0,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(144.0),
@@ -186,97 +200,76 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   }
 
   ///
-  ///widget shows list with available categories
+  ///widget shows list with filter possibilities - categories and status
   ///
-  Widget listOfCategories() {
+  Widget filter() {
     return Container(
       width: 1000, // nieogranicz
       color: PageColor.divider,
-      child: FutureBuilder<Response<BuiltList<Category>>>(
-          future: categoriesWithApi(),
-          builder: (context, response) {
-            if (response.hasData) {
-              if (response.data != null && response.data!.data != null) {
-                countCategories = response.data!.data!.length;
-                if (id == -1)
-                  for (var el in response.data!.data!) {
-                    categoryIndex.addAll({el.id!: false});
-                  }
-              }
+      child: Column(children: <Widget>[
+        slide(),
+        const Padding(
+          padding: EdgeInsets.only(right: 8.0, left: 8.0),
+          child: Divider(
+            color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+            height: 20.0,
+            thickness: 1.0,
+          ),
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              Text("Categories"),
+              FutureBuilder<Response<BuiltList<Category>>>(
+                  future: categoriesWithApi(),
+                  builder: (context, response) {
+                    if (response.hasData) {
+                      if (response.data != null &&
+                          response.data!.data != null) {
+                        countCategories = response.data!.data!.length;
+                        if (id == -1)
+                          for (var el in response.data!.data!) {
+                            if (!categoryIndex.containsKey(el
+                                .id!)) // only when new category, map is updated
+                              categoryIndex.addAll({el.id!: false});
+                          }
+                      }
 
-              return Column(children: <Widget>[
-                Column(
-                  children: [
-                    slide(),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                  child: const Divider(
-                    color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                    height: 20.0,
-                    thickness: 1.0,
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text("Categories"),
-                      SingleChildScrollView(
+                      return SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: showCategories(response),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    Text("Status"),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Row(
-                        children: [
-                          if (response.data!.data!.isNotEmpty)
-                            for (var el in response.data!.data!)
-                              MaterialButton(
-                                  onPressed: () {
-                                    if (el.id != null) {
-                                      if (categoryIndex[el.id] != true) {
-                                        setState(() {
-                                          id = el.id!;
-                                          categoryIndex[id] = true;
-                                        });
-                                      }
-                                    }
-                                  },
-                                  child: Text(
-                                    el.name!,
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: categoryIndex[el.id!] == true
-                                          ? PageColor.texts
-                                          : Colors.white,
-                                    ),
-                                  )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                resetButton(),
-              ]);
-            } else {
-              return Center(
-                  child: CircularProgressIndicator(
-                color: PageColor.appBar,
-              ));
-            }
-          }),
+                      );
+                    } else {
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: PageColor.appBar,
+                      ));
+                    }
+                  }),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            Text("Status"),
+            Center(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: showStatus(),
+              ),
+            ),
+          ],
+        ),
+        resetButton(),
+      ]),
     );
   }
 
+  ///
+  ///widget shows list with available categories
+  ///
   Widget showCategories(AsyncSnapshot<Response<BuiltList<Category>>> response) {
     int i = 0;
     return Column(
@@ -364,6 +357,34 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   }
 
   ///
+  ///widget shows list with available status(es) of events
+  ///
+
+  Widget showStatus() {
+    return Row(
+      children: [
+        for (var el in statusArray)
+          MaterialButton(
+              onPressed: () {
+                if (statusIndex[el] != true) {
+                  setState(() {
+                    statusIndex[el] = true;
+                  });
+                }
+              },
+              child: Text(
+                el,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color:
+                      statusIndex[el] == true ? PageColor.texts : Colors.white,
+                ),
+              )),
+      ],
+    );
+  }
+
+  ///
   ///Button to reset checked categories and load all events
   ///
   Widget resetButton() {
@@ -383,6 +404,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
             setState(() {
               id = -1;
               eventsListbyCategory.clear();
+              // categoryIndex.clear(); // UWAGA
+              for (var name in statusArray) statusIndex[name] = false;
             });
           },
           child: const Text(
