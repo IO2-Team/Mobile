@@ -12,7 +12,7 @@ class Logo extends StatelessWidget {
       children: [
         GradientText(
           'Dionizos',
-          style: TextStyle(fontSize: 35),
+          style: const TextStyle(fontSize: 35),
           gradient: LinearGradient(
             colors: [PageColor.logo1, PageColor.logo2],
           ),

@@ -1,6 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, unnecessary_new, prefer_collection_literals
 
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
+import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
@@ -74,14 +75,14 @@ class _EventSearchWidget extends State<EventSearchWidget> {
             children: const [
               Logo(),
               SizedBox(
-                width: 48,
+                width: 55,
               )
             ],
           ),
         ),
         //actions: <Widget>[], //add actions
       ),
-      drawer: drawerBurger(),
+      drawer: const DrawerBurger(),
       body: FutureBuilder<Response<BuiltList<Event>>>(
           future: eventsWithApi(),
           builder: (context, response) {
@@ -104,11 +105,16 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       color: PageColor.appBar,
                       onRefresh: refresh,
                       child: SlidingUpPanel(
+                        maxHeight: 400,
                         panel: Center(child: listOfCategories()),
                         minHeight: 50.0,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(144.0),
+                          topRight: Radius.circular(44.0),
+                        ),
                         collapsed: Container(
                           decoration: BoxDecoration(
-                            color: PageColor.appBar,
+                            color: PageColor.divider,
                           ),
                           child: Center(
                             child: slide(),
@@ -172,7 +178,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           ),
         ),
         const Text(
-          "Categories",
+          "Filter",
           style: TextStyle(color: Colors.white, fontSize: 17),
         ),
       ],
@@ -184,8 +190,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   Widget listOfCategories() {
     return Container(
-      width: 500, // nieogranicz
-      color: PageColor.appBar,
+      width: 1000, // nieogranicz
+      color: PageColor.divider,
       child: FutureBuilder<Response<BuiltList<Category>>>(
           future: categoriesWithApi(),
           builder: (context, response) {
@@ -204,41 +210,60 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     slide(),
                   ],
                 ),
-                const Divider(
-                  color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                  height: 20.0,
-                  thickness: 1.0,
-                ),
-                SizedBox(
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        if (response.data!.data!.isNotEmpty)
-                          for (var el in response.data!.data!)
-                            MaterialButton(
-                                onPressed: () {
-                                  if (el.id != null) {
-                                    if (categoryIndex[el.id] != true) {
-                                      setState(() {
-                                        id = el.id!;
-                                        categoryIndex[id] = true;
-                                      });
-                                    }
-                                  }
-                                },
-                                child: Text(
-                                  el.name!,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: categoryIndex[el.id!] == true
-                                        ? PageColor.texts
-                                        : Colors.white,
-                                  ),
-                                )),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                  child: const Divider(
+                    color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                    height: 20.0,
+                    thickness: 1.0,
                   ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text("Categories"),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: showCategories(response),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text("Status"),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Row(
+                        children: [
+                          if (response.data!.data!.isNotEmpty)
+                            for (var el in response.data!.data!)
+                              MaterialButton(
+                                  onPressed: () {
+                                    if (el.id != null) {
+                                      if (categoryIndex[el.id] != true) {
+                                        setState(() {
+                                          id = el.id!;
+                                          categoryIndex[id] = true;
+                                        });
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    el.name!,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: categoryIndex[el.id!] == true
+                                          ? PageColor.texts
+                                          : Colors.white,
+                                    ),
+                                  )),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 resetButton(),
               ]);
@@ -252,93 +277,125 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     );
   }
 
+  Widget showCategories(AsyncSnapshot<Response<BuiltList<Category>>> response) {
+    int i = 0;
+    return Column(
+      children: [
+        Row(
+          children: [
+            if (response.data!.data!.isNotEmpty)
+              for (var el in response.data!.data!)
+                MaterialButton(
+                    onPressed: () {
+                      if (el.id != null) {
+                        if (categoryIndex[el.id] != true) {
+                          setState(() {
+                            id = el.id!;
+                            categoryIndex[id] = true;
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      el.name!,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: categoryIndex[el.id!] == true
+                            ? PageColor.texts
+                            : Colors.white,
+                      ),
+                    )),
+          ],
+        ),
+        Row(
+          children: [
+            if (response.data!.data!.isNotEmpty)
+              for (var el in response.data!.data!)
+                MaterialButton(
+                    onPressed: () {
+                      if (el.id != null) {
+                        if (categoryIndex[el.id] != true) {
+                          setState(() {
+                            id = el.id!;
+                            categoryIndex[id] = true;
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      el.name!,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: categoryIndex[el.id!] == true
+                            ? PageColor.texts
+                            : Colors.white,
+                      ),
+                    )),
+          ],
+        ),
+        Row(
+          children: [
+            if (response.data!.data!.isNotEmpty)
+              for (var el in response.data!.data!)
+                MaterialButton(
+                    onPressed: () {
+                      if (el.id != null) {
+                        if (categoryIndex[el.id] != true) {
+                          setState(() {
+                            id = el.id!;
+                            categoryIndex[id] = true;
+                          });
+                        }
+                      }
+                    },
+                    child: Text(
+                      el.name!,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: categoryIndex[el.id!] == true
+                            ? PageColor.texts
+                            : Colors.white,
+                      ),
+                    )),
+          ],
+        ),
+      ],
+    );
+  }
+
   ///
   ///Button to reset checked categories and load all events
   ///
   Widget resetButton() {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(left: 10.0),
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: 300.0,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: PageColor.divider,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(80)),
-              ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 30.0, top: 20),
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 300.0,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: PageColor.eventSearch,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(80)),
             ),
-            onPressed: () {
-              setState(() {
-                id = -1;
-                eventsListbyCategory.clear();
-              });
-            },
-            child: const Text(
-              'Reset',
-              style: TextStyle(
-                letterSpacing: 1.5,
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MyFont1',
-              ),
+          ),
+          onPressed: () {
+            setState(() {
+              id = -1;
+              eventsListbyCategory.clear();
+            });
+          },
+          child: const Text(
+            'Reset',
+            style: TextStyle(
+              letterSpacing: 1.5,
+              fontSize: 19.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'MyFont1',
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget drawerBurger() {
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: Column(children: <Widget>[
-        Expanded(
-          child: SafeArea(
-            child: ListView(
-              children: [
-                SizedBox(
-                  height: 64,
-                  child: DrawerHeader(
-                    decoration: BoxDecoration(color: PageColor.appBar),
-                    child: Column(
-                      children: [
-                        FractionallySizedBox(
-                          widthFactor: 0.8,
-                          child: Center(
-                              child: Text(
-                            "License & support",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          )),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.picture_as_pdf_outlined),
-                  title: const Text('License'),
-                  onTap: () {
-                    //    Navigator.of(context)
-                    //      .popUntil((route) => route.isFirst);
-                    ///   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(const LicenseWebView(),false,user: widget.user,backgroundColor: widget.backgroundColor),));
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.contact_support),
-                  title: const Text('Support'),
-                  onTap: () {
-                    //  Navigator.of(context)
-                    //      .popUntil((route) => route.isFirst);
-                    //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(SupportScreen(cloudUser: widget.user!,backgroundColor: widget.backgroundColor),false,user: widget.user,backgroundColor: widget.backgroundColor),));
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ]),
     );
   }
 }
