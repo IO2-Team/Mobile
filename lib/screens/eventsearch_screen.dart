@@ -102,15 +102,15 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 if (!isNewData)
                   isNewData = true; //wpp za malo czasu
                 else {
+                  isNewData = false;
                   eventsList.clear();
+
                   if (categoryIndex[id]!)
                     for (var el in response.data!.data!)
                       if (!eventsListsbyCategories[id]!.contains(el)) {
                         eventsListsbyCategories[id]!.add(el);
                         eventsList.add(el);
                       }
-
-                  isNewData = false;
 
                   for (var eKey in categoryIndex.keys)
                     if (categoryIndex[eKey] == true)
@@ -275,7 +275,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         countCategories = response.data!.data!.length;
                         if (id == -1) {
                           // only on start and when resstart button it check if element is new
-
+                          categoryIndex.clear();
                           eventsListsbyCategories.clear();
                           for (var el in response.data!.data!) {
                             categoryIndex.addAll({el.id!: false});
@@ -385,6 +385,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 id = response.data!.data![i].id!;
                 eventsListsbyCategories[id]!.clear();
                 categoryIndex[id] = false;
+                eventsList.clear();
               });
             }
           }
@@ -452,8 +453,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           onPressed: () {
             setState(() {
               id = -1;
-              categoryIndex
-                  .clear(); // when reset - all categoires will be reloaded
               for (var name in statusArray) statusIndex[name] = false;
             });
           },
