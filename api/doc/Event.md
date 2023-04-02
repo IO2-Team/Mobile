@@ -9,7 +9,6 @@ import 'package:openapi/api.dart';
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **int** |  | 
-**freePlace** | **int** |  | [optional] 
 **title** | **String** |  | [optional] 
 **startTime** | **int** |  | [optional] 
 **endTime** | **int** |  | [optional] 
@@ -19,6 +18,9 @@ Name | Type | Description | Notes
 **placeSchema** | **String** |  | [optional] 
 **status** | [**EventStatus**](EventStatus.md) |  | [optional] 
 **categories** | [**BuiltList&lt;Category&gt;**](Category.md) |  | [optional] 
+**freePlace** | **int** |  | [optional] 
+**maxPlace** | **int** |  | [optional] 
+**places** | [**BuiltList&lt;Place&gt;**](Place.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

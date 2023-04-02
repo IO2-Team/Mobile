@@ -10,6 +10,7 @@ doc/EventOrganizerApi.md
 doc/EventStatus.md
 doc/LoginOrganizer200Response.md
 doc/Organizer.md
+doc/Place.md
 doc/ReservationApi.md
 doc/ReservationDTO.md
 lib/openapi.dart
@@ -31,6 +32,7 @@ lib/src/model/event.dart
 lib/src/model/event_status.dart
 lib/src/model/login_organizer200_response.dart
 lib/src/model/organizer.dart
+lib/src/model/place.dart
 lib/src/model/reservation_dto.dart
 lib/src/serializers.dart
 pubspec.yaml
@@ -42,5 +44,6 @@ test/event_status_test.dart
 test/event_test.dart
 test/login_organizer200_response_test.dart
 test/organizer_test.dart
+test/place_test.dart
 test/reservation_api_test.dart
 test/reservation_dto_test.dart

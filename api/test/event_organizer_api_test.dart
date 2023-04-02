@@ -21,6 +21,13 @@ void main() {
       // TODO
     });
 
+    // Get organizer account (my account)
+    //
+    //Future<Organizer> getOrganizer(String sessionToken) async
+    test('test getOrganizer', () async {
+      // TODO
+    });
+
     // Logs organizer into the system
     //
     // 

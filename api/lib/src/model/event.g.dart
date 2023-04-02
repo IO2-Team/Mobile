@@ -10,8 +10,6 @@ class _$Event extends Event {
   @override
   final int id;
   @override
-  final int? freePlace;
-  @override
   final String? title;
   @override
   final int? startTime;
@@ -29,13 +27,18 @@ class _$Event extends Event {
   final EventStatus? status;
   @override
   final BuiltList<Category>? categories;
+  @override
+  final int? freePlace;
+  @override
+  final int? maxPlace;
+  @override
+  final BuiltList<Place>? places;
 
   factory _$Event([void Function(EventBuilder)? updates]) =>
       (new EventBuilder()..update(updates))._build();
 
   _$Event._(
       {required this.id,
-      this.freePlace,
       this.title,
       this.startTime,
       this.endTime,
@@ -44,7 +47,10 @@ class _$Event extends Event {
       this.name,
       this.placeSchema,
       this.status,
-      this.categories})
+      this.categories,
+      this.freePlace,
+      this.maxPlace,
+      this.places})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(id, r'Event', 'id');
   }
@@ -61,7 +67,6 @@ class _$Event extends Event {
     if (identical(other, this)) return true;
     return other is Event &&
         id == other.id &&
-        freePlace == other.freePlace &&
         title == other.title &&
         startTime == other.startTime &&
         endTime == other.endTime &&
@@ -70,14 +75,16 @@ class _$Event extends Event {
         name == other.name &&
         placeSchema == other.placeSchema &&
         status == other.status &&
-        categories == other.categories;
+        categories == other.categories &&
+        freePlace == other.freePlace &&
+        maxPlace == other.maxPlace &&
+        places == other.places;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, id.hashCode);
-    _$hash = $jc(_$hash, freePlace.hashCode);
     _$hash = $jc(_$hash, title.hashCode);
     _$hash = $jc(_$hash, startTime.hashCode);
     _$hash = $jc(_$hash, endTime.hashCode);
@@ -87,6 +94,9 @@ class _$Event extends Event {
     _$hash = $jc(_$hash, placeSchema.hashCode);
     _$hash = $jc(_$hash, status.hashCode);
     _$hash = $jc(_$hash, categories.hashCode);
+    _$hash = $jc(_$hash, freePlace.hashCode);
+    _$hash = $jc(_$hash, maxPlace.hashCode);
+    _$hash = $jc(_$hash, places.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -95,7 +105,6 @@ class _$Event extends Event {
   String toString() {
     return (newBuiltValueToStringHelper(r'Event')
           ..add('id', id)
-          ..add('freePlace', freePlace)
           ..add('title', title)
           ..add('startTime', startTime)
           ..add('endTime', endTime)
@@ -104,7 +113,10 @@ class _$Event extends Event {
           ..add('name', name)
           ..add('placeSchema', placeSchema)
           ..add('status', status)
-          ..add('categories', categories))
+          ..add('categories', categories)
+          ..add('freePlace', freePlace)
+          ..add('maxPlace', maxPlace)
+          ..add('places', places))
         .toString();
   }
 }
@@ -115,10 +127,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   int? _id;
   int? get id => _$this._id;
   set id(int? id) => _$this._id = id;
-
-  int? _freePlace;
-  int? get freePlace => _$this._freePlace;
-  set freePlace(int? freePlace) => _$this._freePlace = freePlace;
 
   String? _title;
   String? get title => _$this._title;
@@ -158,6 +166,18 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   set categories(ListBuilder<Category>? categories) =>
       _$this._categories = categories;
 
+  int? _freePlace;
+  int? get freePlace => _$this._freePlace;
+  set freePlace(int? freePlace) => _$this._freePlace = freePlace;
+
+  int? _maxPlace;
+  int? get maxPlace => _$this._maxPlace;
+  set maxPlace(int? maxPlace) => _$this._maxPlace = maxPlace;
+
+  ListBuilder<Place>? _places;
+  ListBuilder<Place> get places => _$this._places ??= new ListBuilder<Place>();
+  set places(ListBuilder<Place>? places) => _$this._places = places;
+
   EventBuilder() {
     Event._defaults(this);
   }
@@ -166,7 +186,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
     final $v = _$v;
     if ($v != null) {
       _id = $v.id;
-      _freePlace = $v.freePlace;
       _title = $v.title;
       _startTime = $v.startTime;
       _endTime = $v.endTime;
@@ -176,6 +195,9 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _placeSchema = $v.placeSchema;
       _status = $v.status;
       _categories = $v.categories?.toBuilder();
+      _freePlace = $v.freePlace;
+      _maxPlace = $v.maxPlace;
+      _places = $v.places?.toBuilder();
       _$v = null;
     }
     return this;
@@ -201,7 +223,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _$result = _$v ??
           new _$Event._(
               id: BuiltValueNullFieldError.checkNotNull(id, r'Event', 'id'),
-              freePlace: freePlace,
               title: title,
               startTime: startTime,
               endTime: endTime,
@@ -210,12 +231,18 @@ class EventBuilder implements Builder<Event, EventBuilder> {
               name: name,
               placeSchema: placeSchema,
               status: status,
-              categories: _categories?.build());
+              categories: _categories?.build(),
+              freePlace: freePlace,
+              maxPlace: maxPlace,
+              places: _places?.build());
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'categories';
         _categories?.build();
+
+        _$failedField = 'places';
+        _places?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'Event', _$failedField, e.toString());

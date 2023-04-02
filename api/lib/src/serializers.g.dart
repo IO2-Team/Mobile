@@ -13,10 +13,14 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(LoginOrganizer200Response.serializer)
       ..add(Organizer.serializer)
       ..add(OrganizerStatusEnum.serializer)
+      ..add(Place.serializer)
       ..add(ReservationDTO.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Category)]),
           () => new ListBuilder<Category>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Place)]),
+          () => new ListBuilder<Place>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Event)]),
           () => new ListBuilder<Event>()))

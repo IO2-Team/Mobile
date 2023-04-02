@@ -6,6 +6,7 @@
 import 'package:openapi/src/model/event_status.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/model/category.dart';
+import 'package:openapi/src/model/place.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -15,7 +16,6 @@ part 'event.g.dart';
 ///
 /// Properties:
 /// * [id] 
-/// * [freePlace] 
 /// * [title] 
 /// * [startTime] 
 /// * [endTime] 
@@ -25,13 +25,13 @@ part 'event.g.dart';
 /// * [placeSchema] 
 /// * [status] 
 /// * [categories] 
+/// * [freePlace] 
+/// * [maxPlace] 
+/// * [places] 
 @BuiltValue()
 abstract class Event implements Built<Event, EventBuilder> {
   @BuiltValueField(wireName: r'id')
   int get id;
-
-  @BuiltValueField(wireName: r'freePlace')
-  int? get freePlace;
 
   @BuiltValueField(wireName: r'title')
   String? get title;
@@ -61,6 +61,15 @@ abstract class Event implements Built<Event, EventBuilder> {
   @BuiltValueField(wireName: r'categories')
   BuiltList<Category>? get categories;
 
+  @BuiltValueField(wireName: r'freePlace')
+  int? get freePlace;
+
+  @BuiltValueField(wireName: r'maxPlace')
+  int? get maxPlace;
+
+  @BuiltValueField(wireName: r'places')
+  BuiltList<Place>? get places;
+
   Event._();
 
   factory Event([void updates(EventBuilder b)]) = _$Event;
@@ -89,13 +98,6 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
       object.id,
       specifiedType: const FullType(int),
     );
-    if (object.freePlace != null) {
-      yield r'freePlace';
-      yield serializers.serialize(
-        object.freePlace,
-        specifiedType: const FullType(int),
-      );
-    }
     if (object.title != null) {
       yield r'title';
       yield serializers.serialize(
@@ -159,6 +161,27 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
         specifiedType: const FullType(BuiltList, [FullType(Category)]),
       );
     }
+    if (object.freePlace != null) {
+      yield r'freePlace';
+      yield serializers.serialize(
+        object.freePlace,
+        specifiedType: const FullType(int),
+      );
+    }
+    if (object.maxPlace != null) {
+      yield r'maxPlace';
+      yield serializers.serialize(
+        object.maxPlace,
+        specifiedType: const FullType(int),
+      );
+    }
+    if (object.places != null) {
+      yield r'places';
+      yield serializers.serialize(
+        object.places,
+        specifiedType: const FullType(BuiltList, [FullType(Place)]),
+      );
+    }
   }
 
   @override
@@ -188,13 +211,6 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
             specifiedType: const FullType(int),
           ) as int;
           result.id = valueDes;
-          break;
-        case r'freePlace':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(int),
-          ) as int;
-          result.freePlace = valueDes;
           break;
         case r'title':
           final valueDes = serializers.deserialize(
@@ -258,6 +274,27 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
             specifiedType: const FullType(BuiltList, [FullType(Category)]),
           ) as BuiltList<Category>;
           result.categories.replace(valueDes);
+          break;
+        case r'freePlace':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int;
+          result.freePlace = valueDes;
+          break;
+        case r'maxPlace':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(int),
+          ) as int;
+          result.maxPlace = valueDes;
+          break;
+        case r'places':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(Place)]),
+          ) as BuiltList<Place>;
+          result.places.replace(valueDes);
           break;
         default:
           unhandled.add(key);
