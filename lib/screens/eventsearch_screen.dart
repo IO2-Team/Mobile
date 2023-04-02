@@ -102,39 +102,42 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           future: eventsWithApi(),
           builder: (context, response) {
             if (response.hasData) {
-              if (response.data!.data!.isNotEmpty) {
+              if (id != -1 && response.data!.data!.isNotEmpty) {
                 if (!isNewData)
                   isNewData = true; //wpp za malo czasu
                 else {
                   isNewData = false;
                   eventsList.clear();
 
-                  if (id == -1) {
-                    // if no category has been chosen
-                    if (eventsList.isEmpty)
-                      for (var el in response.data!.data!) eventsList.add(el);
-                  } else {
-                    if (id !=
-                        -2) // adding events from selected category, -2 when category unchecked - then no data added
-                      for (var el in response.data!.data!)
-                        if (!eventsListsbyCategories[id]!.contains(el)) {
-                          eventsListsbyCategories[id]!.add(el);
-                          eventsList.add(el);
-                        }
-                    // adding categories if any more checked
-                    for (var eKey in categoryIndex.keys)
-                      if (categoryIndex[eKey] == true)
-                        for (var el in eventsListsbyCategories[eKey]!)
-                          if (!eventsList.contains(el)) eventsList.add(el);
-                    // if no category has been chosen
-                    if (eventsList.isEmpty)
-                      for (var el in response.data!.data!) eventsList.add(el);
-                  }
+                  if (id !=
+                      -2) // adding events from selected category, -2 when category unchecked - then no data added
+                    for (var el in response.data!.data!)
+                      if (!eventsListsbyCategories[id]!.contains(el)) {
+                        eventsListsbyCategories[id]!.add(el);
+                        eventsList.add(el);
+                      }
+                  // adding categories if any more checked
+                  for (var eKey in categoryIndex.keys)
+                    if (categoryIndex[eKey] == true)
+                      for (var el in eventsListsbyCategories[eKey]!)
+                        if (!eventsList.contains(el)) eventsList.add(el);
+                  // if no category has been chosen
+                  if (eventsList.isEmpty)
+                    for (var el in response.data!.data!) eventsList.add(el);
+
                   // sort by date
                   if (eventsList.isNotEmpty)
                     eventsList.sort(
                         ((a, b) => (a.startTime!).compareTo(b.startTime!)));
                 }
+              } else {
+                if (eventsList.isEmpty)
+                  for (var el in response.data!.data!) eventsList.add(el);
+
+                // sort by date
+                if (eventsList.isNotEmpty)
+                  eventsList
+                      .sort(((a, b) => (a.startTime!).compareTo(b.startTime!)));
               }
               return Stack(
                 children: <Widget>[
