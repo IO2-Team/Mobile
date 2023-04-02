@@ -27,12 +27,21 @@ class EventSearchWidget extends StatefulWidget {
 class _EventSearchWidget extends State<EventSearchWidget> {
   // list for events for summary
   bool isFiltersChecked = true;
+  // to add categories when isReset == true
   bool isRest = true;
+  // list with events to show
   List<Event> eventsList = new List.empty(growable: true);
+  // lists with different categories
   late Map<int, List<Event>> eventsListsbyCategories = new Map();
-  int countCategories = 0; // categories, probably useless in future
+  // categories, probably useless in future
+  int countCategories = 0;
   // Map with categories, is it checked or note
   late Map<int, bool> categoryIndex = new Map();
+  // id used for chosen category
+  int id = -1;
+  // used for waiting for new data
+  bool isNewData = false;
+
   final Map<String, bool> statusIndex = {
     "inFuture": false,
     "pending": false,
@@ -40,10 +49,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     "cancelled": false
   };
   final Set<String> statusArray = {"inFuture", "pending", "done", "cancelled"};
-// id used for chosen category
-  int id = -1;
-  // used for waiting for new data
-  bool isNewData = false;
 
 // to refresh the screen
   Future refresh() async {
@@ -103,6 +108,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           builder: (context, response) {
             if (response.hasData) {
               if (id != -1 && response.data!.data!.isNotEmpty) {
+                // if any category
                 if (!isNewData)
                   isNewData = true; //wpp za malo czasu
                 else {
@@ -130,9 +136,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     eventsList.sort(
                         ((a, b) => (a.startTime!).compareTo(b.startTime!)));
                 }
-              } else {
-                if (eventsList.isEmpty)
-                  for (var el in response.data!.data!) eventsList.add(el);
+              } else if (response.data!.data!.isNotEmpty) {
+                eventsList.clear();
+                for (var el in response.data!.data!) eventsList.add(el);
 
                 // sort by date
                 if (eventsList.isNotEmpty)
