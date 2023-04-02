@@ -13,6 +13,8 @@ class PageColor {
   static final ticket = Color.fromARGB(255, 95, 227, 148);
   static final logo1 = Color.fromARGB(255, 189, 249, 180);
   static final logo2 = Color.fromARGB(255, 50, 250, 50);
+  static final singleEventActive = Color.fromARGB(255, 189, 249, 180);
+
   static final divider = Color.fromARGB(255, 149, 149, 254);
   static final doneCanceled = Color.fromARGB(255, 176, 176, 198);
 }

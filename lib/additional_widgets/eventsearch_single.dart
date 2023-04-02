@@ -38,8 +38,8 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             color: widget.event.status != null &&
                     widget.event.status!.name == "inFuture"
-                ? PageColor.singleEvent
-                : PageColor.eventSearch,
+                ? PageColor.singleEventActive
+                : PageColor.singleEvent,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: PageColor.eventSearch,
@@ -116,7 +116,9 @@ class _SingleEvent extends State<SingleEvent> {
                   const SizedBox(
                     width: 15,
                   ),
-                  bookPlaceButton(),
+                  if (widget.event.status != null &&
+                      widget.event.status!.name == "inFuture")
+                    bookPlaceButton(),
                 ],
               ),
             ],

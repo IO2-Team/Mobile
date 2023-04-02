@@ -1,4 +1,7 @@
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
+import 'package:eventapp_mobile/additional_widgets/license.dart';
+import 'package:eventapp_mobile/additional_widgets/logo.dart';
+import 'package:eventapp_mobile/additional_widgets/support.dart';
 import 'package:flutter/material.dart';
 
 class DrawerBurger extends StatelessWidget {
@@ -7,7 +10,8 @@ class DrawerBurger extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white,
+      width: 260,
+      backgroundColor: PageColor.eventSearch,
       child: Column(children: <Widget>[
         Expanded(
           child: SafeArea(
@@ -18,11 +22,12 @@ class DrawerBurger extends StatelessWidget {
                   child: DrawerHeader(
                     decoration: BoxDecoration(color: PageColor.appBar),
                     child: Column(
-                      children: [
+                      children: const [
                         FractionallySizedBox(
                           widthFactor: 0.8,
                           child: Center(
                               child: Text(
+                            overflow: TextOverflow.clip,
                             "License & support",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           )),
@@ -32,21 +37,53 @@ class DrawerBurger extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.picture_as_pdf_outlined),
-                  title: const Text('License'),
+                  leading: const Icon(
+                    Icons.picture_as_pdf_outlined,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'License',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                   onTap: () {
-                    //    Navigator.of(context)
-                    //      .popUntil((route) => route.isFirst);
-                    ///   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(const LicenseWebView(),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                              appBar: AppBar(
+                                  title: const Text('Flutter Simple Example')),
+                              body: const LicenseWebView(),
+                            )));
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.contact_support),
-                  title: const Text('Support'),
+                  leading: const Icon(
+                    Icons.contact_support,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'Support',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                   onTap: () {
-                    //  Navigator.of(context)
-                    //      .popUntil((route) => route.isFirst);
-                    //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScaffold(SupportScreen(cloudUser: widget.user!,backgroundColor: widget.backgroundColor),false,user: widget.user,backgroundColor: widget.backgroundColor),));
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                              appBar: AppBar(
+                                backgroundColor: PageColor.appBar,
+                                title: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Logo(),
+                                      SizedBox(
+                                        width: 55,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              body: SupportScreen(),
+                            )));
                   },
                 ),
               ],
