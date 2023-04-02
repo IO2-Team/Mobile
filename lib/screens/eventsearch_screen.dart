@@ -26,6 +26,8 @@ class EventSearchWidget extends StatefulWidget {
 
 class _EventSearchWidget extends State<EventSearchWidget> {
   // list for events for summary
+  bool isFiltersChecked = true;
+  bool isRest = true;
   List<Event> eventsList = new List.empty(growable: true);
   late Map<int, List<Event>> eventsListsbyCategories = new Map();
   int countCategories = 0; // categories, probably useless in future
@@ -46,6 +48,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
 // to refresh the screen
   Future refresh() async {
     setState(() {
+      isRest = true;
       id = -1;
     });
   }
@@ -80,42 +83,57 @@ class _EventSearchWidget extends State<EventSearchWidget> {
       appBar: AppBar(
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: true,
-        title: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Logo(),
-              SizedBox(
-                width: 55,
-              )
-            ],
-          ),
+        title: const Center(
+          child: Logo(),
         ),
-        //actions: <Widget>[], //add actions
+        actions: const <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(
+              Icons.qr_code_2_rounded,
+              size: 37,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
       drawer: const DrawerBurger(),
       body: FutureBuilder<Response<BuiltList<Event>>>(
           future: eventsWithApi(),
           builder: (context, response) {
             if (response.hasData) {
-              if (id != -1 && response.data!.data!.isNotEmpty) {
+              if (response.data!.data!.isNotEmpty) {
                 if (!isNewData)
                   isNewData = true; //wpp za malo czasu
                 else {
                   isNewData = false;
                   eventsList.clear();
 
-                  if (id != -2)
-                    for (var el in response.data!.data!)
-                      if (!eventsListsbyCategories[id]!.contains(el)) {
-                        eventsListsbyCategories[id]!.add(el);
-                        eventsList.add(el);
-                      }
-
-                  for (var eKey in categoryIndex.keys)
-                    if (categoryIndex[eKey] == true)
-                      for (var el in eventsListsbyCategories[eKey]!)
-                        if (!eventsList.contains(el)) eventsList.add(el);
+                  if (id == -1) {
+                    // if no category has been chosen
+                    if (eventsList.isEmpty)
+                      for (var el in response.data!.data!) eventsList.add(el);
+                  } else {
+                    if (id !=
+                        -2) // adding events from selected category, -2 when category unchecked - then no data added
+                      for (var el in response.data!.data!)
+                        if (!eventsListsbyCategories[id]!.contains(el)) {
+                          eventsListsbyCategories[id]!.add(el);
+                          eventsList.add(el);
+                        }
+                    // adding categories if any more checked
+                    for (var eKey in categoryIndex.keys)
+                      if (categoryIndex[eKey] == true)
+                        for (var el in eventsListsbyCategories[eKey]!)
+                          if (!eventsList.contains(el)) eventsList.add(el);
+                    // if no category has been chosen
+                    if (eventsList.isEmpty)
+                      for (var el in response.data!.data!) eventsList.add(el);
+                  }
+                  // sort by date
+                  if (eventsList.isNotEmpty)
+                    eventsList.sort(
+                        ((a, b) => (a.startTime!).compareTo(b.startTime!)));
                 }
               }
               return Stack(
@@ -128,17 +146,17 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       child: SlidingUpPanel(
                         maxHeight: 430,
                         panel: Center(child: filter()),
-                        minHeight: 50.0,
+                        minHeight: 60.0,
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(25.0),
-                          topRight: Radius.circular(25.0),
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
                         ),
                         collapsed: Container(
                           decoration: BoxDecoration(
-                            color: PageColor.divider,
+                            color: PageColor.appBar,
                             borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(25.0),
-                              topRight: Radius.circular(25.0),
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
                             ),
                           ),
                           child: Center(
@@ -154,12 +172,13 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 160.0),
                             child: Column(children: <Widget>[
-                              if (id != -1 && eventsList.isNotEmpty)
+                              if (eventsList.isNotEmpty)
                                 for (var el in eventsList)
                                   if ((statusIndex["inFuture"] == false &&
                                           statusIndex["pending"] == false &&
                                           statusIndex["done"] == false &&
-                                          statusIndex["cancelled"] == false) ||
+                                          statusIndex["cancelled"] == false &&
+                                          el.status!.name == "inFuture") ||
                                       (el.status!.name == "inFuture" &&
                                           statusIndex["inFuture"] == true) ||
                                       (el.status!.name == "pending" &&
@@ -169,23 +188,24 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                       (el.status!.name == "cancelled" &&
                                           statusIndex["cancelled"] == true))
                                     SingleEvent(el),
-                              if ((id == -1 ||
-                                      id != -1 && eventsList.isEmpty) &&
-                                  response.data!.data!.isNotEmpty)
-                                for (var el in response.data!.data!)
-                                  if ((statusIndex["inFuture"] == false &&
-                                          statusIndex["pending"] == false &&
-                                          statusIndex["done"] == false &&
-                                          statusIndex["cancelled"] == false) ||
-                                      (el.status!.name == "inFuture" &&
-                                          statusIndex["inFuture"] == true) ||
-                                      (el.status!.name == "pending" &&
-                                          statusIndex["pending"] == true) ||
-                                      (el.status!.name == "done" &&
-                                          statusIndex["done"] == true) ||
-                                      (el.status!.name == "cancelled" &&
-                                          statusIndex["cancelled"] == true))
-                                    SingleEvent(el),
+                              // if ((id == -1 ||
+                              //         id != -1 && eventsList.isEmpty) &&
+                              //     response.data!.data!.isNotEmpty)
+                              //   for (var el in response.data!.data!)
+                              //     if ((statusIndex["inFuture"] == false &&
+                              //             statusIndex["pending"] == false &&
+                              //             statusIndex["done"] == false &&
+                              //             statusIndex["cancelled"] == false &&
+                              //             el.status!.name == "inFuture") ||
+                              //         (el.status!.name == "inFuture" &&
+                              //             statusIndex["inFuture"] == true) ||
+                              //         (el.status!.name == "pending" &&
+                              //             statusIndex["pending"] == true) ||
+                              //         (el.status!.name == "done" &&
+                              //             statusIndex["done"] == true) ||
+                              //         (el.status!.name == "cancelled" &&
+                              //             statusIndex["cancelled"] == true))
+                              //       SingleEvent(el),
                             ]),
                           ),
                         ),
@@ -212,8 +232,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Column(
       children: [
         Padding(
-          padding:
-              const EdgeInsets.only(top: 8.0, left: 7.0, right: 7.0, bottom: 8),
+          padding: const EdgeInsets.only(top: 8.0, left: 7.0, right: 7.0),
           child: SizedBox(
             width: 47,
             height: 4,
@@ -228,9 +247,67 @@ class _EventSearchWidget extends State<EventSearchWidget> {
             ),
           ),
         ),
-        const Text(
-          "Filters",
-          style: TextStyle(color: Colors.white, fontSize: 18),
+        Row(
+          children: [
+            Expanded(
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isFiltersChecked = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                      elevation: 0.0,
+                      shadowColor: Colors.transparent,
+                      backgroundColor: isFiltersChecked
+                          ? PageColor.divider
+                          : PageColor.appBar,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
+                      )),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 45, right: 45),
+                    child: const Text(
+                      "Filters",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isFiltersChecked = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                      elevation: 0.0,
+                      shadowColor: Colors.transparent,
+                      backgroundColor: !isFiltersChecked
+                          ? PageColor.divider
+                          : PageColor.appBar,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
+                      )),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 45, right: 45),
+                    child: const Text(
+                      "SortBy",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -243,89 +320,110 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Container(
       width: 1000, // nieogranicz
       decoration: BoxDecoration(
-        color: PageColor.divider,
+        color: PageColor.appBar,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(25.0),
-          topRight: Radius.circular(25.0),
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
         ),
       ),
       child: Column(children: <Widget>[
         slide(),
-        Padding(
-          padding: const EdgeInsets.only(right: 18.0, left: 18.0),
-          child: Divider(
-            color: PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
-            height: 20.0,
-            thickness: 1.0,
-          ),
+        Divider(
+          color: PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
+          height: 0.0,
+          thickness: 1.0,
         ),
-        Expanded(
-          child: Column(
-            children: [
-              const Text(
-                "Categories",
-                style: TextStyle(color: Colors.white, fontSize: 17),
-              ),
-              FutureBuilder<Response<BuiltList<Category>>>(
-                  future: categoriesWithApi(),
-                  builder: (context, response) {
-                    if (response.hasData) {
-                      if (response.data != null &&
-                          response.data!.data != null) {
-                        countCategories = response.data!.data!.length;
-                        if (id == -1) {
-                          // only on start and when resstart button it check if element is new
-                          categoryIndex.clear();
-                          eventsListsbyCategories.clear();
-                          for (var el in response.data!.data!) {
-                            categoryIndex.addAll({el.id!: false});
-                            eventsListsbyCategories.addAll({
-                              el.id!: new List.empty(growable: true)
-                            }); // new empty lists added
-                          } // only when new category, map is updated
-                        }
-                      }
+        if (isFiltersChecked)
+          Expanded(
+            child: Container(
+              width: 1000,
+              color: PageColor.divider,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: const Text(
+                      "Categories",
+                      style: TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                  ),
+                  FutureBuilder<Response<BuiltList<Category>>>(
+                      future: categoriesWithApi(),
+                      builder: (context, response) {
+                        if (response.hasData) {
+                          if (response.data != null &&
+                              response.data!.data != null) {
+                            countCategories = response.data!.data!.length;
+                            if (id == -1 && isRest == true) {
+                              // only on start and when resstart button it check if element is new
+                              isRest = false;
+                              categoryIndex.clear();
+                              eventsListsbyCategories.clear();
+                              for (var el in response.data!.data!) {
+                                categoryIndex.addAll({el.id!: false});
+                                eventsListsbyCategories.addAll({
+                                  el.id!: new List.empty(growable: true)
+                                }); // new empty lists added
+                              } // only when new category, map is updated
+                            }
+                          }
 
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: showCategories(response),
-                      );
-                    } else {
-                      return Center(
-                          child: CircularProgressIndicator(
-                        color: PageColor.appBar,
-                      ));
-                    }
-                  }),
-            ],
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: showCategories(response),
+                          );
+                        } else {
+                          return Center(
+                              child: CircularProgressIndicator(
+                            color: PageColor.appBar,
+                          ));
+                        }
+                      }),
+                ],
+              ),
+            ),
           ),
-        ),
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 18.0, right: 18),
-              child: Divider(
-                color:
-                    PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
-                height: 20.0,
-                thickness: 1.0,
-              ),
+        if (isFiltersChecked)
+          Container(
+            width: 1000,
+            color: PageColor.divider,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 18.0, right: 18),
+                  child: Divider(
+                    color: PageColor
+                        .eventSearch, //Color.fromARGB(255, 149, 149, 254),
+                    height: 20.0,
+                    thickness: 1.0,
+                  ),
+                ),
+                const Text(
+                  "Status",
+                  style: TextStyle(color: Colors.white, fontSize: 17),
+                ),
+                Center(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: showStatus(),
+                  ),
+                ),
+              ],
             ),
-            const Text(
-              "Status",
-              style: TextStyle(color: Colors.white, fontSize: 17),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: showStatus(),
-              ),
-            ),
-          ],
-        ),
-        resetButton(),
+          ),
+        if (!isFiltersChecked)
+          Expanded(
+              child: Container(
+                  width: 1000,
+                  color: PageColor.divider,
+                  child: Center(
+                      child: Text(
+                    "so far only by date available",
+                    style: TextStyle(color: Colors.white, fontSize: 17),
+                  )))),
+        Container(width: 1000, color: PageColor.divider, child: resetButton()),
       ]),
     );
   }
@@ -451,6 +549,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           ),
           onPressed: () {
             setState(() {
+              isRest = true;
               id = -1;
               for (var name in statusArray) statusIndex[name] = false;
             });

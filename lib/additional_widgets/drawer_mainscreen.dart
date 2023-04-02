@@ -48,11 +48,8 @@ class DrawerBurger extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                              appBar: AppBar(
-                                  title: const Text('Flutter Simple Example')),
-                              body: const LicenseWebView(),
-                            )));
+                      builder: (context) => const LicenseWebView(),
+                    ));
                   },
                 ),
                 ListTile(
