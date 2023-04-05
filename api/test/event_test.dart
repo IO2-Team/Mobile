@@ -12,11 +12,6 @@ void main() {
       // TODO
     });
 
-    // int freePlace
-    test('to test the property `freePlace`', () async {
-      // TODO
-    });
-
     // String title
     test('to test the property `title`', () async {
       // TODO
@@ -59,6 +54,21 @@ void main() {
 
     // BuiltList<Category> categories
     test('to test the property `categories`', () async {
+      // TODO
+    });
+
+    // int freePlace
+    test('to test the property `freePlace`', () async {
+      // TODO
+    });
+
+    // int maxPlace
+    test('to test the property `maxPlace`', () async {
+      // TODO
+    });
+
+    // BuiltList<Place> places
+    test('to test the property `places`', () async {
       // TODO
     });
 

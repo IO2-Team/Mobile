@@ -19,6 +19,7 @@ import 'package:openapi/src/model/event.dart';
 import 'package:openapi/src/model/event_status.dart';
 import 'package:openapi/src/model/login_organizer200_response.dart';
 import 'package:openapi/src/model/organizer.dart';
+import 'package:openapi/src/model/place.dart';
 import 'package:openapi/src/model/reservation_dto.dart';
 
 part 'serializers.g.dart';
@@ -29,6 +30,7 @@ part 'serializers.g.dart';
   EventStatus,
   LoginOrganizer200Response,
   Organizer,
+  Place,
   ReservationDTO,
 ])
 Serializers serializers = (_$serializers.toBuilder()

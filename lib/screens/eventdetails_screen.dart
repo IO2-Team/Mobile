@@ -1,7 +1,14 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
+import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:intl/intl.dart';
+import 'package:eventapp_mobile/additional_widgets/logo.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows chosen event
@@ -17,7 +24,6 @@ class EventDetails extends StatefulWidget {
 class _EventDetails extends State<EventDetails> {
   final Color textscol = PageColor.texts;
   final Color textscol2 = PageColor.textsLight;
-
   @override
   Widget build(BuildContext context) {
     final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
@@ -30,9 +36,7 @@ class _EventDetails extends State<EventDetails> {
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
         title: const Center(
-          child: Text(
-            "A mobile event App",
-          ),
+          child: Logo(),
         ),
         leading: SizedBox(
           width: 60,
@@ -45,30 +49,65 @@ class _EventDetails extends State<EventDetails> {
                 color: Colors.white,
               )),
         ),
-        actions: const <Widget>[
-          SizedBox(
-            width: 60,
-          )
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: const Icon(
+              Icons.qr_code_2_rounded,
+              size: 37,
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MakeReservationWidget(widget.event)));
+        },
+        label: const Text(
+          'Reservate',
+          style: TextStyle(fontSize: 20),
+        ),
+        icon: const Icon(
+          Icons.book_online,
+          size: 30,
+        ),
+        backgroundColor: PageColor.ticket,
+        elevation: 10,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // bottomNavigationBar: BottomAppBar(
+      //     child: Container(height: 50 ,color: PageColor.appBar),
+      //     shape: CircularNotchedRectangle(),
+      //     //notchMargin: 4.0
+      // ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             if (widget.event.title != null) viewTitle(widget.event.title!),
-            if (widget.event.startTime != null)
-              columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
-                  IconsInApp.clockIcon, "Start date"),
-            if (widget.event.endTime != null)
-              columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
-                  IconsInApp.clockIcon, "End date"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                if (widget.event.startTime != null)
+                  columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
+                      IconsInApp.clockIcon, "Start date"),
+                freePlace(widget.event.freePlace),
+                if (widget.event.endTime != null)
+                  columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
+                      IconsInApp.clockIcon, "End date"),
+              ],
+            ),
             if (widget.event.longitude != null && widget.event.latitude != null)
-              columnWithInfoLocation(IconsInApp.placeIcon, "Location"),
+              columnWithInfoLocation(IconsInApp.placeIcon,
+                  getAddress(widget.event.latitude!, widget.event.longitude!)),
             if (widget.event.name != null) description(widget.event.name!),
-            palcesLeftAndStatus(widget.event.freePlace, widget.event.status),
-            bookPlaceButton(widget.event.status),
           ],
         ),
       ),
@@ -83,27 +122,17 @@ class _EventDetails extends State<EventDetails> {
   ///
   Widget viewTitle(String eventTitle) {
     return Padding(
-      padding: const EdgeInsets.only(left: 60.0, right: 60.0, top: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Event",
-            style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 0.4,
-              fontSize: 15.0,
-            ),
+      padding:
+          const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
+      child: Center(
+        child: Text(
+          eventTitle,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 30.0,
+            color: textscol,
           ),
-          Text(
-            eventTitle,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 25.0,
-              color: textscol,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -113,98 +142,44 @@ class _EventDetails extends State<EventDetails> {
   ///
   Widget columnWithInfoDates(
       IconData dateico, DateTime dateStart, IconData timeico, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              letterSpacing: 0.4,
-              fontSize: 22.0,
-            ),
-          ),
-          const Divider(
-            color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-            height: 12.0,
-            thickness: 1.0,
-          ),
-          Column(
-            children: [
-              Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: PageColor.singleEvent,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        border: Border.all(
+          color: PageColor.eventSearch,
+          width: 0.1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(
+            left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 0.0),
+              child: Row(
                 children: [
                   Icon(
-                    dateico,
-                    size: 18.0,
+                    timeico,
                     color: textscol2,
+                    size: 22.0,
                   ),
                   const SizedBox(
-                    width: 2,
+                    width: 1,
                   ),
-                  Text(
-                    DateFormat('dd MMMM yyyy').format(dateStart),
-                    style: TextStyle(
-                      color: textscol,
-                      fontSize: 15.5,
+                  if (widget.event.startTime != null)
+                    Text(
+                      DateFormat('Hm').format(dateStart),
+                      style: TextStyle(
+                        color: textscol,
+                        fontSize: 22.0,
+                      ),
                     ),
-                  ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 0.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      timeico,
-                      color: textscol2,
-                      size: 18.0,
-                    ),
-                    const SizedBox(
-                      width: 1,
-                    ),
-                    if (widget.event.startTime != null)
-                      Text(
-                        DateFormat('Hm').format(dateStart),
-                        style: TextStyle(
-                          color: textscol,
-                          fontSize: 13.0,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  ///
-  /// widget shows info about location of event
-  ///
-  Widget columnWithInfoLocation(IconData dateico, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 90.0, right: 90.0, top: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              letterSpacing: 0.4,
-              fontSize: 22.0,
             ),
-          ),
-          const Divider(
-            color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-            height: 12.0,
-            thickness: 1.0,
-          ),
-          if (widget.event.longitude != null)
             Row(
               children: [
                 Icon(
@@ -216,14 +191,77 @@ class _EventDetails extends State<EventDetails> {
                   width: 2,
                 ),
                 Text(
-                  "(${widget.event.latitude}, ${widget.event.longitude})",
+                  DateFormat('dd MMMM yyyy').format(dateStart),
                   style: TextStyle(
-                    fontSize: 15.0,
                     color: textscol,
+                    fontSize: 15,
                   ),
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ///
+  /// widget shows info about location of event
+  ///
+  Widget columnWithInfoLocation(IconData dateico, Future<String> address) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            "Location:",
+            style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 0.4,
+              fontSize: 22.0,
+            ),
+          ),
+          const Divider(
+            color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+            height: 12.0,
+            thickness: 1.0,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: PageColor.singleEvent,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              border: Border.all(
+                color: PageColor.eventSearch,
+                width: 0.1,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FutureBuilder<String>(
+                future: address, // async work
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('Loading....');
+                    default:
+                      if (snapshot.hasError)
+                        return Text('Error: ${snapshot.error}');
+                      else
+                        return Text(
+                          snapshot.data!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: textscol,
+                            fontSize: 16.5,
+                          ),
+                        );
+                  }
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -233,232 +271,109 @@ class _EventDetails extends State<EventDetails> {
   /// widget shows long description of event
   ///
   Widget description(String descript) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(
-            left: 35.0, right: 35.0, top: 35.0, bottom: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 12.0),
-              child: Text(
-                "Details",
-                style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 0.4,
-                  fontSize: 15.0,
-                ),
-              ),
-            ),
-            Container(
-              width: 900,
-              height: 200, //delete it !!!!!
-              padding: const EdgeInsets.all(14.0),
-              decoration: BoxDecoration(
-                color: PageColor.singleEvent,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.eventSearch,
-                  width: 0.1,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    " $descript  - lets assume this event description will be much longer than it is now, right?",
-                    overflow: TextOverflow.visible,
-                    style: TextStyle(
-                      fontSize: 16.5,
-                      color: textscol,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  ///
-  /// widget shows how many places are left
-  ///
-  Widget palcesLeftAndStatus(int? places, EventStatus? eventStat) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
+        Center(
           child: Padding(
-            padding: const EdgeInsets.only(left: 35.0, right: 4.0),
-            child: Container(
-              padding: const EdgeInsets.all(14.0),
-              decoration: BoxDecoration(
-                color: PageColor.singleEvent,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.eventSearch,
-                  width: 0.1,
+            padding: const EdgeInsets.only(
+                left: 15.0, right: 15.0, top: 35.0, bottom: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Description:",
+                  style: TextStyle(
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                    fontSize: 22.0,
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Free places",
-                    style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 0.4,
-                      fontSize: 15.0,
+                const Divider(
+                  color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                  height: 12.0,
+                  thickness: 1.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: PageColor.singleEvent,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(
+                      color: PageColor.eventSearch,
+                      width: 0.1,
                     ),
                   ),
-                  const Divider(
-                    color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                    height: 12.0,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    children: [
-                      Icon(IconsInApp.freePlacesIcon2,
-                          size: 15, color: textscol2),
-                      if (places != null)
-                        Text(
-                          "$places places left",
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: textscol,
-                          ),
-                        )
-                      else
-                        Text(
-                          "unlimited",
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: textscol,
-                          ),
-                        )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(right: 35.0, left: 4.0),
-            child: Container(
-              padding: const EdgeInsets.all(14.0),
-              decoration: BoxDecoration(
-                color: PageColor.singleEvent,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.eventSearch,
-                  width: 0.1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Event status",
-                    style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 0.4,
-                      fontSize: 15.0,
-                    ),
-                  ),
-                  const Divider(
-                    color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                    height: 12.0,
-                    thickness: 1.0,
-                  ),
-                  if (eventStat != null)
-                    Text(
-                      eventStat.name,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14.0),
+                    child: Text(
+                      descript,
+                      textAlign: TextAlign.start,
                       overflow: TextOverflow.visible,
                       style: TextStyle(
-                        fontSize: 15,
-                        color: textscol,
-                      ),
-                    )
-                  else
-                    Text(
-                      "-",
-                      overflow: TextOverflow.visible,
-                      style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 16.5,
                         color: textscol,
                       ),
                     ),
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
+        const SizedBox(
+          height: 70,
+        )
       ],
     );
   }
 
-  ///
-  /// widget for button to book place on event
-  ///
-  Widget bookPlaceButton(EventStatus? eventStat) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0, right: 35),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
+  Widget freePlace(int? places) {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: PageColor.singleEvent,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        border: Border.all(
+          color: PageColor.eventSearch,
+          width: 0.1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 12.0),
-                child: Text(
-                  "Intrested in?",
-                  style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 0.4,
-                    fontSize: 15.0,
-                  ),
+              Text(
+                "$places",
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: textscol,
                 ),
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: eventStat == EventStatus.inFuture ||
-                              eventStat == EventStatus.pending
-                          ? PageColor.ticket
-                          : PageColor.doneCanceled,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(80)),
-                      ),
-                    ),
-                    onPressed: () {
-                      //  if(eventStat) ...
-                    },
-                    child: const Text(
-                      'Reserv',
-                      style: TextStyle(
-                        letterSpacing: 1.5,
-                        fontSize: 19.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'MyFont1',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              Icon(IconsInApp.freePlacesIcon2, size: 15, color: textscol2),
             ],
+          ),
+          Text(
+            "left",
+            style: TextStyle(
+              color: textscol,
+              fontSize: 15,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Future<String> getAddress(String latitude, String longitude) async {
+    try {
+      http.Response res = await http.get(Uri.parse(
+          "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$latitude&lon=$longitude"));
+      Map<String, dynamic> json = jsonDecode(res.body);
+      return json.containsKey("error") ? "" : json["display_name"];
+    } catch (e) {
+      return "";
+    }
   }
 }

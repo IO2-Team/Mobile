@@ -36,7 +36,7 @@ final int startTime = 1683034164; // int | Unix time stamp of begin of event
 final int endTime = 1683034164; // int | Unix time stamp of end of event
 final String latitude = 40.4775315; // String | Latitude of event
 final String longitude = -3.7051359; // String | Longitude of event
-final BuiltList<int> categories = ; // BuiltList<int> | Unix time stamp of end of event
+final BuiltList<int> categories = ; // BuiltList<int> | Array of id of categories that event belong to.
 final String placeSchema = placeSchema_example; // String | seralized place schema
 
 try {
@@ -59,7 +59,7 @@ Name | Type | Description  | Notes
  **endTime** | **int**| Unix time stamp of end of event | 
  **latitude** | **String**| Latitude of event | 
  **longitude** | **String**| Longitude of event | 
- **categories** | [**BuiltList&lt;int&gt;**](int.md)| Unix time stamp of end of event | 
+ **categories** | [**BuiltList&lt;int&gt;**](int.md)| Array of id of categories that event belong to. | 
  **placeSchema** | **String**| seralized place schema | [optional] 
 
 ### Return type
