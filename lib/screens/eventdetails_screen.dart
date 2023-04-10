@@ -49,10 +49,10 @@ class _EventDetails extends State<EventDetails> {
                 color: Colors.white,
               )),
         ),
-        actions: <Widget>[
+        actions: const <Widget>[
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: const Icon(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(
               Icons.qr_code_2_rounded,
               size: 37,
               color: Colors.white,
