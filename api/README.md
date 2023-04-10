@@ -61,7 +61,7 @@ try {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://pw.edu.pl/api/v3*
+All URIs are relative to *https://yourbackenhosting.edu.pl*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -88,9 +88,14 @@ Class | Method | HTTP request | Description
 
  - [Category](doc\Category.md)
  - [Event](doc\Event.md)
+ - [EventForm](doc\EventForm.md)
+ - [EventPatch](doc\EventPatch.md)
  - [EventStatus](doc\EventStatus.md)
+ - [EventWithPlaces](doc\EventWithPlaces.md)
  - [LoginOrganizer200Response](doc\LoginOrganizer200Response.md)
  - [Organizer](doc\Organizer.md)
+ - [OrganizerForm](doc\OrganizerForm.md)
+ - [OrganizerPatch](doc\OrganizerPatch.md)
  - [Place](doc\Place.md)
  - [ReservationDTO](doc\ReservationDTO.md)
 

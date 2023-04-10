@@ -7,7 +7,6 @@ import 'dart:async';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
-import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/reservation_dto.dart';
 
 class ReservationApi {
@@ -45,6 +44,7 @@ class ReservationApi {
     final _options = Options(
       method: r'DELETE',
       headers: <String, dynamic>{
+        r'reservationToken': reservationToken,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -54,14 +54,9 @@ class ReservationApi {
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'reservationToken': encodeQueryParameter(_serializers, reservationToken, const FullType(String)),
-    };
-
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
-      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -99,6 +94,8 @@ class ReservationApi {
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        r'eventId': eventId,
+        if (placeID != null) r'placeID': placeID,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -108,15 +105,9 @@ class ReservationApi {
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'eventId': encodeQueryParameter(_serializers, eventId, const FullType(int)),
-      if (placeID != null) r'placeID': encodeQueryParameter(_serializers, placeID, const FullType(int)),
-    };
-
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
-      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

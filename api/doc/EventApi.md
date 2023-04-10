@@ -5,7 +5,7 @@
 import 'package:openapi/api.dart';
 ```
 
-All URIs are relative to *https://pw.edu.pl/api/v3*
+All URIs are relative to *https://yourbackenhosting.edu.pl*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -19,7 +19,7 @@ Method | HTTP request | Description
 
 
 # **addEvent**
-> Event addEvent(sessionToken, title, name, freePlace, startTime, endTime, latitude, longitude, categories, placeSchema)
+> Event addEvent(sessionToken, eventForm)
 
 Add new event
 
@@ -29,18 +29,10 @@ import 'package:openapi/api.dart';
 
 final api = Openapi().getEventApi();
 final String sessionToken = 3424bn3b3tii3t4ibt43in; // String | session Token
-final String title = Short description of Event; // String | title of Event
-final String name = Long description of Event; // String | title of Event
-final int freePlace = 56; // int | No of free places
-final int startTime = 1683034164; // int | Unix time stamp of begin of event
-final int endTime = 1683034164; // int | Unix time stamp of end of event
-final String latitude = 40.4775315; // String | Latitude of event
-final String longitude = -3.7051359; // String | Longitude of event
-final BuiltList<int> categories = ; // BuiltList<int> | Array of id of categories that event belong to.
-final String placeSchema = placeSchema_example; // String | seralized place schema
+final EventForm eventForm = ; // EventForm | Add event
 
 try {
-    final response = api.addEvent(sessionToken, title, name, freePlace, startTime, endTime, latitude, longitude, categories, placeSchema);
+    final response = api.addEvent(sessionToken, eventForm);
     print(response);
 } catch on DioError (e) {
     print('Exception when calling EventApi->addEvent: $e\n');
@@ -52,15 +44,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **sessionToken** | **String**| session Token | 
- **title** | **String**| title of Event | 
- **name** | **String**| title of Event | 
- **freePlace** | **int**| No of free places | 
- **startTime** | **int**| Unix time stamp of begin of event | 
- **endTime** | **int**| Unix time stamp of end of event | 
- **latitude** | **String**| Latitude of event | 
- **longitude** | **String**| Longitude of event | 
- **categories** | [**BuiltList&lt;int&gt;**](int.md)| Array of id of categories that event belong to. | 
- **placeSchema** | **String**| seralized place schema | [optional] 
+ **eventForm** | [**EventForm**](EventForm.md)| Add event | [optional] 
 
 ### Return type
 
@@ -72,7 +56,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -161,7 +145,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getEventById**
-> Event getEventById(id)
+> EventWithPlaces getEventById(id)
 
 Find event by ID
 
@@ -190,7 +174,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**Event**](Event.md)
+[**EventWithPlaces**](EventWithPlaces.md)
 
 ### Authorization
 
@@ -282,7 +266,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **patchEvent**
-> patchEvent(sessionToken, id, event)
+> patchEvent(sessionToken, id, eventPatch)
 
 patch existing event
 
@@ -293,10 +277,10 @@ import 'package:openapi/api.dart';
 final api = Openapi().getEventApi();
 final String sessionToken = 3424bn3b3tii3t4ibt43in; // String | session Token
 final String id = id_example; // String | id of Event
-final Event event = ; // Event | Update an existent user in the store
+final EventPatch eventPatch = ; // EventPatch | Update an existent user in the store
 
 try {
-    api.patchEvent(sessionToken, id, event);
+    api.patchEvent(sessionToken, id, eventPatch);
 } catch on DioError (e) {
     print('Exception when calling EventApi->patchEvent: $e\n');
 }
@@ -308,7 +292,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **sessionToken** | **String**| session Token | 
  **id** | **String**| id of Event | 
- **event** | [**Event**](Event.md)| Update an existent user in the store | [optional] 
+ **eventPatch** | [**EventPatch**](EventPatch.md)| Update an existent user in the store | [optional] 
 
 ### Return type
 

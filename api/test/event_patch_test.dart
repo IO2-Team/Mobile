@@ -1,19 +1,19 @@
 import 'package:test/test.dart';
 import 'package:openapi/openapi.dart';
 
-// tests for Event
+// tests for EventPatch
 void main() {
-  final instance = EventBuilder();
+  final instance = EventPatchBuilder();
   // TODO add properties to the builder and call build()
 
-  group(Event, () {
-    // int id
-    test('to test the property `id`', () async {
+  group(EventPatch, () {
+    // String title
+    test('to test the property `title`', () async {
       // TODO
     });
 
-    // String title
-    test('to test the property `title`', () async {
+    // String name
+    test('to test the property `name`', () async {
       // TODO
     });
 
@@ -37,23 +37,8 @@ void main() {
       // TODO
     });
 
-    // String name
-    test('to test the property `name`', () async {
-      // TODO
-    });
-
-    // EventStatus status
-    test('to test the property `status`', () async {
-      // TODO
-    });
-
-    // BuiltList<Category> categories
-    test('to test the property `categories`', () async {
-      // TODO
-    });
-
-    // int freePlace
-    test('to test the property `freePlace`', () async {
+    // String placeSchema
+    test('to test the property `placeSchema`', () async {
       // TODO
     });
 
@@ -62,8 +47,8 @@ void main() {
       // TODO
     });
 
-    // String placeSchema
-    test('to test the property `placeSchema`', () async {
+    // BuiltList<int> categoriesIds
+    test('to test the property `categoriesIds`', () async {
       // TODO
     });
 

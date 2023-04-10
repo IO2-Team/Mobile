@@ -133,8 +133,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
 
                   // sort by date
                   if (eventsList.isNotEmpty)
-                    eventsList.sort(
-                        ((a, b) => (a.startTime!).compareTo(b.startTime!)));
+                    eventsList
+                        .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
                 }
               } else if (response.data!.data!.isNotEmpty) {
                 eventsList.clear();
@@ -143,7 +143,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 // sort by date
                 if (eventsList.isNotEmpty)
                   eventsList
-                      .sort(((a, b) => (a.startTime!).compareTo(b.startTime!)));
+                      .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
               }
               return Stack(
                 children: <Widget>[
@@ -187,14 +187,14 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                           statusIndex["pending"] == false &&
                                           statusIndex["done"] == false &&
                                           statusIndex["cancelled"] == false &&
-                                          el.status!.name == "inFuture") ||
-                                      (el.status!.name == "inFuture" &&
+                                          el.status.name == "inFuture") ||
+                                      (el.status.name == "inFuture" &&
                                           statusIndex["inFuture"] == true) ||
-                                      (el.status!.name == "pending" &&
+                                      (el.status.name == "pending" &&
                                           statusIndex["pending"] == true) ||
-                                      (el.status!.name == "done" &&
+                                      (el.status.name == "done" &&
                                           statusIndex["done"] == true) ||
-                                      (el.status!.name == "cancelled" &&
+                                      (el.status.name == "cancelled" &&
                                           statusIndex["cancelled"] == true))
                                     SingleEvent(el),
                               // if ((id == -1 ||
@@ -369,9 +369,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                               categoryIndex.clear();
                               eventsListsbyCategories.clear();
                               for (var el in response.data!.data!) {
-                                categoryIndex.addAll({el.id!: false});
+                                categoryIndex.addAll({el.id: false});
                                 eventsListsbyCategories.addAll({
-                                  el.id!: new List.empty(growable: true)
+                                  el.id: new List.empty(growable: true)
                                 }); // new empty lists added
                               } // only when new category, map is updated
                             }
@@ -481,26 +481,24 @@ class _EventSearchWidget extends State<EventSearchWidget> {
       AsyncSnapshot<Response<BuiltList<Category>>> response, int i) {
     return MaterialButton(
         onPressed: () {
-          if (response.data!.data![i].id != null) {
-            if (categoryIndex[response.data!.data![i].id] != true) {
-              setState(() {
-                id = response.data!.data![i].id!;
-                categoryIndex[id] = true;
-              });
-            } else {
-              setState(() {
-                id = -2;
-                eventsListsbyCategories[response.data!.data![i].id!]!.clear();
-                categoryIndex[response.data!.data![i].id!] = false;
-              });
-            }
+          if (categoryIndex[response.data!.data![i].id] != true) {
+            setState(() {
+              id = response.data!.data![i].id;
+              categoryIndex[id] = true;
+            });
+          } else {
+            setState(() {
+              id = -2;
+              eventsListsbyCategories[response.data!.data![i].id]!.clear();
+              categoryIndex[response.data!.data![i].id] = false;
+            });
           }
         },
         child: Text(
-          response.data!.data![i].name!,
+          response.data!.data![i].name,
           style: TextStyle(
             fontSize: 18.0,
-            color: categoryIndex[response.data!.data![i].id!] == true
+            color: categoryIndex[response.data!.data![i].id] == true
                 ? PageColor.logo1
                 : PageColor.category,
           ),

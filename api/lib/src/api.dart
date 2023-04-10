@@ -15,7 +15,7 @@ import 'package:openapi/src/api/event_organizer_api.dart';
 import 'package:openapi/src/api/reservation_api.dart';
 
 class Openapi {
-  static const String basePath = r'https://pw.edu.pl/api/v3';
+  static const String basePath = r'https://yourbackenhosting.edu.pl';
 
   final Dio dio;
   final Serializers serializers;

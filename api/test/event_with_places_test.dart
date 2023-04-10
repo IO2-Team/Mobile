@@ -1,12 +1,12 @@
 import 'package:test/test.dart';
 import 'package:openapi/openapi.dart';
 
-// tests for Event
+// tests for EventWithPlaces
 void main() {
-  final instance = EventBuilder();
+  final instance = EventWithPlacesBuilder();
   // TODO add properties to the builder and call build()
 
-  group(Event, () {
+  group(EventWithPlaces, () {
     // int id
     test('to test the property `id`', () async {
       // TODO
@@ -59,6 +59,11 @@ void main() {
 
     // int maxPlace
     test('to test the property `maxPlace`', () async {
+      // TODO
+    });
+
+    // BuiltList<Place> places
+    test('to test the property `places`', () async {
       // TODO
     });
 

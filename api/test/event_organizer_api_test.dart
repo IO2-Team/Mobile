@@ -9,7 +9,7 @@ void main() {
   group(EventOrganizerApi, () {
     // Confirm orginizer account
     //
-    //Future<Organizer> confirm(String id, String code) async
+    //Future confirm(String id, String code) async
     test('test confirm', () async {
       // TODO
     });
@@ -39,14 +39,14 @@ void main() {
 
     // Patch orginizer account
     //
-    //Future patchOrganizer(String sessionToken, String id, { Organizer organizer }) async
+    //Future patchOrganizer(String sessionToken, String id, { OrganizerPatch organizerPatch }) async
     test('test patchOrganizer', () async {
       // TODO
     });
 
     // Create orginizer account
     //
-    //Future<Organizer> signUp(String name, String email, String password) async
+    //Future<Organizer> signUp({ OrganizerForm organizerForm }) async
     test('test signUp', () async {
       // TODO
     });

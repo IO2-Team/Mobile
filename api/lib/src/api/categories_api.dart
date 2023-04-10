@@ -8,7 +8,6 @@ import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/category.dart';
 
 class CategoriesApi {
@@ -49,6 +48,7 @@ class CategoriesApi {
       method: r'POST',
       headers: <String, dynamic>{
         r'sessionToken': sessionToken,
+        r'categoryName': categoryName,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -58,14 +58,9 @@ class CategoriesApi {
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'categoryName': encodeQueryParameter(_serializers, categoryName, const FullType(String)),
-    };
-
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
-      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

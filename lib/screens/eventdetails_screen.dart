@@ -26,10 +26,10 @@ class _EventDetails extends State<EventDetails> {
   final Color textscol2 = PageColor.textsLight;
   @override
   Widget build(BuildContext context) {
-    final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.startTime != null ? widget.event.startTime! * 1000 : 0);
-    final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.endTime != null ? widget.event.endTime! * 1000 : 0);
+    final DateTime dateStart =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.startTime * 1000);
+    final DateTime dateFinish =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.endTime * 1000);
     return Scaffold(
       backgroundColor: PageColor.eventSearch,
       appBar: AppBar(
@@ -91,23 +91,20 @@ class _EventDetails extends State<EventDetails> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            if (widget.event.title != null) viewTitle(widget.event.title!),
+            viewTitle(widget.event.title),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if (widget.event.startTime != null)
-                  columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
-                      IconsInApp.clockIcon, "Start date"),
+                columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
+                    IconsInApp.clockIcon, "Start date"),
                 freePlace(widget.event.freePlace),
-                if (widget.event.endTime != null)
-                  columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
-                      IconsInApp.clockIcon, "End date"),
+                columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
+                    IconsInApp.clockIcon, "End date"),
               ],
             ),
-            if (widget.event.longitude != null && widget.event.latitude != null)
-              columnWithInfoLocation(IconsInApp.placeIcon,
-                  getAddress(widget.event.latitude!, widget.event.longitude!)),
-            if (widget.event.name != null) description(widget.event.name!),
+            columnWithInfoLocation(IconsInApp.placeIcon,
+                getAddress(widget.event.latitude, widget.event.longitude)),
+            description(widget.event.name),
           ],
         ),
       ),

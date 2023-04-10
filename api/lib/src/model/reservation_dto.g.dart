@@ -8,17 +8,27 @@ part of 'reservation_dto.dart';
 
 class _$ReservationDTO extends ReservationDTO {
   @override
-  final int? eventId;
+  final int eventId;
   @override
-  final int? placeId;
+  final int placeId;
   @override
-  final String? reservationToken;
+  final String reservationToken;
 
   factory _$ReservationDTO([void Function(ReservationDTOBuilder)? updates]) =>
       (new ReservationDTOBuilder()..update(updates))._build();
 
-  _$ReservationDTO._({this.eventId, this.placeId, this.reservationToken})
-      : super._();
+  _$ReservationDTO._(
+      {required this.eventId,
+      required this.placeId,
+      required this.reservationToken})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(
+        eventId, r'ReservationDTO', 'eventId');
+    BuiltValueNullFieldError.checkNotNull(
+        placeId, r'ReservationDTO', 'placeId');
+    BuiltValueNullFieldError.checkNotNull(
+        reservationToken, r'ReservationDTO', 'reservationToken');
+  }
 
   @override
   ReservationDTO rebuild(void Function(ReservationDTOBuilder) updates) =>
@@ -106,9 +116,12 @@ class ReservationDTOBuilder
   _$ReservationDTO _build() {
     final _$result = _$v ??
         new _$ReservationDTO._(
-            eventId: eventId,
-            placeId: placeId,
-            reservationToken: reservationToken);
+            eventId: BuiltValueNullFieldError.checkNotNull(
+                eventId, r'ReservationDTO', 'eventId'),
+            placeId: BuiltValueNullFieldError.checkNotNull(
+                placeId, r'ReservationDTO', 'placeId'),
+            reservationToken: BuiltValueNullFieldError.checkNotNull(
+                reservationToken, r'ReservationDTO', 'reservationToken'));
     replace(_$result);
     return _$result;
   }

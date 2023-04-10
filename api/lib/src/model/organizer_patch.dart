@@ -6,69 +6,64 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'reservation_dto.g.dart';
+part 'organizer_patch.g.dart';
 
-/// ReservationDTO
+/// OrganizerPatch
 ///
 /// Properties:
-/// * [eventId] 
-/// * [placeId] 
-/// * [reservationToken] 
+/// * [name] 
+/// * [password] 
 @BuiltValue()
-abstract class ReservationDTO implements Built<ReservationDTO, ReservationDTOBuilder> {
-  @BuiltValueField(wireName: r'eventId')
-  int get eventId;
+abstract class OrganizerPatch implements Built<OrganizerPatch, OrganizerPatchBuilder> {
+  @BuiltValueField(wireName: r'name')
+  String? get name;
 
-  @BuiltValueField(wireName: r'placeId')
-  int get placeId;
+  @BuiltValueField(wireName: r'password')
+  String? get password;
 
-  @BuiltValueField(wireName: r'reservationToken')
-  String get reservationToken;
+  OrganizerPatch._();
 
-  ReservationDTO._();
-
-  factory ReservationDTO([void updates(ReservationDTOBuilder b)]) = _$ReservationDTO;
+  factory OrganizerPatch([void updates(OrganizerPatchBuilder b)]) = _$OrganizerPatch;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(ReservationDTOBuilder b) => b;
+  static void _defaults(OrganizerPatchBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<ReservationDTO> get serializer => _$ReservationDTOSerializer();
+  static Serializer<OrganizerPatch> get serializer => _$OrganizerPatchSerializer();
 }
 
-class _$ReservationDTOSerializer implements PrimitiveSerializer<ReservationDTO> {
+class _$OrganizerPatchSerializer implements PrimitiveSerializer<OrganizerPatch> {
   @override
-  final Iterable<Type> types = const [ReservationDTO, _$ReservationDTO];
+  final Iterable<Type> types = const [OrganizerPatch, _$OrganizerPatch];
 
   @override
-  final String wireName = r'ReservationDTO';
+  final String wireName = r'OrganizerPatch';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    ReservationDTO object, {
+    OrganizerPatch object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    yield r'eventId';
-    yield serializers.serialize(
-      object.eventId,
-      specifiedType: const FullType(int),
-    );
-    yield r'placeId';
-    yield serializers.serialize(
-      object.placeId,
-      specifiedType: const FullType(int),
-    );
-    yield r'reservationToken';
-    yield serializers.serialize(
-      object.reservationToken,
-      specifiedType: const FullType(String),
-    );
+    if (object.name != null) {
+      yield r'name';
+      yield serializers.serialize(
+        object.name,
+        specifiedType: const FullType(String),
+      );
+    }
+    if (object.password != null) {
+      yield r'password';
+      yield serializers.serialize(
+        object.password,
+        specifiedType: const FullType(String),
+      );
+    }
   }
 
   @override
   Object serialize(
     Serializers serializers,
-    ReservationDTO object, {
+    OrganizerPatch object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -79,33 +74,26 @@ class _$ReservationDTOSerializer implements PrimitiveSerializer<ReservationDTO> 
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required ReservationDTOBuilder result,
+    required OrganizerPatchBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
       final key = serializedList[i] as String;
       final value = serializedList[i + 1];
       switch (key) {
-        case r'eventId':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(int),
-          ) as int;
-          result.eventId = valueDes;
-          break;
-        case r'placeId':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(int),
-          ) as int;
-          result.placeId = valueDes;
-          break;
-        case r'reservationToken':
+        case r'name':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(String),
           ) as String;
-          result.reservationToken = valueDes;
+          result.name = valueDes;
+          break;
+        case r'password':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.password = valueDes;
           break;
         default:
           unhandled.add(key);
@@ -116,12 +104,12 @@ class _$ReservationDTOSerializer implements PrimitiveSerializer<ReservationDTO> 
   }
 
   @override
-  ReservationDTO deserialize(
+  OrganizerPatch deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = ReservationDTOBuilder();
+    final result = OrganizerPatchBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

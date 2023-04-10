@@ -61,24 +61,28 @@ class _$OrganizerStatusEnumSerializer
 
 class _$Organizer extends Organizer {
   @override
-  final int? id;
+  final int id;
   @override
-  final String? name;
+  final String name;
   @override
-  final String? email;
+  final String email;
   @override
-  final String? password;
-  @override
-  final BuiltList<Event>? events;
-  @override
-  final OrganizerStatusEnum? status;
+  final OrganizerStatusEnum status;
 
   factory _$Organizer([void Function(OrganizerBuilder)? updates]) =>
       (new OrganizerBuilder()..update(updates))._build();
 
   _$Organizer._(
-      {this.id, this.name, this.email, this.password, this.events, this.status})
-      : super._();
+      {required this.id,
+      required this.name,
+      required this.email,
+      required this.status})
+      : super._() {
+    BuiltValueNullFieldError.checkNotNull(id, r'Organizer', 'id');
+    BuiltValueNullFieldError.checkNotNull(name, r'Organizer', 'name');
+    BuiltValueNullFieldError.checkNotNull(email, r'Organizer', 'email');
+    BuiltValueNullFieldError.checkNotNull(status, r'Organizer', 'status');
+  }
 
   @override
   Organizer rebuild(void Function(OrganizerBuilder) updates) =>
@@ -94,8 +98,6 @@ class _$Organizer extends Organizer {
         id == other.id &&
         name == other.name &&
         email == other.email &&
-        password == other.password &&
-        events == other.events &&
         status == other.status;
   }
 
@@ -105,8 +107,6 @@ class _$Organizer extends Organizer {
     _$hash = $jc(_$hash, id.hashCode);
     _$hash = $jc(_$hash, name.hashCode);
     _$hash = $jc(_$hash, email.hashCode);
-    _$hash = $jc(_$hash, password.hashCode);
-    _$hash = $jc(_$hash, events.hashCode);
     _$hash = $jc(_$hash, status.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
@@ -118,8 +118,6 @@ class _$Organizer extends Organizer {
           ..add('id', id)
           ..add('name', name)
           ..add('email', email)
-          ..add('password', password)
-          ..add('events', events)
           ..add('status', status))
         .toString();
   }
@@ -140,14 +138,6 @@ class OrganizerBuilder implements Builder<Organizer, OrganizerBuilder> {
   String? get email => _$this._email;
   set email(String? email) => _$this._email = email;
 
-  String? _password;
-  String? get password => _$this._password;
-  set password(String? password) => _$this._password = password;
-
-  ListBuilder<Event>? _events;
-  ListBuilder<Event> get events => _$this._events ??= new ListBuilder<Event>();
-  set events(ListBuilder<Event>? events) => _$this._events = events;
-
   OrganizerStatusEnum? _status;
   OrganizerStatusEnum? get status => _$this._status;
   set status(OrganizerStatusEnum? status) => _$this._status = status;
@@ -162,8 +152,6 @@ class OrganizerBuilder implements Builder<Organizer, OrganizerBuilder> {
       _id = $v.id;
       _name = $v.name;
       _email = $v.email;
-      _password = $v.password;
-      _events = $v.events?.toBuilder();
       _status = $v.status;
       _$v = null;
     }
@@ -185,27 +173,15 @@ class OrganizerBuilder implements Builder<Organizer, OrganizerBuilder> {
   Organizer build() => _build();
 
   _$Organizer _build() {
-    _$Organizer _$result;
-    try {
-      _$result = _$v ??
-          new _$Organizer._(
-              id: id,
-              name: name,
-              email: email,
-              password: password,
-              events: _events?.build(),
-              status: status);
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'events';
-        _events?.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            r'Organizer', _$failedField, e.toString());
-      }
-      rethrow;
-    }
+    final _$result = _$v ??
+        new _$Organizer._(
+            id: BuiltValueNullFieldError.checkNotNull(id, r'Organizer', 'id'),
+            name: BuiltValueNullFieldError.checkNotNull(
+                name, r'Organizer', 'name'),
+            email: BuiltValueNullFieldError.checkNotNull(
+                email, r'Organizer', 'email'),
+            status: BuiltValueNullFieldError.checkNotNull(
+                status, r'Organizer', 'status'));
     replace(_$result);
     return _$result;
   }

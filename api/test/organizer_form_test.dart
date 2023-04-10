@@ -1,17 +1,12 @@
 import 'package:test/test.dart';
 import 'package:openapi/openapi.dart';
 
-// tests for Organizer
+// tests for OrganizerForm
 void main() {
-  final instance = OrganizerBuilder();
+  final instance = OrganizerFormBuilder();
   // TODO add properties to the builder and call build()
 
-  group(Organizer, () {
-    // int id
-    test('to test the property `id`', () async {
-      // TODO
-    });
-
+  group(OrganizerForm, () {
     // String name
     test('to test the property `name`', () async {
       // TODO
@@ -22,9 +17,8 @@ void main() {
       // TODO
     });
 
-    // User Status
-    // String status
-    test('to test the property `status`', () async {
+    // String password
+    test('to test the property `password`', () async {
       // TODO
     });
 

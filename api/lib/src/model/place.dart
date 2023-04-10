@@ -16,10 +16,10 @@ part 'place.g.dart';
 @BuiltValue()
 abstract class Place implements Built<Place, PlaceBuilder> {
   @BuiltValueField(wireName: r'id')
-  int? get id;
+  int get id;
 
   @BuiltValueField(wireName: r'free')
-  bool? get free;
+  bool get free;
 
   Place._();
 
@@ -44,20 +44,16 @@ class _$PlaceSerializer implements PrimitiveSerializer<Place> {
     Place object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.id != null) {
-      yield r'id';
-      yield serializers.serialize(
-        object.id,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.free != null) {
-      yield r'free';
-      yield serializers.serialize(
-        object.free,
-        specifiedType: const FullType(bool),
-      );
-    }
+    yield r'id';
+    yield serializers.serialize(
+      object.id,
+      specifiedType: const FullType(int),
+    );
+    yield r'free';
+    yield serializers.serialize(
+      object.free,
+      specifiedType: const FullType(bool),
+    );
   }
 
   @override

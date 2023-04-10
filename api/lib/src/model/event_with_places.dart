@@ -6,12 +6,13 @@
 import 'package:openapi/src/model/event_status.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/model/category.dart';
+import 'package:openapi/src/model/place.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
-part 'event.g.dart';
+part 'event_with_places.g.dart';
 
-/// Event
+/// EventWithPlaces
 ///
 /// Properties:
 /// * [id] 
@@ -25,9 +26,10 @@ part 'event.g.dart';
 /// * [categories] 
 /// * [freePlace] 
 /// * [maxPlace] 
+/// * [places] 
 /// * [placeSchema] 
 @BuiltValue()
-abstract class Event implements Built<Event, EventBuilder> {
+abstract class EventWithPlaces implements Built<EventWithPlaces, EventWithPlacesBuilder> {
   @BuiltValueField(wireName: r'id')
   int get id;
 
@@ -62,30 +64,33 @@ abstract class Event implements Built<Event, EventBuilder> {
   @BuiltValueField(wireName: r'maxPlace')
   int get maxPlace;
 
+  @BuiltValueField(wireName: r'places')
+  BuiltList<Place> get places;
+
   @BuiltValueField(wireName: r'placeSchema')
   String? get placeSchema;
 
-  Event._();
+  EventWithPlaces._();
 
-  factory Event([void updates(EventBuilder b)]) = _$Event;
+  factory EventWithPlaces([void updates(EventWithPlacesBuilder b)]) = _$EventWithPlaces;
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(EventBuilder b) => b;
+  static void _defaults(EventWithPlacesBuilder b) => b;
 
   @BuiltValueSerializer(custom: true)
-  static Serializer<Event> get serializer => _$EventSerializer();
+  static Serializer<EventWithPlaces> get serializer => _$EventWithPlacesSerializer();
 }
 
-class _$EventSerializer implements PrimitiveSerializer<Event> {
+class _$EventWithPlacesSerializer implements PrimitiveSerializer<EventWithPlaces> {
   @override
-  final Iterable<Type> types = const [Event, _$Event];
+  final Iterable<Type> types = const [EventWithPlaces, _$EventWithPlaces];
 
   @override
-  final String wireName = r'Event';
+  final String wireName = r'EventWithPlaces';
 
   Iterable<Object?> _serializeProperties(
     Serializers serializers,
-    Event object, {
+    EventWithPlaces object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
     yield r'id';
@@ -143,6 +148,11 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
       object.maxPlace,
       specifiedType: const FullType(int),
     );
+    yield r'places';
+    yield serializers.serialize(
+      object.places,
+      specifiedType: const FullType(BuiltList, [FullType(Place)]),
+    );
     if (object.placeSchema != null) {
       yield r'placeSchema';
       yield serializers.serialize(
@@ -155,7 +165,7 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
   @override
   Object serialize(
     Serializers serializers,
-    Event object, {
+    EventWithPlaces object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     return _serializeProperties(serializers, object, specifiedType: specifiedType).toList();
@@ -166,7 +176,7 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
     required List<Object?> serializedList,
-    required EventBuilder result,
+    required EventWithPlacesBuilder result,
     required List<Object?> unhandled,
   }) {
     for (var i = 0; i < serializedList.length; i += 2) {
@@ -250,6 +260,13 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
           ) as int;
           result.maxPlace = valueDes;
           break;
+        case r'places':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltList, [FullType(Place)]),
+          ) as BuiltList<Place>;
+          result.places.replace(valueDes);
+          break;
         case r'placeSchema':
           final valueDes = serializers.deserialize(
             value,
@@ -266,12 +283,12 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
   }
 
   @override
-  Event deserialize(
+  EventWithPlaces deserialize(
     Serializers serializers,
     Object serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = EventBuilder();
+    final result = EventWithPlacesBuilder();
     final serializedList = (serialized as Iterable<Object?>).toList();
     final unhandled = <Object?>[];
     _deserializeProperties(

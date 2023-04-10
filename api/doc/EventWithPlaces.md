@@ -1,4 +1,4 @@
-# openapi.model.Event
+# openapi.model.EventWithPlaces
 
 ## Load the model package
 ```dart
@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **categories** | [**BuiltList&lt;Category&gt;**](Category.md) |  | 
 **freePlace** | **int** |  | 
 **maxPlace** | **int** |  | 
+**places** | [**BuiltList&lt;Place&gt;**](Place.md) |  | 
 **placeSchema** | **String** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
