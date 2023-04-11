@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
@@ -30,6 +32,22 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         .api
         .getEventApi()
         .getEventById(id: widget.event.id);
+  }
+
+  Future<Response<ReservationDTO>> placeBooked(
+      int eventId, String? placeId) async {
+    if (placeId != null)
+      return context
+          .read<APIProvider>()
+          .api
+          .getReservationApi()
+          .makeReservation(eventId: eventId);
+    else
+      return context
+          .read<APIProvider>()
+          .api
+          .getReservationApi()
+          .makeReservation(eventId: eventId, placeID: int.parse(placeId!));
   }
 
   @override
@@ -188,7 +206,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                   ),
                 ),
                 onPressed: () {
-//TO DO - how to write data to server - write??
+                  placeBooked(widget.event.id, _selectedItem!);
 
                   setState(() {
                     isReservationAccepted = true;
