@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:provider/provider.dart';
+
+import '../api/api_provider.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows screen to make reservation
@@ -18,13 +22,15 @@ class MakeReservationWidget extends StatefulWidget {
 class _MakeReservationWidget extends State<MakeReservationWidget> {
   bool isReservationAccepted = false;
   bool _showFreePlaces = false;
-  String _selectedItem = 'Place A';
-  List<String> _freePlaces = [
-    'Place A',
-    'Place B',
-    'Place C',
-    'Place D',
-  ];
+  String? _selectedItem = null;
+
+  Future<Response<EventWithPlaces>> freePlaces() async {
+    return context
+        .read<APIProvider>()
+        .api
+        .getEventApi()
+        .getEventById(id: widget.event.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,68 +113,18 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                     ),
                   ),
                   _showFreePlaces
-                      ? DropdownButton2<String>(
-                          buttonStyleData: ButtonStyleData(
-                            height: 50,
-                            width: 400,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: PageColor.singleEvent,
-                              ),
-                              color: PageColor.singleEvent,
-                            ),
-                            elevation: 1,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                              maxHeight: 200,
-                              width: 200,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                color: PageColor.singleEvent,
-                              ),
-                              elevation: 1,
-                              scrollbarTheme: ScrollbarThemeData(
-                                radius: const Radius.circular(40),
-                                thickness: MaterialStateProperty.all(1),
-                                thumbVisibility:
-                                    MaterialStateProperty.all(true),
-                              )),
-                          value: _selectedItem,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedItem = value!;
-                            });
-                          },
-                          items: _freePlaces.map((item) {
-                            return DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(item),
-                            );
-                          }).toList(),
-                        )
-                      : DropdownButton2<String>(
-                          buttonStyleData: ButtonStyleData(
-                            height: 50,
-                            width: 400,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: PageColor.singleEvent,
-                              ),
-                              color: PageColor.singleEvent,
-                            ),
-                            elevation: 0,
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedItem = value!;
-                            });
-                          },
-                          items: null,
-                        )
+                      ? FutureBuilder<Response<EventWithPlaces>>(
+                          future: freePlaces(),
+                          builder: (context, response) {
+                            if (response.hasData &&
+                                response.data != null &&
+                                response.data!.data != null) {
+                              return whenPlaceToSelect(response);
+                            } else {
+                              return whileNoPlaceSelected();
+                            }
+                          })
+                      : whileNoPlaceSelected(),
                 ],
               ),
             ),
@@ -203,7 +159,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
   }
 
   ///
-  /// widget for button to book place on event
+  /// widget for button to accept a reservation and chosen place
   ///
   Widget bookPlaceButton() {
     return Expanded(
@@ -232,6 +188,8 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                   ),
                 ),
                 onPressed: () {
+//TO DO - how to write data to server - write??
+
                   setState(() {
                     isReservationAccepted = true;
                   });
@@ -250,6 +208,82 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  ///
+  /// widget when choosePlace checkbox is not checked and when loading a data
+  ///
+  Widget whileNoPlaceSelected() {
+    return DropdownButton2<String>(
+      buttonStyleData: ButtonStyleData(
+        height: 50,
+        width: 400,
+        padding: const EdgeInsets.only(left: 14, right: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: PageColor.singleEvent,
+          ),
+          color: PageColor.singleEvent,
+        ),
+        elevation: 0,
+      ),
+      onChanged: (value) {},
+      items: null,
+    );
+  }
+
+  ///
+  /// widget when choosePlace checkbox is checked
+  ///
+  Widget whenPlaceToSelect(AsyncSnapshot<Response<EventWithPlaces>> response) {
+    return DropdownButton2<String>(
+      buttonStyleData: ButtonStyleData(
+        height: 50,
+        width: 400,
+        padding: const EdgeInsets.only(left: 14, right: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: PageColor.singleEvent,
+          ),
+          color: PageColor.singleEvent,
+        ),
+        elevation: 1,
+      ),
+      dropdownStyleData: DropdownStyleData(
+          maxHeight: 200,
+          width: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: PageColor.singleEvent,
+          ),
+          elevation: 1,
+          scrollbarTheme: ScrollbarThemeData(
+            radius: const Radius.circular(40),
+            thickness: MaterialStateProperty.all(1),
+            thumbVisibility: MaterialStateProperty.all(true),
+          )),
+      value: _selectedItem,
+      onChanged: (value) {
+        setState(() {
+          _selectedItem = value!;
+        });
+      },
+      items: response.data!.data!.places.map((item) {
+        if (item.free) {
+          return DropdownMenuItem<String>(
+            value: "$item",
+            child: Text("Place $item"),
+          );
+        } else {
+          return const DropdownMenuItem<String>(
+            value: null,
+            child: Text("Place notFreexd"), //TO CHANGE
+          );
+        }
+      }).toList(),
     );
   }
 }

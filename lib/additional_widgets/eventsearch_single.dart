@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
@@ -241,7 +243,7 @@ class _SingleEvent extends State<SingleEvent> {
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return Text('Loading....');
+                        return const Text('Loading....');
                       default:
                         if (snapshot.hasError)
                           return Text('Error: ${snapshot.error}');
@@ -376,7 +378,8 @@ class _SingleEvent extends State<SingleEvent> {
           width: 300,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: widget.event.status.name == "inFuture"
+              backgroundColor: widget.event.status.name == "inFuture" &&
+                      widget.event.freePlace != 0
                   ? PageColor.ticket
                   : PageColor.doneCanceled,
               shape: const RoundedRectangleBorder(
@@ -384,11 +387,13 @@ class _SingleEvent extends State<SingleEvent> {
               ),
             ),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MakeReservationWidget(widget.event)));
+              if (widget.event.status.name == "inFuture" &&
+                  widget.event.freePlace != 0)
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MakeReservationWidget(widget.event)));
             },
             child: const Text(
               'Reserve',

@@ -63,10 +63,12 @@ class _EventDetails extends State<EventDetails> {
 
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MakeReservationWidget(widget.event)));
+          if (widget.event.status.name == "inFuture" &&
+              widget.event.freePlace != 0)
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MakeReservationWidget(widget.event)));
         },
         label: const Text(
           'Reservate',
@@ -76,7 +78,10 @@ class _EventDetails extends State<EventDetails> {
           Icons.book_online,
           size: 30,
         ),
-        backgroundColor: PageColor.ticket,
+        backgroundColor: widget.event.status.name == "inFuture" &&
+                widget.event.freePlace != 0
+            ? PageColor.ticket
+            : PageColor.doneCanceled,
         elevation: 10,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
