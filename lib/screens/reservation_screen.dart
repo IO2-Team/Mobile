@@ -35,8 +35,8 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
   }
 
   Future<Response<ReservationDTO>> placeBooked(
-      int eventId, String? placeId) async {
-    if (placeId != null)
+      int eventId, String placeId) async {
+    if (placeId.contains('f'))
       return context
           .read<APIProvider>()
           .api
@@ -47,7 +47,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
           .read<APIProvider>()
           .api
           .getReservationApi()
-          .makeReservation(eventId: eventId, placeID: int.parse(placeId!));
+          .makeReservation(eventId: eventId, placeID: int.parse(placeId));
   }
 
   @override
@@ -207,7 +207,6 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                 ),
                 onPressed: () {
                   placeBooked(widget.event.id, _selectedItem!);
-
                   setState(() {
                     isReservationAccepted = true;
                   });
@@ -272,7 +271,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
       ),
       dropdownStyleData: DropdownStyleData(
           maxHeight: 200,
-          width: 200,
+          width: 390,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             color: PageColor.singleEvent,
@@ -292,13 +291,19 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
       items: response.data!.data!.places.map((item) {
         if (item.free) {
           return DropdownMenuItem<String>(
-            value: "$item",
-            child: Text("Place $item"),
+            value: "${item.id}",
+            child: Text("Place ${item.id}"),
           );
         } else {
-          return const DropdownMenuItem<String>(
-            value: null,
-            child: Text("Place notFreexd"), //TO CHANGE
+          return DropdownMenuItem<String>(
+            value: " ${item.id}f",
+            child: Text(
+              "Place ${item.id}",
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 15,
+              ),
+            ),
           );
         }
       }).toList(),

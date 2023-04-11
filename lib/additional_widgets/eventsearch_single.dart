@@ -162,14 +162,13 @@ class _SingleEvent extends State<SingleEvent> {
           const SizedBox(
             width: 2,
           ),
-          if (widget.event.startTime != null)
-            Text(
-              DateFormat('dd.MM.yyyy').format(dateStart),
-              style: TextStyle(
-                color: textsCol,
-                fontSize: 15.5,
-              ),
+          Text(
+            DateFormat('dd.MM.yyyy').format(dateStart),
+            style: TextStyle(
+              color: textsCol,
+              fontSize: 15.5,
             ),
+          ),
         ],
       ),
     );
