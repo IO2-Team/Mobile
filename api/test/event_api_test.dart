@@ -9,7 +9,7 @@ void main() {
   group(EventApi, () {
     // Add new event
     //
-    //Future<Event> addEvent(String sessionToken, String title, String name, int freePlace, int startTime, int endTime, String latitude, String longitude, BuiltList<int> categories, { String placeSchema }) async
+    //Future<Event> addEvent(String sessionToken, { EventForm eventForm }) async
     test('test addEvent', () async {
       // TODO
     });
@@ -32,7 +32,7 @@ void main() {
     //
     // Returns a single event
     //
-    //Future<Event> getEventById(int id) async
+    //Future<EventWithPlaces> getEventById(int id) async
     test('test getEventById', () async {
       // TODO
     });
@@ -53,7 +53,7 @@ void main() {
 
     // patch existing event
     //
-    //Future patchEvent(String sessionToken, String id, { Event event }) async
+    //Future patchEvent(String sessionToken, String id, { EventPatch eventPatch }) async
     test('test patchEvent', () async {
       // TODO
     });

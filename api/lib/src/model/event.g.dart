@@ -10,49 +10,56 @@ class _$Event extends Event {
   @override
   final int id;
   @override
-  final String? title;
+  final String title;
   @override
-  final int? startTime;
+  final int startTime;
   @override
-  final int? endTime;
+  final int endTime;
   @override
-  final String? latitude;
+  final String latitude;
   @override
-  final String? longitude;
+  final String longitude;
   @override
-  final String? name;
+  final String name;
+  @override
+  final EventStatus status;
+  @override
+  final BuiltList<Category> categories;
+  @override
+  final int freePlace;
+  @override
+  final int maxPlace;
   @override
   final String? placeSchema;
-  @override
-  final EventStatus? status;
-  @override
-  final BuiltList<Category>? categories;
-  @override
-  final int? freePlace;
-  @override
-  final int? maxPlace;
-  @override
-  final BuiltList<Place>? places;
 
   factory _$Event([void Function(EventBuilder)? updates]) =>
       (new EventBuilder()..update(updates))._build();
 
   _$Event._(
       {required this.id,
-      this.title,
-      this.startTime,
-      this.endTime,
-      this.latitude,
-      this.longitude,
-      this.name,
-      this.placeSchema,
-      this.status,
-      this.categories,
-      this.freePlace,
-      this.maxPlace,
-      this.places})
+      required this.title,
+      required this.startTime,
+      required this.endTime,
+      required this.latitude,
+      required this.longitude,
+      required this.name,
+      required this.status,
+      required this.categories,
+      required this.freePlace,
+      required this.maxPlace,
+      this.placeSchema})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(id, r'Event', 'id');
+    BuiltValueNullFieldError.checkNotNull(title, r'Event', 'title');
+    BuiltValueNullFieldError.checkNotNull(startTime, r'Event', 'startTime');
+    BuiltValueNullFieldError.checkNotNull(endTime, r'Event', 'endTime');
+    BuiltValueNullFieldError.checkNotNull(latitude, r'Event', 'latitude');
+    BuiltValueNullFieldError.checkNotNull(longitude, r'Event', 'longitude');
+    BuiltValueNullFieldError.checkNotNull(name, r'Event', 'name');
+    BuiltValueNullFieldError.checkNotNull(status, r'Event', 'status');
+    BuiltValueNullFieldError.checkNotNull(categories, r'Event', 'categories');
+    BuiltValueNullFieldError.checkNotNull(freePlace, r'Event', 'freePlace');
+    BuiltValueNullFieldError.checkNotNull(maxPlace, r'Event', 'maxPlace');
   }
 
   @override
@@ -73,12 +80,11 @@ class _$Event extends Event {
         latitude == other.latitude &&
         longitude == other.longitude &&
         name == other.name &&
-        placeSchema == other.placeSchema &&
         status == other.status &&
         categories == other.categories &&
         freePlace == other.freePlace &&
         maxPlace == other.maxPlace &&
-        places == other.places;
+        placeSchema == other.placeSchema;
   }
 
   @override
@@ -91,12 +97,11 @@ class _$Event extends Event {
     _$hash = $jc(_$hash, latitude.hashCode);
     _$hash = $jc(_$hash, longitude.hashCode);
     _$hash = $jc(_$hash, name.hashCode);
-    _$hash = $jc(_$hash, placeSchema.hashCode);
     _$hash = $jc(_$hash, status.hashCode);
     _$hash = $jc(_$hash, categories.hashCode);
     _$hash = $jc(_$hash, freePlace.hashCode);
     _$hash = $jc(_$hash, maxPlace.hashCode);
-    _$hash = $jc(_$hash, places.hashCode);
+    _$hash = $jc(_$hash, placeSchema.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -111,12 +116,11 @@ class _$Event extends Event {
           ..add('latitude', latitude)
           ..add('longitude', longitude)
           ..add('name', name)
-          ..add('placeSchema', placeSchema)
           ..add('status', status)
           ..add('categories', categories)
           ..add('freePlace', freePlace)
           ..add('maxPlace', maxPlace)
-          ..add('places', places))
+          ..add('placeSchema', placeSchema))
         .toString();
   }
 }
@@ -152,10 +156,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   String? get name => _$this._name;
   set name(String? name) => _$this._name = name;
 
-  String? _placeSchema;
-  String? get placeSchema => _$this._placeSchema;
-  set placeSchema(String? placeSchema) => _$this._placeSchema = placeSchema;
-
   EventStatus? _status;
   EventStatus? get status => _$this._status;
   set status(EventStatus? status) => _$this._status = status;
@@ -174,9 +174,9 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   int? get maxPlace => _$this._maxPlace;
   set maxPlace(int? maxPlace) => _$this._maxPlace = maxPlace;
 
-  ListBuilder<Place>? _places;
-  ListBuilder<Place> get places => _$this._places ??= new ListBuilder<Place>();
-  set places(ListBuilder<Place>? places) => _$this._places = places;
+  String? _placeSchema;
+  String? get placeSchema => _$this._placeSchema;
+  set placeSchema(String? placeSchema) => _$this._placeSchema = placeSchema;
 
   EventBuilder() {
     Event._defaults(this);
@@ -192,12 +192,11 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _latitude = $v.latitude;
       _longitude = $v.longitude;
       _name = $v.name;
-      _placeSchema = $v.placeSchema;
       _status = $v.status;
-      _categories = $v.categories?.toBuilder();
+      _categories = $v.categories.toBuilder();
       _freePlace = $v.freePlace;
       _maxPlace = $v.maxPlace;
-      _places = $v.places?.toBuilder();
+      _placeSchema = $v.placeSchema;
       _$v = null;
     }
     return this;
@@ -223,26 +222,31 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _$result = _$v ??
           new _$Event._(
               id: BuiltValueNullFieldError.checkNotNull(id, r'Event', 'id'),
-              title: title,
-              startTime: startTime,
-              endTime: endTime,
-              latitude: latitude,
-              longitude: longitude,
-              name: name,
-              placeSchema: placeSchema,
-              status: status,
-              categories: _categories?.build(),
-              freePlace: freePlace,
-              maxPlace: maxPlace,
-              places: _places?.build());
+              title: BuiltValueNullFieldError.checkNotNull(
+                  title, r'Event', 'title'),
+              startTime: BuiltValueNullFieldError.checkNotNull(
+                  startTime, r'Event', 'startTime'),
+              endTime: BuiltValueNullFieldError.checkNotNull(
+                  endTime, r'Event', 'endTime'),
+              latitude: BuiltValueNullFieldError.checkNotNull(
+                  latitude, r'Event', 'latitude'),
+              longitude: BuiltValueNullFieldError.checkNotNull(
+                  longitude, r'Event', 'longitude'),
+              name:
+                  BuiltValueNullFieldError.checkNotNull(name, r'Event', 'name'),
+              status: BuiltValueNullFieldError.checkNotNull(
+                  status, r'Event', 'status'),
+              categories: categories.build(),
+              freePlace: BuiltValueNullFieldError.checkNotNull(
+                  freePlace, r'Event', 'freePlace'),
+              maxPlace: BuiltValueNullFieldError.checkNotNull(
+                  maxPlace, r'Event', 'maxPlace'),
+              placeSchema: placeSchema);
     } catch (_) {
       late String _$failedField;
       try {
         _$failedField = 'categories';
-        _categories?.build();
-
-        _$failedField = 'places';
-        _places?.build();
+        categories.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'Event', _$failedField, e.toString());

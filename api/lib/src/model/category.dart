@@ -16,10 +16,10 @@ part 'category.g.dart';
 @BuiltValue()
 abstract class Category implements Built<Category, CategoryBuilder> {
   @BuiltValueField(wireName: r'id')
-  int? get id;
+  int get id;
 
   @BuiltValueField(wireName: r'name')
-  String? get name;
+  String get name;
 
   Category._();
 
@@ -44,20 +44,16 @@ class _$CategorySerializer implements PrimitiveSerializer<Category> {
     Category object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.id != null) {
-      yield r'id';
-      yield serializers.serialize(
-        object.id,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.name != null) {
-      yield r'name';
-      yield serializers.serialize(
-        object.name,
-        specifiedType: const FullType(String),
-      );
-    }
+    yield r'id';
+    yield serializers.serialize(
+      object.id,
+      specifiedType: const FullType(int),
+    );
+    yield r'name';
+    yield serializers.serialize(
+      object.name,
+      specifiedType: const FullType(String),
+    );
   }
 
   @override

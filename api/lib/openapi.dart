@@ -16,8 +16,13 @@ export 'package:openapi/src/api/reservation_api.dart';
 
 export 'package:openapi/src/model/category.dart';
 export 'package:openapi/src/model/event.dart';
+export 'package:openapi/src/model/event_form.dart';
+export 'package:openapi/src/model/event_patch.dart';
 export 'package:openapi/src/model/event_status.dart';
+export 'package:openapi/src/model/event_with_places.dart';
 export 'package:openapi/src/model/login_organizer200_response.dart';
 export 'package:openapi/src/model/organizer.dart';
+export 'package:openapi/src/model/organizer_form.dart';
+export 'package:openapi/src/model/organizer_patch.dart';
 export 'package:openapi/src/model/place.dart';
 export 'package:openapi/src/model/reservation_dto.dart';

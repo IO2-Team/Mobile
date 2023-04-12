@@ -6,7 +6,6 @@
 import 'package:openapi/src/model/event_status.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:openapi/src/model/category.dart';
-import 'package:openapi/src/model/place.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -22,53 +21,49 @@ part 'event.g.dart';
 /// * [latitude] 
 /// * [longitude] 
 /// * [name] 
-/// * [placeSchema] 
 /// * [status] 
 /// * [categories] 
 /// * [freePlace] 
 /// * [maxPlace] 
-/// * [places] 
+/// * [placeSchema] 
 @BuiltValue()
 abstract class Event implements Built<Event, EventBuilder> {
   @BuiltValueField(wireName: r'id')
   int get id;
 
   @BuiltValueField(wireName: r'title')
-  String? get title;
+  String get title;
 
   @BuiltValueField(wireName: r'startTime')
-  int? get startTime;
+  int get startTime;
 
   @BuiltValueField(wireName: r'endTime')
-  int? get endTime;
+  int get endTime;
 
   @BuiltValueField(wireName: r'latitude')
-  String? get latitude;
+  String get latitude;
 
   @BuiltValueField(wireName: r'longitude')
-  String? get longitude;
+  String get longitude;
 
   @BuiltValueField(wireName: r'name')
-  String? get name;
-
-  @BuiltValueField(wireName: r'placeSchema')
-  String? get placeSchema;
+  String get name;
 
   @BuiltValueField(wireName: r'status')
-  EventStatus? get status;
+  EventStatus get status;
   // enum statusEnum {  inFuture,  pending,  done,  cancelled,  };
 
   @BuiltValueField(wireName: r'categories')
-  BuiltList<Category>? get categories;
+  BuiltList<Category> get categories;
 
   @BuiltValueField(wireName: r'freePlace')
-  int? get freePlace;
+  int get freePlace;
 
   @BuiltValueField(wireName: r'maxPlace')
-  int? get maxPlace;
+  int get maxPlace;
 
-  @BuiltValueField(wireName: r'places')
-  BuiltList<Place>? get places;
+  @BuiltValueField(wireName: r'placeSchema')
+  String? get placeSchema;
 
   Event._();
 
@@ -98,88 +93,61 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
       object.id,
       specifiedType: const FullType(int),
     );
-    if (object.title != null) {
-      yield r'title';
-      yield serializers.serialize(
-        object.title,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.startTime != null) {
-      yield r'startTime';
-      yield serializers.serialize(
-        object.startTime,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.endTime != null) {
-      yield r'endTime';
-      yield serializers.serialize(
-        object.endTime,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.latitude != null) {
-      yield r'latitude';
-      yield serializers.serialize(
-        object.latitude,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.longitude != null) {
-      yield r'longitude';
-      yield serializers.serialize(
-        object.longitude,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.name != null) {
-      yield r'name';
-      yield serializers.serialize(
-        object.name,
-        specifiedType: const FullType(String),
-      );
-    }
+    yield r'title';
+    yield serializers.serialize(
+      object.title,
+      specifiedType: const FullType(String),
+    );
+    yield r'startTime';
+    yield serializers.serialize(
+      object.startTime,
+      specifiedType: const FullType(int),
+    );
+    yield r'endTime';
+    yield serializers.serialize(
+      object.endTime,
+      specifiedType: const FullType(int),
+    );
+    yield r'latitude';
+    yield serializers.serialize(
+      object.latitude,
+      specifiedType: const FullType(String),
+    );
+    yield r'longitude';
+    yield serializers.serialize(
+      object.longitude,
+      specifiedType: const FullType(String),
+    );
+    yield r'name';
+    yield serializers.serialize(
+      object.name,
+      specifiedType: const FullType(String),
+    );
+    yield r'status';
+    yield serializers.serialize(
+      object.status,
+      specifiedType: const FullType(EventStatus),
+    );
+    yield r'categories';
+    yield serializers.serialize(
+      object.categories,
+      specifiedType: const FullType(BuiltList, [FullType(Category)]),
+    );
+    yield r'freePlace';
+    yield serializers.serialize(
+      object.freePlace,
+      specifiedType: const FullType(int),
+    );
+    yield r'maxPlace';
+    yield serializers.serialize(
+      object.maxPlace,
+      specifiedType: const FullType(int),
+    );
     if (object.placeSchema != null) {
       yield r'placeSchema';
       yield serializers.serialize(
         object.placeSchema,
         specifiedType: const FullType(String),
-      );
-    }
-    if (object.status != null) {
-      yield r'status';
-      yield serializers.serialize(
-        object.status,
-        specifiedType: const FullType(EventStatus),
-      );
-    }
-    if (object.categories != null) {
-      yield r'categories';
-      yield serializers.serialize(
-        object.categories,
-        specifiedType: const FullType(BuiltList, [FullType(Category)]),
-      );
-    }
-    if (object.freePlace != null) {
-      yield r'freePlace';
-      yield serializers.serialize(
-        object.freePlace,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.maxPlace != null) {
-      yield r'maxPlace';
-      yield serializers.serialize(
-        object.maxPlace,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.places != null) {
-      yield r'places';
-      yield serializers.serialize(
-        object.places,
-        specifiedType: const FullType(BuiltList, [FullType(Place)]),
       );
     }
   }
@@ -254,13 +222,6 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
           ) as String;
           result.name = valueDes;
           break;
-        case r'placeSchema':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.placeSchema = valueDes;
-          break;
         case r'status':
           final valueDes = serializers.deserialize(
             value,
@@ -289,12 +250,12 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
           ) as int;
           result.maxPlace = valueDes;
           break;
-        case r'places':
+        case r'placeSchema':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType(BuiltList, [FullType(Place)]),
-          ) as BuiltList<Place>;
-          result.places.replace(valueDes);
+            specifiedType: const FullType(String),
+          ) as String;
+          result.placeSchema = valueDes;
           break;
         default:
           unhandled.add(key);

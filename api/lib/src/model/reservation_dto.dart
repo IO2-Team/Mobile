@@ -17,13 +17,13 @@ part 'reservation_dto.g.dart';
 @BuiltValue()
 abstract class ReservationDTO implements Built<ReservationDTO, ReservationDTOBuilder> {
   @BuiltValueField(wireName: r'eventId')
-  int? get eventId;
+  int get eventId;
 
   @BuiltValueField(wireName: r'placeId')
-  int? get placeId;
+  int get placeId;
 
   @BuiltValueField(wireName: r'reservationToken')
-  String? get reservationToken;
+  String get reservationToken;
 
   ReservationDTO._();
 
@@ -48,27 +48,21 @@ class _$ReservationDTOSerializer implements PrimitiveSerializer<ReservationDTO> 
     ReservationDTO object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.eventId != null) {
-      yield r'eventId';
-      yield serializers.serialize(
-        object.eventId,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.placeId != null) {
-      yield r'placeId';
-      yield serializers.serialize(
-        object.placeId,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.reservationToken != null) {
-      yield r'reservationToken';
-      yield serializers.serialize(
-        object.reservationToken,
-        specifiedType: const FullType(String),
-      );
-    }
+    yield r'eventId';
+    yield serializers.serialize(
+      object.eventId,
+      specifiedType: const FullType(int),
+    );
+    yield r'placeId';
+    yield serializers.serialize(
+      object.placeId,
+      specifiedType: const FullType(int),
+    );
+    yield r'reservationToken';
+    yield serializers.serialize(
+      object.reservationToken,
+      specifiedType: const FullType(String),
+    );
   }
 
   @override

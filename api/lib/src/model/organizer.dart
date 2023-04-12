@@ -4,7 +4,6 @@
 
 // ignore_for_file: unused_element
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/model/event.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -16,29 +15,21 @@ part 'organizer.g.dart';
 /// * [id] 
 /// * [name] 
 /// * [email] 
-/// * [password] 
-/// * [events] 
 /// * [status] - User Status
 @BuiltValue()
 abstract class Organizer implements Built<Organizer, OrganizerBuilder> {
   @BuiltValueField(wireName: r'id')
-  int? get id;
+  int get id;
 
   @BuiltValueField(wireName: r'name')
-  String? get name;
+  String get name;
 
   @BuiltValueField(wireName: r'email')
-  String? get email;
-
-  @BuiltValueField(wireName: r'password')
-  String? get password;
-
-  @BuiltValueField(wireName: r'events')
-  BuiltList<Event>? get events;
+  String get email;
 
   /// User Status
   @BuiltValueField(wireName: r'status')
-  OrganizerStatusEnum? get status;
+  OrganizerStatusEnum get status;
   // enum statusEnum {  pending,  confirmed,  };
 
   Organizer._();
@@ -64,48 +55,26 @@ class _$OrganizerSerializer implements PrimitiveSerializer<Organizer> {
     Organizer object, {
     FullType specifiedType = FullType.unspecified,
   }) sync* {
-    if (object.id != null) {
-      yield r'id';
-      yield serializers.serialize(
-        object.id,
-        specifiedType: const FullType(int),
-      );
-    }
-    if (object.name != null) {
-      yield r'name';
-      yield serializers.serialize(
-        object.name,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.email != null) {
-      yield r'email';
-      yield serializers.serialize(
-        object.email,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.password != null) {
-      yield r'password';
-      yield serializers.serialize(
-        object.password,
-        specifiedType: const FullType(String),
-      );
-    }
-    if (object.events != null) {
-      yield r'events';
-      yield serializers.serialize(
-        object.events,
-        specifiedType: const FullType(BuiltList, [FullType(Event)]),
-      );
-    }
-    if (object.status != null) {
-      yield r'status';
-      yield serializers.serialize(
-        object.status,
-        specifiedType: const FullType(OrganizerStatusEnum),
-      );
-    }
+    yield r'id';
+    yield serializers.serialize(
+      object.id,
+      specifiedType: const FullType(int),
+    );
+    yield r'name';
+    yield serializers.serialize(
+      object.name,
+      specifiedType: const FullType(String),
+    );
+    yield r'email';
+    yield serializers.serialize(
+      object.email,
+      specifiedType: const FullType(String),
+    );
+    yield r'status';
+    yield serializers.serialize(
+      object.status,
+      specifiedType: const FullType(OrganizerStatusEnum),
+    );
   }
 
   @override
@@ -149,20 +118,6 @@ class _$OrganizerSerializer implements PrimitiveSerializer<Organizer> {
             specifiedType: const FullType(String),
           ) as String;
           result.email = valueDes;
-          break;
-        case r'password':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.password = valueDes;
-          break;
-        case r'events':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(BuiltList, [FullType(Event)]),
-          ) as BuiltList<Event>;
-          result.events.replace(valueDes);
           break;
         case r'status':
           final valueDes = serializers.deserialize(

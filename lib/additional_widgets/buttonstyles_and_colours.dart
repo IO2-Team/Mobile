@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../screens/reservatedeventslist_screen.dart';
+
 class PageColor {
   static final eventSearch = Color.fromARGB(255, 182, 182, 255);
   static final singleEvent = Color.fromARGB(255, 192, 192, 255);
@@ -36,4 +38,49 @@ class IconsInApp {
       const IconData(0xf57a, fontFamily: 'MaterialIcons');
   static IconData burgerMhm =
       const IconData(0xf0023, fontFamily: 'MaterialIcons');
+}
+
+class Buttonss {
+  static Widget QrButton(BuildContext context) {
+    return SizedBox(
+      width: 65,
+      child: MaterialButton(
+        onPressed: () {
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReservatedListEventsWidget()))
+              .then((value) {
+            if (value != null) {
+              Navigator.pop(context, value);
+            }
+          });
+        },
+        child: const Icon(
+          Icons.qr_code_2_rounded,
+          size: 37,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  static Widget QrButtonInFirstPage(BuildContext context) {
+    return SizedBox(
+      width: 65,
+      child: MaterialButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ReservatedListEventsWidget()));
+        },
+        child: const Icon(
+          Icons.qr_code_2_rounded,
+          size: 37,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
 }

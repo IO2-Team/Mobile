@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +27,10 @@ class _SingleEvent extends State<SingleEvent> {
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
-    final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.startTime != null ? widget.event.startTime! * 1000 : 0);
-    final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.endTime != null ? widget.event.endTime! * 1000 : 0);
+    final DateTime dateStart =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.startTime * 1000);
+    final DateTime dateFinish =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.endTime * 1000);
 
     return Column(
       children: [
@@ -36,8 +38,7 @@ class _SingleEvent extends State<SingleEvent> {
         Container(
           padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
-            color: widget.event.status != null &&
-                    widget.event.status!.name == "inFuture"
+            color: widget.event.status.name == "inFuture"
                 ? PageColor.singleEventActive
                 : PageColor.singleEvent,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -55,11 +56,10 @@ class _SingleEvent extends State<SingleEvent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (widget.event.title != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: eventTitle(),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: eventTitle(),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 7, right: 7),
                       child: Divider(
@@ -116,9 +116,7 @@ class _SingleEvent extends State<SingleEvent> {
                   const SizedBox(
                     width: 15,
                   ),
-                  if (widget.event.status != null &&
-                      widget.event.status!.name == "inFuture")
-                    bookPlaceButton(),
+                  if (widget.event.status.name == "inFuture") bookPlaceButton(),
                 ],
               ),
             ],
@@ -137,7 +135,7 @@ class _SingleEvent extends State<SingleEvent> {
   ///
   Widget eventTitle() {
     return Text(
-      widget.event.title!,
+      widget.event.title,
       style: TextStyle(
         letterSpacing: 0.4,
         fontSize: 18.0,
@@ -164,14 +162,13 @@ class _SingleEvent extends State<SingleEvent> {
           const SizedBox(
             width: 2,
           ),
-          if (widget.event.startTime != null)
-            Text(
-              DateFormat('dd.MM.yyyy').format(dateStart),
-              style: TextStyle(
-                color: textsCol,
-                fontSize: 15.5,
-              ),
+          Text(
+            DateFormat('dd.MM.yyyy').format(dateStart),
+            style: TextStyle(
+              color: textsCol,
+              fontSize: 15.5,
             ),
+          ),
         ],
       ),
     );
@@ -234,60 +231,59 @@ class _SingleEvent extends State<SingleEvent> {
           const EdgeInsets.only(bottom: 5.0, top: 0.0, left: 10.0, right: 10.0),
       child: Column(
         children: [
-          if (widget.event.latitude != null && widget.event.longitude != null)
-            Center(
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: FutureBuilder<String>(
-                    future: getAddress(widget.event.latitude!,
-                        widget.event.longitude!), // async work
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Text('Loading....');
-                        default:
-                          if (snapshot.hasError)
-                            return Text('Error: ${snapshot.error}');
-                          else if (snapshot.data != "")
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10),
-                                  child: Divider(
-                                    color: PageColor.divider,
-                                    height: 12.0,
-                                    thickness: 1.0,
-                                  ),
+          Center(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: FutureBuilder<String>(
+                  future: getAddress(widget.event.latitude,
+                      widget.event.longitude), // async work
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Text('Loading....');
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else if (snapshot.data != "")
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10),
+                                child: Divider(
+                                  color: PageColor.divider,
+                                  height: 12.0,
+                                  thickness: 1.0,
                                 ),
-                                Icon(
-                                  IconsInApp.placeIcon,
-                                  size: 18.0,
-                                  color: textsCol2,
+                              ),
+                              Icon(
+                                IconsInApp.placeIcon,
+                                size: 18.0,
+                                color: textsCol2,
+                              ),
+                              const SizedBox(
+                                width: 1,
+                              ),
+                              Text(
+                                snapshot.data!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: PageColor.texts,
+                                  fontSize: 14.5,
                                 ),
-                                const SizedBox(
-                                  width: 1,
-                                ),
-                                Text(
-                                  snapshot.data!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: PageColor.texts,
-                                    fontSize: 14.5,
-                                  ),
-                                ),
-                              ],
-                            );
-                          else
-                            return const SizedBox();
-                      }
-                    },
-                  ),
+                              ),
+                            ],
+                          );
+                        else
+                          return const SizedBox();
+                    }
+                  },
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
@@ -310,9 +306,9 @@ class _SingleEvent extends State<SingleEvent> {
           const SizedBox(
             width: 2,
           ),
-          if (widget.event.freePlace != null)
+          if (widget.event.freePlace != 0)
             Text(
-              "${widget.event.freePlace!} places left",
+              "${widget.event.freePlace} places left",
               style: TextStyle(
                 color: textsCol,
                 fontSize: 15.5,
@@ -381,8 +377,8 @@ class _SingleEvent extends State<SingleEvent> {
           width: 300,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: widget.event.status != null &&
-                      widget.event.status!.name == "inFuture"
+              backgroundColor: widget.event.status.name == "inFuture" &&
+                      widget.event.freePlace != 0
                   ? PageColor.ticket
                   : PageColor.doneCanceled,
               shape: const RoundedRectangleBorder(
@@ -390,11 +386,13 @@ class _SingleEvent extends State<SingleEvent> {
               ),
             ),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MakeReservationWidget(widget.event)));
+              if (widget.event.status.name == "inFuture" &&
+                  widget.event.freePlace != 0)
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MakeReservationWidget(widget.event)));
             },
             child: const Text(
               'Reserve',
