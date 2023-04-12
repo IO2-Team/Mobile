@@ -8,6 +8,7 @@ import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:provider/provider.dart';
 
+import '../additional_widgets/saveanddelete_reservation.dart';
 import '../api/api_provider.dart';
 
 ///////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ class MakeReservationWidget extends StatefulWidget {
 class _MakeReservationWidget extends State<MakeReservationWidget> {
   bool isReservationAccepted = false;
   bool _showFreePlaces = false;
-  String? _selectedItem = null;
+  String? _selectedItem;
 
   Future<Response<EventWithPlaces>> freePlaces() async {
     return context
@@ -34,20 +35,36 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         .getEventById(id: widget.event.id);
   }
 
-  Future<Response<ReservationDTO>> placeBooked(
-      int eventId, String placeId) async {
+  void placeBooked(int eventId, String placeId) async {
+    Future<Response<ReservationDTO>> dataToSharedPref;
     if (placeId.contains('f'))
-      return context
+      dataToSharedPref = context
           .read<APIProvider>()
           .api
           .getReservationApi()
           .makeReservation(eventId: eventId);
     else
-      return context
+      dataToSharedPref = context
           .read<APIProvider>()
           .api
           .getReservationApi()
           .makeReservation(eventId: eventId, placeID: int.parse(placeId));
+
+    // dataToSharedPref.then((response) {
+    //   // response.statusCode == 200 means all worked properly
+    //   if (response.statusCode == 200 && response.data != null) {
+    //     // Successful response
+    //     ReservationDTO jsonEvent = response.data!;
+    //     SaveAndDeleteReservation.saveRes(JsonEvent(
+    //         eventId: jsonEvent.eventId,
+    //         placeId: jsonEvent.placeId,
+    //         reservationToken: jsonEvent.reservationToken));
+    //     return true;
+    //   } else {
+    //     // Error handling for unsuccessful response
+    //     return false;
+    //   }
+    // });
   }
 
   @override
@@ -71,15 +88,8 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                 color: Colors.white,
               )),
         ),
-        actions: const <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: 37,
-              color: Colors.white,
-            ),
-          ),
+        actions: <Widget>[
+          Buttonss.QrButton(context),
         ],
       ),
       body: Padding(
@@ -87,6 +97,24 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         child: Column(
           children: [
             viewTitle(widget.event.title),
+            Row(
+              children: const [
+                Text(
+                  textAlign: TextAlign.left,
+                  "Places schema:",
+                  style: TextStyle(
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                    fontSize: 22.0,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(
+              color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+              height: 12.0,
+              thickness: 1.0,
+            ),
             Container(
               width: 200, // Set the width of the container
               height: 200, // Set the height of the container
@@ -120,14 +148,22 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                             });
                           },
                         ),
-                        Text(
+                        const Text(
                           'Choose place',
                           style: TextStyle(
-                            fontSize: 14.0,
-                            color: PageColor.texts,
+                            fontSize: 22.0,
+                            color: Colors.white,
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Divider(
+                      color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                      height: 1.0,
+                      thickness: 1.0,
                     ),
                   ),
                   _showFreePlaces
@@ -136,7 +172,8 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                           builder: (context, response) {
                             if (response.hasData &&
                                 response.data != null &&
-                                response.data!.data != null) {
+                                response.data!.data != null &&
+                                isReservationAccepted == false) {
                               return whenPlaceToSelect(response);
                             } else {
                               return whileNoPlaceSelected();
@@ -206,10 +243,16 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                   ),
                 ),
                 onPressed: () {
-                  placeBooked(widget.event.id, _selectedItem!);
-                  setState(() {
-                    isReservationAccepted = true;
-                  });
+                  if (!isReservationAccepted) {
+                    // save to SharedPreferences
+                    // SaveAndDeleteReservation.
+
+                    // shot to Api
+                    placeBooked(widget.event.id, _selectedItem!);
+                    setState(() {
+                      isReservationAccepted = true;
+                    });
+                  }
                 },
                 child: const Text(
                   'Accept',

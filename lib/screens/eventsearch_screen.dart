@@ -91,15 +91,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         title: const Center(
           child: Logo(),
         ),
-        actions: const <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: 37,
-              color: Colors.white,
-            ),
-          ),
+        actions: <Widget>[
+          Buttonss.QrButtonInFirstPage(context),
         ],
       ),
       drawer: const DrawerBurger(),

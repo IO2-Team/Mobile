@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
 import 'package:eventapp_mobile/screens/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
@@ -49,18 +50,10 @@ class _EventDetails extends State<EventDetails> {
                 color: Colors.white,
               )),
         ),
-        actions: const <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: 37,
-              color: Colors.white,
-            ),
-          ),
+        actions: <Widget>[
+          Buttonss.QrButton(context),
         ],
       ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           if (widget.event.status.name == "inFuture" &&
@@ -68,7 +61,12 @@ class _EventDetails extends State<EventDetails> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MakeReservationWidget(widget.event)));
+                    builder: (context) =>
+                        MakeReservationWidget(widget.event))).then((value) {
+              if (value != null) {
+                Navigator.pop(context, value);
+              }
+            });
         },
         label: const Text(
           'Reservate',
@@ -85,11 +83,6 @@ class _EventDetails extends State<EventDetails> {
         elevation: 10,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // bottomNavigationBar: BottomAppBar(
-      //     child: Container(height: 50 ,color: PageColor.appBar),
-      //     shape: CircularNotchedRectangle(),
-      //     //notchMargin: 4.0
-      // ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
