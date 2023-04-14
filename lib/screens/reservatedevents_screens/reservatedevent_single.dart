@@ -14,7 +14,7 @@ import 'dart:convert';
 ///////////////////////////////////////////////////////////////
 class SingleEventReservated extends StatefulWidget {
   final EventWithPlaces event;
-  final JsonEvent? jsonEvet;
+  final JsonEvent jsonEvet;
   final SaveAndDeleteReservation sharedPref;
 
   SingleEventReservated(this.event, this.jsonEvet, this.sharedPref,

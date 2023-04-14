@@ -1,12 +1,14 @@
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
+import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../additional_widgets/logo.dart';
 
 class InspectionScreen extends StatefulWidget {
-  final JsonEvent? jsonEvet;
+  final JsonEvent jsonEvet;
   final SaveAndDeleteReservation sharedPref;
   const InspectionScreen(this.jsonEvet, this.sharedPref, {Key? key})
       : super(key: key);
@@ -19,6 +21,11 @@ class _InspectionScreenState extends State<InspectionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
+  void deletePlaceWithApi() async {
+    if (widget.jsonEvet.reservationToken != null)
+      context.read<APIProvider>().api.getReservationApi().deleteReservation(
+          reservationToken: widget.jsonEvet.reservationToken!);
+  }
 
   @override
   void initState() {
@@ -65,7 +72,7 @@ class _InspectionScreenState extends State<InspectionScreen>
               padding: const EdgeInsets.all(20.0),
               child: QrImage(
                 //TO DO: if not null -- check it!!!!
-                data: widget.jsonEvet!.toJson().toString(),
+                data: widget.jsonEvet.toJson().toString(),
                 size: 300,
               ),
             )),
@@ -138,13 +145,13 @@ class _InspectionScreenState extends State<InspectionScreen>
                           child: Container(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                "${widget.jsonEvet!.placeId}",
+                                "${widget.jsonEvet.placeId}",
                                 style: TextStyle(
                                   letterSpacing: 0.4,
                                   fontSize: 17.0,
                                   color: PageColor.texts,
                                 ),
-                              ))) // if not NULL TODO
+                              )))
                     ],
                   ),
                 ),
@@ -168,13 +175,13 @@ class _InspectionScreenState extends State<InspectionScreen>
                           child: Container(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                "${widget.jsonEvet!.eventId}" ?? "Unknown",
+                                "${widget.jsonEvet.eventId}",
                                 style: TextStyle(
                                   letterSpacing: 0.3,
                                   fontSize: 17.0,
                                   color: PageColor.texts,
                                 ),
-                              ))) // if not NULL TODO
+                              )))
                     ],
                   ),
                 ),
@@ -206,13 +213,13 @@ class _InspectionScreenState extends State<InspectionScreen>
                           child: Container(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                widget.jsonEvet!.reservationToken ?? "Unknown",
+                                widget.jsonEvet.reservationToken ?? "Unknown",
                                 style: TextStyle(
                                   letterSpacing: 0.3,
                                   fontSize: 17.0,
                                   color: PageColor.texts,
                                 ),
-                              ))), // if not NULL TODO
+                              ))),
                     ],
                   ),
                 ),
@@ -306,8 +313,10 @@ class _InspectionScreenState extends State<InspectionScreen>
         children: [
           MaterialButton(
             onPressed: () {
-              if (widget.jsonEvet != null && widget.jsonEvet!.eventId != null) {
-                widget.sharedPref.removeRes(widget.jsonEvet!.eventId!);
+              if (widget.jsonEvet.eventId != null) {
+                widget.sharedPref.removeRes(widget.jsonEvet.eventId!);
+                deletePlaceWithApi();
+
                 Navigator.pop(context, true);
               }
             },

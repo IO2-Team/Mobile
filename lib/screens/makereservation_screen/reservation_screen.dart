@@ -87,7 +87,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
           width: 60,
           child: MaterialButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: Icon(
                 IconsInApp.arrowBack,
@@ -243,46 +243,49 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
               visible: isReservationAccepted,
               child: Text(
                 'Reservation Accepted',
-                style: TextStyle(fontSize: 20, color: PageColor.logo2),
+                style: TextStyle(fontSize: 20, color: PageColor.appBar),
               ),
             ),
-            SizedBox(
-              width: 300,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: !isReservationAccepted &&
-                          !(_selectedItem != null &&
-                              _selectedItem!.contains('f'))
-                      ? PageColor.ticket
-                      : PageColor.doneCanceled,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(80)),
+            Visibility(
+              visible: !isReservationAccepted,
+              child: SizedBox(
+                width: 300,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: !isReservationAccepted &&
+                            !(_selectedItem != null &&
+                                _selectedItem!.contains('f'))
+                        ? PageColor.ticket
+                        : PageColor.doneCanceled,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(80)),
+                    ),
                   ),
-                ),
-                onPressed: () {
-                  if (!isReservationAccepted &&
-                      !(_selectedItem != null &&
-                          _selectedItem!.contains('f'))) {
-                    // save to SharedPreferences
-                    // SaveAndDeleteReservation.
+                  onPressed: () {
+                    if (!isReservationAccepted &&
+                        !(_selectedItem != null &&
+                            _selectedItem!.contains('f'))) {
+                      // save to SharedPreferences
+                      // SaveAndDeleteReservation.
 
-                    // shot to Api
-                    if (_showFreePlaces)
-                      placeBooked(widget.event.id, _selectedItem!);
-                    else
-                      placeBooked(widget.event.id, null);
-                    setState(() {
-                      isReservationAccepted = true;
-                    });
-                  }
-                },
-                child: const Text(
-                  'Accept',
-                  style: TextStyle(
-                    letterSpacing: 1.5,
-                    fontSize: 19.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'MyFont1',
+                      // shot to Api
+                      if (_showFreePlaces)
+                        placeBooked(widget.event.id, _selectedItem!);
+                      else
+                        placeBooked(widget.event.id, null);
+                      setState(() {
+                        isReservationAccepted = true;
+                      });
+                    }
+                  },
+                  child: const Text(
+                    'Accept',
+                    style: TextStyle(
+                      letterSpacing: 1.5,
+                      fontSize: 19.0,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'MyFont1',
+                    ),
                   ),
                 ),
               ),
@@ -350,7 +353,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
       value: _selectedItem,
       onChanged: (value) {
         setState(() {
-          if (value != null) _selectedItem = value!;
+          if (value != null) _selectedItem = value;
         });
       },
       items: response.data!.data!.places.map((item) {

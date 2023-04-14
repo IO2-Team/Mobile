@@ -60,7 +60,8 @@ class _EventDetails extends State<EventDetails> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           if (widget.event.status.name == "inFuture" &&
-              widget.event.freePlace != 0)
+              widget.event.freePlace != 0 &&
+              !widget.sharedPref.getAllKeys().contains("${widget.event.id}"))
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -80,7 +81,8 @@ class _EventDetails extends State<EventDetails> {
           size: 30,
         ),
         backgroundColor: widget.event.status.name == "inFuture" &&
-                widget.event.freePlace != 0
+                widget.event.freePlace != 0 &&
+                !widget.sharedPref.getAllKeys().contains("${widget.event.id}")
             ? PageColor.ticket
             : PageColor.doneCanceled,
         elevation: 10,

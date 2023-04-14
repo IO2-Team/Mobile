@@ -67,25 +67,4 @@ class Buttonss {
       ),
     );
   }
-
-  static Widget QrButtonInFirstPage(
-      BuildContext context, SaveAndDeleteReservation sharedPref) {
-    return SizedBox(
-      width: 65,
-      child: MaterialButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ReservatedListEventsWidget(sharedPref: sharedPref)));
-        },
-        child: const Icon(
-          Icons.qr_code_2_rounded,
-          size: 37,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
 }

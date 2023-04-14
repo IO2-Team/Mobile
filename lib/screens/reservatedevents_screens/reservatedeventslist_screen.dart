@@ -75,9 +75,6 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
             ),
             child: Column(
               children: [
-                // FutureBuilder<SharedPreferences>(
-                //     future: .getInstance(),
-                // builder: (context, response) {
                 if (widget.sharedPref.getAllKeys().isNotEmpty)
                   for (int i = 0;
                       i < widget.sharedPref.getAllKeys().length;
@@ -95,7 +92,7 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
                                 response.data!.data!,
                                 widget.sharedPref.getRes(widget.sharedPref
                                     .getAllKeys()
-                                    .elementAt(i)),
+                                    .elementAt(i))!, // if never NULL (hym)
                                 widget.sharedPref);
                           } else {
                             return SizedBox();

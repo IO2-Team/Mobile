@@ -358,7 +358,11 @@ class _SingleEvent extends State<SingleEvent> {
                       builder: (context) => EventDetails(
                             widget.event,
                             sharedPref: widget.sharedPref,
-                          )));
+                          ))).then((value) {
+                if (value != null) {
+                  setState(() {});
+                }
+              });
             },
             child: const Text(
               'Details',
@@ -406,7 +410,7 @@ class _SingleEvent extends State<SingleEvent> {
                             sharedPref: widget.sharedPref)));
             },
             child: const Text(
-              'Reserve',
+              'Reservate',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,

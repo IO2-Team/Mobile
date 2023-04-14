@@ -2,6 +2,7 @@
 
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
+import 'package:eventapp_mobile/screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
@@ -96,7 +97,25 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           child: Logo(),
         ),
         actions: <Widget>[
-          Buttonss.QrButtonInFirstPage(context, widget.sharedPref),
+          SizedBox(
+            width: 65,
+            child: MaterialButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReservatedListEventsWidget(
+                            sharedPref: widget.sharedPref))).then((value) {
+                  refresh();
+                });
+              },
+              child: const Icon(
+                Icons.qr_code_2_rounded,
+                size: 37,
+                color: Colors.white,
+              ),
+            ),
+          )
         ],
       ),
       drawer: const DrawerBurger(),
