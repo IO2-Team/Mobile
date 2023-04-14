@@ -8,8 +8,8 @@ import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:provider/provider.dart';
 
-import '../additional_widgets/saveanddelete_reservation.dart';
-import '../api/api_provider.dart';
+import '../../additional_widgets/saveanddelete_reservation.dart';
+import '../../api/api_provider.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows screen to make reservation
@@ -17,7 +17,10 @@ import '../api/api_provider.dart';
 
 class MakeReservationWidget extends StatefulWidget {
   final Event event;
-  const MakeReservationWidget(this.event, {super.key});
+  final SaveAndDeleteReservation sharedPref;
+
+  const MakeReservationWidget(this.event,
+      {super.key, required this.sharedPref});
   @override
   State<MakeReservationWidget> createState() => _MakeReservationWidget();
 }
@@ -35,9 +38,9 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         .getEventById(id: widget.event.id);
   }
 
-  void placeBooked(int eventId, String placeId) async {
+  void placeBooked(int eventId, String? placeId) async {
     Future<Response<ReservationDTO>> dataToSharedPref;
-    if (placeId.contains('f'))
+    if (placeId == null || placeId.contains('f'))
       dataToSharedPref = context
           .read<APIProvider>()
           .api
@@ -50,21 +53,21 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
           .getReservationApi()
           .makeReservation(eventId: eventId, placeID: int.parse(placeId));
 
-    // dataToSharedPref.then((response) {
-    //   // response.statusCode == 200 means all worked properly
-    //   if (response.statusCode == 200 && response.data != null) {
-    //     // Successful response
-    //     ReservationDTO jsonEvent = response.data!;
-    //     SaveAndDeleteReservation.saveRes(JsonEvent(
-    //         eventId: jsonEvent.eventId,
-    //         placeId: jsonEvent.placeId,
-    //         reservationToken: jsonEvent.reservationToken));
-    //     return true;
-    //   } else {
-    //     // Error handling for unsuccessful response
-    //     return false;
-    //   }
-    // });
+    dataToSharedPref.then((response) {
+      // response.statusCode == 200 means all worked properly
+      if (response.data != null) {
+        // Successful response
+        ReservationDTO jsonEvent = response.data!;
+        widget.sharedPref.saveRes(JsonEvent(
+            eventId: jsonEvent.eventId,
+            placeId: jsonEvent.placeId,
+            reservationToken: jsonEvent.reservationToken));
+        return true;
+      } else {
+        // Error handling for unsuccessful response
+        return false;
+      }
+    });
   }
 
   @override
@@ -75,7 +78,10 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
         title: const Center(
-          child: Logo(),
+          child: Padding(
+            padding: EdgeInsets.only(right: 38.0),
+            child: Logo(),
+          ),
         ),
         leading: SizedBox(
           width: 60,
@@ -88,9 +94,6 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                 color: Colors.white,
               )),
         ),
-        actions: <Widget>[
-          Buttonss.QrButton(context),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.only(right: 10.0, left: 10),
@@ -174,7 +177,11 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                                 response.data != null &&
                                 response.data!.data != null &&
                                 isReservationAccepted == false) {
-                              return whenPlaceToSelect(response);
+                              return Column(
+                                children: [
+                                  whenPlaceToSelect(response),
+                                ],
+                              );
                             } else {
                               return whileNoPlaceSelected();
                             }
@@ -224,6 +231,14 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            if (_selectedItem != null && _selectedItem!.contains('f'))
+              const Text(
+                "Place not available!",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.red,
+                ),
+              ),
             Visibility(
               visible: isReservationAccepted,
               child: Text(
@@ -235,7 +250,9 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
               width: 300,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: !isReservationAccepted
+                  backgroundColor: !isReservationAccepted &&
+                          !(_selectedItem != null &&
+                              _selectedItem!.contains('f'))
                       ? PageColor.ticket
                       : PageColor.doneCanceled,
                   shape: const RoundedRectangleBorder(
@@ -243,12 +260,17 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                   ),
                 ),
                 onPressed: () {
-                  if (!isReservationAccepted) {
+                  if (!isReservationAccepted &&
+                      !(_selectedItem != null &&
+                          _selectedItem!.contains('f'))) {
                     // save to SharedPreferences
                     // SaveAndDeleteReservation.
 
                     // shot to Api
-                    placeBooked(widget.event.id, _selectedItem!);
+                    if (_showFreePlaces)
+                      placeBooked(widget.event.id, _selectedItem!);
+                    else
+                      placeBooked(widget.event.id, null);
                     setState(() {
                       isReservationAccepted = true;
                     });
@@ -328,7 +350,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
       value: _selectedItem,
       onChanged: (value) {
         setState(() {
-          _selectedItem = value!;
+          if (value != null) _selectedItem = value!;
         });
       },
       items: response.data!.data!.places.map((item) {

@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/reservatedeventslist_screen.dart';
+import '../screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 
 class PageColor {
   static final eventSearch = Color.fromARGB(255, 182, 182, 255);
@@ -41,7 +42,8 @@ class IconsInApp {
 }
 
 class Buttonss {
-  static Widget QrButton(BuildContext context) {
+  static Widget QrButton(
+      BuildContext context, SaveAndDeleteReservation sharedPref) {
     return SizedBox(
       width: 65,
       child: MaterialButton(
@@ -49,7 +51,8 @@ class Buttonss {
           Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ReservatedListEventsWidget()))
+                      builder: (context) =>
+                          ReservatedListEventsWidget(sharedPref: sharedPref)))
               .then((value) {
             if (value != null) {
               Navigator.pop(context, value);
@@ -65,7 +68,8 @@ class Buttonss {
     );
   }
 
-  static Widget QrButtonInFirstPage(BuildContext context) {
+  static Widget QrButtonInFirstPage(
+      BuildContext context, SaveAndDeleteReservation sharedPref) {
     return SizedBox(
       width: 65,
       child: MaterialButton(
@@ -73,7 +77,8 @@ class Buttonss {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const ReservatedListEventsWidget()));
+                  builder: (context) =>
+                      ReservatedListEventsWidget(sharedPref: sharedPref)));
         },
         child: const Icon(
           Icons.qr_code_2_rounded,

@@ -7,18 +7,22 @@ import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
-import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
+import 'package:eventapp_mobile/screens/main_screen/eventsearch_single.dart';
 import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../additional_widgets/saveanddelete_reservation.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows events list
 ///////////////////////////////////////////////////////////////
 
 class EventSearchWidget extends StatefulWidget {
-  const EventSearchWidget({super.key, required this.title});
+  const EventSearchWidget(
+      {super.key, required this.title, required this.sharedPref});
   final String title;
+  final SaveAndDeleteReservation sharedPref;
   // final APIProvider apiProvider;
   @override
   State<EventSearchWidget> createState() => _EventSearchWidget();
@@ -92,7 +96,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           child: Logo(),
         ),
         actions: <Widget>[
-          Buttonss.QrButtonInFirstPage(context),
+          Buttonss.QrButtonInFirstPage(context, widget.sharedPref),
         ],
       ),
       drawer: const DrawerBurger(),
@@ -168,7 +172,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         body: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 40.0,
+                            horizontal: 30.0,
                             vertical: 10.0,
                           ),
                           child: Padding(
@@ -189,7 +193,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                           statusIndex["done"] == true) ||
                                       (el.status.name == "cancelled" &&
                                           statusIndex["cancelled"] == true))
-                                    SingleEvent(el),
+                                    SingleEvent(el,
+                                        sharedPref: widget.sharedPref),
                               // if ((id == -1 ||
                               //         id != -1 && eventsList.isEmpty) &&
                               //     response.data!.data!.isNotEmpty)
