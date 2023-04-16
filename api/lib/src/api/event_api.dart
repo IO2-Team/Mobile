@@ -8,11 +8,12 @@ import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:openapi/src/api_util.dart';
 import 'package:openapi/src/model/event.dart';
+import 'package:openapi/src/model/event_form.dart';
+import 'package:openapi/src/model/event_patch.dart';
+import 'package:openapi/src/model/event_with_places.dart';
 
 class EventApi {
-
   final Dio _dio;
 
   final Serializers _serializers;
@@ -20,19 +21,11 @@ class EventApi {
   const EventApi(this._dio, this._serializers);
 
   /// Add new event
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [sessionToken] - session Token
-  /// * [title] - title of Event
-  /// * [name] - title of Event
-  /// * [freePlace] - No of free places
-  /// * [startTime] - Unix time stamp of begin of event
-  /// * [endTime] - Unix time stamp of end of event
-  /// * [latitude] - Latitude of event
-  /// * [longitude] - Longitude of event
-  /// * [categories] - Array of id of categories that event belong to.
-  /// * [placeSchema] - seralized place schema
+  /// * [eventForm] - Add event
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -42,17 +35,9 @@ class EventApi {
   ///
   /// Returns a [Future] containing a [Response] with a [Event] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<Event>> addEvent({ 
+  Future<Response<Event>> addEvent({
     required String sessionToken,
-    required String title,
-    required String name,
-    required int freePlace,
-    required int startTime,
-    required int endTime,
-    required String latitude,
-    required String longitude,
-    required BuiltList<int> categories,
-    String? placeSchema,
+    EventForm? eventForm,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -71,25 +56,33 @@ class EventApi {
         'secure': <Map<String, String>>[],
         ...?extra,
       },
+      contentType: 'application/json',
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'title': encodeQueryParameter(_serializers, title, const FullType(String)),
-      r'name': encodeQueryParameter(_serializers, name, const FullType(String)),
-      r'freePlace': encodeQueryParameter(_serializers, freePlace, const FullType(int)),
-      if (placeSchema != null) r'placeSchema': encodeQueryParameter(_serializers, placeSchema, const FullType(String)),
-      r'startTime': encodeQueryParameter(_serializers, startTime, const FullType(int)),
-      r'endTime': encodeQueryParameter(_serializers, endTime, const FullType(int)),
-      r'latitude': encodeQueryParameter(_serializers, latitude, const FullType(String)),
-      r'longitude': encodeQueryParameter(_serializers, longitude, const FullType(String)),
-      r'categories': encodeCollectionQueryParameter<int>(_serializers, categories, const FullType(BuiltList, [FullType(int)]), format: ListFormat.multi,),
-    };
+    dynamic _bodyData;
+
+    try {
+      const _type = FullType(EventForm);
+      _bodyData = eventForm == null
+          ? null
+          : _serializers.serialize(eventForm, specifiedType: _type);
+    } catch (error, stackTrace) {
+      throw DioError(
+        requestOptions: _options.compose(
+          _dio.options,
+          _path,
+        ),
+        type: DioErrorType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
 
     final _response = await _dio.request<Object>(
       _path,
+      data: _bodyData,
       options: _options,
-      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -103,7 +96,6 @@ class EventApi {
         _response.data!,
         specifiedType: _responseType,
       ) as Event;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -127,7 +119,7 @@ class EventApi {
   }
 
   /// Cancel event
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [sessionToken] - session Token
@@ -141,7 +133,7 @@ class EventApi {
   ///
   /// Returns a [Future]
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<void>> cancelEvent({ 
+  Future<Response<void>> cancelEvent({
     required String sessionToken,
     required String id,
     CancelToken? cancelToken,
@@ -177,7 +169,7 @@ class EventApi {
   }
 
   /// Return list of all events in category
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [categoryId] - ID of category
@@ -190,7 +182,7 @@ class EventApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltList<Event>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltList<Event>>> getByCategory({ 
+  Future<Response<BuiltList<Event>>> getByCategory({
     required int categoryId,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -203,6 +195,7 @@ class EventApi {
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
+        r'categoryId': categoryId,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -212,14 +205,9 @@ class EventApi {
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'categoryId': encodeQueryParameter(_serializers, categoryId, const FullType(int)),
-    };
-
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
-      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
@@ -233,7 +221,6 @@ class EventApi {
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltList<Event>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -268,9 +255,9 @@ class EventApi {
   /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
   /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
   ///
-  /// Returns a [Future] containing a [Response] with a [Event] as data
+  /// Returns a [Future] containing a [Response] with a [EventWithPlaces] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<Event>> getEventById({ 
+  Future<Response<EventWithPlaces>> getEventById({
     required int id,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -300,15 +287,14 @@ class EventApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Event _responseData;
+    EventWithPlaces _responseData;
 
     try {
-      const _responseType = FullType(Event);
+      const _responseType = FullType(EventWithPlaces);
       _responseData = _serializers.deserialize(
         _response.data!,
         specifiedType: _responseType,
-      ) as Event;
-
+      ) as EventWithPlaces;
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -319,7 +305,7 @@ class EventApi {
       );
     }
 
-    return Response<Event>(
+    return Response<EventWithPlaces>(
       data: _responseData,
       headers: _response.headers,
       isRedirect: _response.isRedirect,
@@ -332,7 +318,7 @@ class EventApi {
   }
 
   /// Return list of all events
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -344,7 +330,7 @@ class EventApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltList<Event>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltList<Event>>> getEvents({ 
+  Future<Response<BuiltList<Event>>> getEvents({
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -381,7 +367,6 @@ class EventApi {
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltList<Event>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -405,7 +390,7 @@ class EventApi {
   }
 
   /// Return list of events made by organizer, according to session
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [sessionToken] - session Token
@@ -418,7 +403,7 @@ class EventApi {
   ///
   /// Returns a [Future] containing a [Response] with a [BuiltList<Event>] as data
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<BuiltList<Event>>> getMyEvents({ 
+  Future<Response<BuiltList<Event>>> getMyEvents({
     required String sessionToken,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -457,7 +442,6 @@ class EventApi {
         _response.data!,
         specifiedType: _responseType,
       ) as BuiltList<Event>;
-
     } catch (error, stackTrace) {
       throw DioError(
         requestOptions: _response.requestOptions,
@@ -481,12 +465,12 @@ class EventApi {
   }
 
   /// patch existing event
-  /// 
+  ///
   ///
   /// Parameters:
   /// * [sessionToken] - session Token
   /// * [id] - id of Event
-  /// * [event] - Update an existent user in the store
+  /// * [eventPatch] - Update an existent user in the store
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -496,10 +480,10 @@ class EventApi {
   ///
   /// Returns a [Future]
   /// Throws [DioError] if API call or serialization fails
-  Future<Response<void>> patchEvent({ 
+  Future<Response<void>> patchEvent({
     required String sessionToken,
     required String id,
-    Event? event,
+    EventPatch? eventPatch,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -525,12 +509,13 @@ class EventApi {
     dynamic _bodyData;
 
     try {
-      const _type = FullType(Event);
-      _bodyData = event == null ? null : _serializers.serialize(event, specifiedType: _type);
-
-    } catch(error, stackTrace) {
+      const _type = FullType(EventPatch);
+      _bodyData = eventPatch == null
+          ? null
+          : _serializers.serialize(eventPatch, specifiedType: _type);
+    } catch (error, stackTrace) {
       throw DioError(
-         requestOptions: _options.compose(
+        requestOptions: _options.compose(
           _dio.options,
           _path,
         ),
@@ -551,5 +536,4 @@ class EventApi {
 
     return _response;
   }
-
 }

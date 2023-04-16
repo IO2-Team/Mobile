@@ -8,14 +8,17 @@ part of 'category.dart';
 
 class _$Category extends Category {
   @override
-  final int? id;
+  final int id;
   @override
-  final String? name;
+  final String name;
 
   factory _$Category([void Function(CategoryBuilder)? updates]) =>
       (new CategoryBuilder()..update(updates))._build();
 
-  _$Category._({this.id, this.name}) : super._();
+  _$Category._({required this.id, required this.name}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(id, r'Category', 'id');
+    BuiltValueNullFieldError.checkNotNull(name, r'Category', 'name');
+  }
 
   @override
   Category rebuild(void Function(CategoryBuilder) updates) =>
@@ -88,7 +91,11 @@ class CategoryBuilder implements Builder<Category, CategoryBuilder> {
   Category build() => _build();
 
   _$Category _build() {
-    final _$result = _$v ?? new _$Category._(id: id, name: name);
+    final _$result = _$v ??
+        new _$Category._(
+            id: BuiltValueNullFieldError.checkNotNull(id, r'Category', 'id'),
+            name: BuiltValueNullFieldError.checkNotNull(
+                name, r'Category', 'name'));
     replace(_$result);
     return _$result;
   }

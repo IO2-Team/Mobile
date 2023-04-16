@@ -8,14 +8,17 @@ part of 'place.dart';
 
 class _$Place extends Place {
   @override
-  final int? id;
+  final int id;
   @override
-  final bool? free;
+  final bool free;
 
   factory _$Place([void Function(PlaceBuilder)? updates]) =>
       (new PlaceBuilder()..update(updates))._build();
 
-  _$Place._({this.id, this.free}) : super._();
+  _$Place._({required this.id, required this.free}) : super._() {
+    BuiltValueNullFieldError.checkNotNull(id, r'Place', 'id');
+    BuiltValueNullFieldError.checkNotNull(free, r'Place', 'free');
+  }
 
   @override
   Place rebuild(void Function(PlaceBuilder) updates) =>
@@ -88,7 +91,11 @@ class PlaceBuilder implements Builder<Place, PlaceBuilder> {
   Place build() => _build();
 
   _$Place _build() {
-    final _$result = _$v ?? new _$Place._(id: id, free: free);
+    final _$result = _$v ??
+        new _$Place._(
+            id: BuiltValueNullFieldError.checkNotNull(id, r'Place', 'id'),
+            free:
+                BuiltValueNullFieldError.checkNotNull(free, r'Place', 'free'));
     replace(_$result);
     return _$result;
   }

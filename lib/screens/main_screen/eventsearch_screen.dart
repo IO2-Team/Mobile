@@ -2,23 +2,28 @@
 
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
+import 'package:eventapp_mobile/screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
-import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
+import 'package:eventapp_mobile/screens/main_screen/eventsearch_single.dart';
 import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../additional_widgets/saveanddelete_reservation.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows events list
 ///////////////////////////////////////////////////////////////
 
 class EventSearchWidget extends StatefulWidget {
-  const EventSearchWidget({super.key, required this.title});
+  const EventSearchWidget(
+      {super.key, required this.title, required this.sharedPref});
   final String title;
+  final SaveAndDeleteReservation sharedPref;
   // final APIProvider apiProvider;
   @override
   State<EventSearchWidget> createState() => _EventSearchWidget();
@@ -91,15 +96,26 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         title: const Center(
           child: Logo(),
         ),
-        actions: const <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Icon(
-              Icons.qr_code_2_rounded,
-              size: 37,
-              color: Colors.white,
+        actions: <Widget>[
+          SizedBox(
+            width: 65,
+            child: MaterialButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReservatedListEventsWidget(
+                            sharedPref: widget.sharedPref))).then((value) {
+                  refresh();
+                });
+              },
+              child: const Icon(
+                Icons.qr_code_2_rounded,
+                size: 37,
+                color: Colors.white,
+              ),
             ),
-          ),
+          )
         ],
       ),
       drawer: const DrawerBurger(),
@@ -133,8 +149,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
 
                   // sort by date
                   if (eventsList.isNotEmpty)
-                    eventsList.sort(
-                        ((a, b) => (a.startTime!).compareTo(b.startTime!)));
+                    eventsList
+                        .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
                 }
               } else if (response.data!.data!.isNotEmpty) {
                 eventsList.clear();
@@ -143,13 +159,14 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 // sort by date
                 if (eventsList.isNotEmpty)
                   eventsList
-                      .sort(((a, b) => (a.startTime!).compareTo(b.startTime!)));
+                      .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
               }
               return Stack(
                 children: <Widget>[
                   SizedBox(
                     height: double.infinity,
                     child: RefreshIndicator(
+                      key: const Key("mainScreenIndicator"),
                       color: PageColor.appBar,
                       onRefresh: refresh,
                       child: SlidingUpPanel(
@@ -175,7 +192,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         body: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 40.0,
+                            horizontal: 30.0,
                             vertical: 10.0,
                           ),
                           child: Padding(
@@ -187,34 +204,17 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                           statusIndex["pending"] == false &&
                                           statusIndex["done"] == false &&
                                           statusIndex["cancelled"] == false &&
-                                          el.status!.name == "inFuture") ||
-                                      (el.status!.name == "inFuture" &&
+                                          el.status.name == "inFuture") ||
+                                      (el.status.name == "inFuture" &&
                                           statusIndex["inFuture"] == true) ||
-                                      (el.status!.name == "pending" &&
+                                      (el.status.name == "pending" &&
                                           statusIndex["pending"] == true) ||
-                                      (el.status!.name == "done" &&
+                                      (el.status.name == "done" &&
                                           statusIndex["done"] == true) ||
-                                      (el.status!.name == "cancelled" &&
+                                      (el.status.name == "cancelled" &&
                                           statusIndex["cancelled"] == true))
-                                    SingleEvent(el),
-                              // if ((id == -1 ||
-                              //         id != -1 && eventsList.isEmpty) &&
-                              //     response.data!.data!.isNotEmpty)
-                              //   for (var el in response.data!.data!)
-                              //     if ((statusIndex["inFuture"] == false &&
-                              //             statusIndex["pending"] == false &&
-                              //             statusIndex["done"] == false &&
-                              //             statusIndex["cancelled"] == false &&
-                              //             el.status!.name == "inFuture") ||
-                              //         (el.status!.name == "inFuture" &&
-                              //             statusIndex["inFuture"] == true) ||
-                              //         (el.status!.name == "pending" &&
-                              //             statusIndex["pending"] == true) ||
-                              //         (el.status!.name == "done" &&
-                              //             statusIndex["done"] == true) ||
-                              //         (el.status!.name == "cancelled" &&
-                              //             statusIndex["cancelled"] == true))
-                              //       SingleEvent(el),
+                                    SingleEvent(el,
+                                        sharedPref: widget.sharedPref),
                             ]),
                           ),
                         ),
@@ -307,7 +307,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                             topRight: Radius.circular(20)),
                       )),
                   child: Container(
-                    padding: EdgeInsets.only(left: 45, right: 45),
+                    padding: const EdgeInsets.only(left: 45, right: 45),
                     child: const Text(
                       "SortBy",
                       style: TextStyle(color: Colors.white, fontSize: 16),
@@ -349,9 +349,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
               color: PageColor.divider,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
                       "Categories",
                       style: TextStyle(color: Colors.white, fontSize: 17),
                     ),
@@ -369,9 +369,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                               categoryIndex.clear();
                               eventsListsbyCategories.clear();
                               for (var el in response.data!.data!) {
-                                categoryIndex.addAll({el.id!: false});
+                                categoryIndex.addAll({el.id: false});
                                 eventsListsbyCategories.addAll({
-                                  el.id!: new List.empty(growable: true)
+                                  el.id: new List.empty(growable: true)
                                 }); // new empty lists added
                               } // only when new category, map is updated
                             }
@@ -383,10 +383,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                             child: showCategories(response),
                           );
                         } else {
-                          return Center(
-                              child: CircularProgressIndicator(
-                            color: PageColor.appBar,
-                          ));
+                          return const Center();
                         }
                       }),
                 ],
@@ -479,32 +476,36 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   Widget categoryButton(
       AsyncSnapshot<Response<BuiltList<Category>>> response, int i) {
-    return MaterialButton(
-        onPressed: () {
-          if (response.data!.data![i].id != null) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2.0, right: 2),
+      child: MaterialButton(
+          padding: const EdgeInsets.only(left: 4.0, right: 4),
+          elevation: 0,
+          onPressed: () {
             if (categoryIndex[response.data!.data![i].id] != true) {
               setState(() {
-                id = response.data!.data![i].id!;
+                id = response.data!.data![i].id;
                 categoryIndex[id] = true;
               });
             } else {
               setState(() {
                 id = -2;
-                eventsListsbyCategories[response.data!.data![i].id!]!.clear();
-                categoryIndex[response.data!.data![i].id!] = false;
+                eventsListsbyCategories[response.data!.data![i].id]!.clear();
+                categoryIndex[response.data!.data![i].id] = false;
               });
             }
-          }
-        },
-        child: Text(
-          response.data!.data![i].name!,
-          style: TextStyle(
-            fontSize: 18.0,
-            color: categoryIndex[response.data!.data![i].id!] == true
-                ? PageColor.logo1
-                : PageColor.category,
-          ),
-        ));
+          },
+          color: PageColor.eventSearch,
+          child: Text(
+            response.data!.data![i].name,
+            style: TextStyle(
+              fontSize: 18.0,
+              color: categoryIndex[response.data!.data![i].id] == true
+                  ? PageColor.logo1
+                  : PageColor.appBar,
+            ),
+          )),
+    );
   }
 
   ///
@@ -515,27 +516,33 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Row(
       children: [
         for (var el in statusArray)
-          MaterialButton(
-              onPressed: () {
-                if (statusIndex[el] != true) {
-                  setState(() {
-                    statusIndex[el] = true;
-                  });
-                } else {
-                  setState(() {
-                    statusIndex[el] = false;
-                  });
-                }
-              },
-              child: Text(
-                el,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: statusIndex[el] == true
-                      ? PageColor.logo1
-                      : PageColor.category,
-                ),
-              )),
+          Padding(
+            padding: const EdgeInsets.only(left: 2.0, right: 2),
+            child: MaterialButton(
+                padding: const EdgeInsets.only(left: 2.0, right: 2),
+                elevation: 0,
+                color: PageColor.eventSearch,
+                onPressed: () {
+                  if (statusIndex[el] != true) {
+                    setState(() {
+                      statusIndex[el] = true;
+                    });
+                  } else {
+                    setState(() {
+                      statusIndex[el] = false;
+                    });
+                  }
+                },
+                child: Text(
+                  el,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: statusIndex[el] == true
+                        ? PageColor.logo1
+                        : PageColor.appBar,
+                  ),
+                )),
+          ),
       ],
     );
   }

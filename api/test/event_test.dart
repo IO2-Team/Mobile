@@ -42,11 +42,6 @@ void main() {
       // TODO
     });
 
-    // String placeSchema
-    test('to test the property `placeSchema`', () async {
-      // TODO
-    });
-
     // EventStatus status
     test('to test the property `status`', () async {
       // TODO
@@ -67,8 +62,8 @@ void main() {
       // TODO
     });
 
-    // BuiltList<Place> places
-    test('to test the property `places`', () async {
+    // String placeSchema
+    test('to test the property `placeSchema`', () async {
       // TODO
     });
 

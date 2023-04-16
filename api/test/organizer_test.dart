@@ -22,16 +22,6 @@ void main() {
       // TODO
     });
 
-    // String password
-    test('to test the property `password`', () async {
-      // TODO
-    });
-
-    // BuiltList<Event> events
-    test('to test the property `events`', () async {
-      // TODO
-    });
-
     // User Status
     // String status
     test('to test the property `status`', () async {

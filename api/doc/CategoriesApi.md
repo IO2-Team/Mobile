@@ -5,7 +5,7 @@
 import 'package:openapi/api.dart';
 ```
 
-All URIs are relative to *https://pw.edu.pl/api/v3*
+All URIs are relative to *https://yourbackenhosting.edu.pl*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------

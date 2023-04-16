@@ -1,6 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:eventapp_mobile/screens/reservation_screen.dart';
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
+import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -16,7 +17,10 @@ import 'dart:convert';
 
 class EventDetails extends StatefulWidget {
   final Event event;
-  const EventDetails(this.event, {Key? key}) : super(key: key);
+  final SaveAndDeleteReservation sharedPref;
+
+  const EventDetails(this.event, {Key? key, required this.sharedPref})
+      : super(key: key);
   @override
   State<EventDetails> createState() => _EventDetails();
 }
@@ -26,17 +30,20 @@ class _EventDetails extends State<EventDetails> {
   final Color textscol2 = PageColor.textsLight;
   @override
   Widget build(BuildContext context) {
-    final DateTime dateStart = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.startTime != null ? widget.event.startTime! * 1000 : 0);
-    final DateTime dateFinish = DateTime.fromMillisecondsSinceEpoch(
-        widget.event.endTime != null ? widget.event.endTime! * 1000 : 0);
+    final DateTime dateStart =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.startTime * 1000);
+    final DateTime dateFinish =
+        DateTime.fromMillisecondsSinceEpoch(widget.event.endTime * 1000);
     return Scaffold(
       backgroundColor: PageColor.eventSearch,
       appBar: AppBar(
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
         title: const Center(
-          child: Logo(),
+          child: Padding(
+            padding: EdgeInsets.only(right: 38.0),
+            child: Logo(),
+          ),
         ),
         leading: SizedBox(
           width: 60,
@@ -49,24 +56,21 @@ class _EventDetails extends State<EventDetails> {
                 color: Colors.white,
               )),
         ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: const Icon(
-              Icons.qr_code_2_rounded,
-              size: 37,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MakeReservationWidget(widget.event)));
+          if (widget.event.status.name == "inFuture" &&
+              widget.event.freePlace != 0 &&
+              !widget.sharedPref.getAllKeys().contains("${widget.event.id}"))
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MakeReservationWidget(widget.event,
+                        sharedPref: widget.sharedPref))).then((value) {
+              if (value != null) {
+                Navigator.pop(context, value);
+              }
+            });
         },
         label: const Text(
           'Reservate',
@@ -76,38 +80,34 @@ class _EventDetails extends State<EventDetails> {
           Icons.book_online,
           size: 30,
         ),
-        backgroundColor: PageColor.ticket,
+        backgroundColor: widget.event.status.name == "inFuture" &&
+                widget.event.freePlace != 0 &&
+                !widget.sharedPref.getAllKeys().contains("${widget.event.id}")
+            ? PageColor.ticket
+            : PageColor.doneCanceled,
         elevation: 10,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // bottomNavigationBar: BottomAppBar(
-      //     child: Container(height: 50 ,color: PageColor.appBar),
-      //     shape: CircularNotchedRectangle(),
-      //     //notchMargin: 4.0
-      // ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            if (widget.event.title != null) viewTitle(widget.event.title!),
+            viewTitle(widget.event.title),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if (widget.event.startTime != null)
-                  columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
-                      IconsInApp.clockIcon, "Start date"),
+                columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
+                    IconsInApp.clockIcon, "Start date"),
                 freePlace(widget.event.freePlace),
-                if (widget.event.endTime != null)
-                  columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
-                      IconsInApp.clockIcon, "End date"),
+                columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
+                    IconsInApp.clockIcon, "End date"),
               ],
             ),
-            if (widget.event.longitude != null && widget.event.latitude != null)
-              columnWithInfoLocation(IconsInApp.placeIcon,
-                  getAddress(widget.event.latitude!, widget.event.longitude!)),
-            if (widget.event.name != null) description(widget.event.name!),
+            columnWithInfoLocation(IconsInApp.placeIcon,
+                getAddress(widget.event.latitude, widget.event.longitude)),
+            description(widget.event.name),
           ],
         ),
       ),
