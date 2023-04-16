@@ -1,4 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
+
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
+import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
+import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -12,7 +16,9 @@ import 'dart:convert';
 ///////////////////////////////////////////////////////////////
 class SingleEvent extends StatefulWidget {
   final Event event;
-  const SingleEvent(this.event, {super.key});
+  final SaveAndDeleteReservation sharedPref;
+
+  const SingleEvent(this.event, {super.key, required this.sharedPref});
   @override
   State<SingleEvent> createState() => _SingleEvent();
 }
@@ -97,6 +103,7 @@ class _SingleEvent extends State<SingleEvent> {
                       height: 12.0,
                       thickness: 1.0,
                     ),
+                    showCountPlaces(),
                   ],
                 ),
               ),
@@ -112,7 +119,11 @@ class _SingleEvent extends State<SingleEvent> {
                   const SizedBox(
                     width: 15,
                   ),
-                  if (widget.event.status.name == "inFuture") bookPlaceButton(),
+                  if (widget.event.status.name == "inFuture" &&
+                      !widget.sharedPref
+                          .getAllKeys()
+                          .contains("${widget.event.id}"))
+                    bookPlaceButton(),
                 ],
               ),
             ],
@@ -286,6 +297,44 @@ class _SingleEvent extends State<SingleEvent> {
   }
 
   ///
+  /// widget shows how many places are free
+  ///
+  Widget showCountPlaces() {
+    return Padding(
+      padding:
+          const EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 10.0),
+      child: Row(
+        children: [
+          Icon(
+            IconsInApp.freePlacesIcon2,
+            color: textsCol2,
+            size: 16.0,
+          ),
+          const SizedBox(
+            width: 2,
+          ),
+          if (widget.event.freePlace != 0)
+            Text(
+              "${widget.event.freePlace} places left",
+              style: TextStyle(
+                color: textsCol,
+                fontSize: 15.5,
+              ),
+            )
+          else
+            Text(
+              "No places limits",
+              style: TextStyle(
+                color: textsCol,
+                fontSize: 15.5,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  ///
   /// widget for button to view details about event
   ///
   Widget viewDetailsButton() {
@@ -302,9 +351,21 @@ class _SingleEvent extends State<SingleEvent> {
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetails(
+                            widget.event,
+                            sharedPref: widget.sharedPref,
+                          ))).then((value) {
+                if (value != null) {
+                  setState(() {});
+                }
+              });
+            },
             child: const Text(
-              'QR',
+              'Details',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,
@@ -338,9 +399,18 @@ class _SingleEvent extends State<SingleEvent> {
                 borderRadius: BorderRadius.all(Radius.circular(80)),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              if (widget.event.status.name == "inFuture" &&
+                  widget.event.freePlace != 0)
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MakeReservationWidget(
+                            widget.event,
+                            sharedPref: widget.sharedPref)));
+            },
             child: const Text(
-              'Delete',
+              'Reservate',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,

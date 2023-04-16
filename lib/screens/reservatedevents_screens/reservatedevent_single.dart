@@ -1,7 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
-
-import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
-import 'package:eventapp_mobile/screens/reservation_screen.dart';
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
+import 'package:eventapp_mobile/screens/withqrcode_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -13,17 +12,21 @@ import 'dart:convert';
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
 ///////////////////////////////////////////////////////////////
-class SingleEvent extends StatefulWidget {
-  final Event event;
-  const SingleEvent(this.event, {super.key});
+class SingleEventReservated extends StatefulWidget {
+  final EventWithPlaces event;
+  final JsonEvent jsonEvet;
+  final SaveAndDeleteReservation sharedPref;
+
+  SingleEventReservated(this.event, this.jsonEvet, this.sharedPref,
+      {super.key});
   @override
-  State<SingleEvent> createState() => _SingleEvent();
+  State<SingleEventReservated> createState() => _SingleEventReservated();
 }
 
-class _SingleEvent extends State<SingleEvent> {
+class _SingleEventReservated extends State<SingleEventReservated> {
   final Color textsCol = PageColor.texts;
   final Color textsCol2 = PageColor.textsLight;
-
+  bool canceled = false;
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
@@ -31,99 +34,101 @@ class _SingleEvent extends State<SingleEvent> {
         DateTime.fromMillisecondsSinceEpoch(widget.event.startTime * 1000);
     final DateTime dateFinish =
         DateTime.fromMillisecondsSinceEpoch(widget.event.endTime * 1000);
-
-    return Column(
-      children: [
-        const SizedBox(height: 10.0),
-        Container(
-          padding: const EdgeInsets.all(12.0),
-          decoration: BoxDecoration(
-            color: widget.event.status.name == "inFuture"
-                ? PageColor.singleEventActive
-                : PageColor.singleEvent,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(
-              color: PageColor.eventSearch,
-              width: 0.1,
+    if (canceled == false)
+      return Column(
+        children: [
+          const SizedBox(height: 10.0),
+          Container(
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color: widget.event.status.name == "inFuture"
+                  ? PageColor.singleEventActive
+                  : PageColor.singleEvent,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              border: Border.all(
+                color: PageColor.eventSearch,
+                width: 0.1,
+              ),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: eventTitle(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 7, right: 7),
-                      child: Divider(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: eventTitle(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 7, right: 7),
+                        child: Divider(
+                          color: PageColor.divider,
+                          height: 12.0,
+                          thickness: 1.0,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            margin: const EdgeInsets.only(
+                                bottom: 0.0, right: 0.0, left: 0.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                showDate(dateStart, IconsInApp.dateIcon0),
+                                showTime(dateStart),
+                              ],
+                            ),
+                          ),
+                          dashBetweenData(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              showDate(dateFinish, IconsInApp.dateIcon1),
+                              showTime(dateFinish),
+                            ],
+                          ),
+                        ],
+                      ),
+                      showPlaceCordinates(),
+                      Divider(
                         color: PageColor.divider,
                         height: 12.0,
                         thickness: 1.0,
                       ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                  height: 12.0,
+                  thickness: 1.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    viewDetailsButton(),
+                    const SizedBox(
+                      width: 15,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.only(
-                              bottom: 0.0, right: 0.0, left: 0.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              showDate(dateStart, IconsInApp.dateIcon0),
-                              showTime(dateStart),
-                            ],
-                          ),
-                        ),
-                        dashBetweenData(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            showDate(dateFinish, IconsInApp.dateIcon1),
-                            showTime(dateFinish),
-                          ],
-                        ),
-                      ],
-                    ),
-                    showPlaceCordinates(),
-                    Divider(
-                      color: PageColor.divider,
-                      height: 12.0,
-                      thickness: 1.0,
-                    ),
-                    showCountPlaces(),
                   ],
                 ),
-              ),
-              const Divider(
-                color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                height: 12.0,
-                thickness: 1.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  viewDetailsButton(),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  if (widget.event.status.name == "inFuture") bookPlaceButton(),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    else
+      return SizedBox(
+        height: 0,
+      );
   }
 
 /////////////////////////////
@@ -290,44 +295,6 @@ class _SingleEvent extends State<SingleEvent> {
   }
 
   ///
-  /// widget shows how many places are free
-  ///
-  Widget showCountPlaces() {
-    return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 5.0, top: 5.0, left: 10.0, right: 10.0),
-      child: Row(
-        children: [
-          Icon(
-            IconsInApp.freePlacesIcon2,
-            color: textsCol2,
-            size: 16.0,
-          ),
-          const SizedBox(
-            width: 2,
-          ),
-          if (widget.event.freePlace != 0)
-            Text(
-              "${widget.event.freePlace} places left",
-              style: TextStyle(
-                color: textsCol,
-                fontSize: 15.5,
-              ),
-            )
-          else
-            Text(
-              "No places limits",
-              style: TextStyle(
-                color: textsCol,
-                fontSize: 15.5,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  ///
   /// widget for button to view details about event
   ///
   Widget viewDetailsButton() {
@@ -348,60 +315,34 @@ class _SingleEvent extends State<SingleEvent> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => EventDetails(widget.event)));
+                      builder: (context) => InspectionScreen(
+                          widget.jsonEvet, widget.sharedPref))).then((value) {
+                if (value != null && value == true) {
+                  setState(() {
+                    canceled = true;
+                    //troche glupio tak? idk
+                  });
+                }
+              });
             },
-            child: const Text(
-              'Details',
-              style: TextStyle(
-                letterSpacing: 1.5,
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MyFont1',
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  ///
-  /// widget for button to book place on event
-  ///
-  Widget bookPlaceButton() {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 0.0, right: 10.0, left: 0.0),
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: 300,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: widget.event.status.name == "inFuture" &&
-                      widget.event.freePlace != 0
-                  ? PageColor.ticket
-                  : PageColor.doneCanceled,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(80)),
-              ),
-            ),
-            onPressed: () {
-              if (widget.event.status.name == "inFuture" &&
-                  widget.event.freePlace != 0)
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            MakeReservationWidget(widget.event)));
-            },
-            child: const Text(
-              'Reserve',
-              style: TextStyle(
-                letterSpacing: 1.5,
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MyFont1',
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.qr_code_2,
+                  size: 30,
+                ),
+                const Text(
+                  ' Inspection',
+                  style: TextStyle(
+                    letterSpacing: 1.5,
+                    fontSize: 19.0,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'MyFont1',
+                  ),
+                ),
+              ],
             ),
           ),
         ),

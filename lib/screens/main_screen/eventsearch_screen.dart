@@ -2,23 +2,28 @@
 
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
+import 'package:eventapp_mobile/screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
-import 'package:eventapp_mobile/additional_widgets/eventsearch_single.dart';
+import 'package:eventapp_mobile/screens/main_screen/eventsearch_single.dart';
 import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../additional_widgets/saveanddelete_reservation.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows events list
 ///////////////////////////////////////////////////////////////
 
 class EventSearchWidget extends StatefulWidget {
-  const EventSearchWidget({super.key, required this.title});
+  const EventSearchWidget(
+      {super.key, required this.title, required this.sharedPref});
   final String title;
+  final SaveAndDeleteReservation sharedPref;
   // final APIProvider apiProvider;
   @override
   State<EventSearchWidget> createState() => _EventSearchWidget();
@@ -92,7 +97,25 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           child: Logo(),
         ),
         actions: <Widget>[
-          Buttonss.QrButtonInFirstPage(context),
+          SizedBox(
+            width: 65,
+            child: MaterialButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReservatedListEventsWidget(
+                            sharedPref: widget.sharedPref))).then((value) {
+                  refresh();
+                });
+              },
+              child: const Icon(
+                Icons.qr_code_2_rounded,
+                size: 37,
+                color: Colors.white,
+              ),
+            ),
+          )
         ],
       ),
       drawer: const DrawerBurger(),
@@ -143,6 +166,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   SizedBox(
                     height: double.infinity,
                     child: RefreshIndicator(
+                      key: const Key("mainScreenIndicator"),
                       color: PageColor.appBar,
                       onRefresh: refresh,
                       child: SlidingUpPanel(
@@ -168,7 +192,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                         body: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 40.0,
+                            horizontal: 30.0,
                             vertical: 10.0,
                           ),
                           child: Padding(
@@ -189,25 +213,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                           statusIndex["done"] == true) ||
                                       (el.status.name == "cancelled" &&
                                           statusIndex["cancelled"] == true))
-                                    SingleEvent(el),
-                              // if ((id == -1 ||
-                              //         id != -1 && eventsList.isEmpty) &&
-                              //     response.data!.data!.isNotEmpty)
-                              //   for (var el in response.data!.data!)
-                              //     if ((statusIndex["inFuture"] == false &&
-                              //             statusIndex["pending"] == false &&
-                              //             statusIndex["done"] == false &&
-                              //             statusIndex["cancelled"] == false &&
-                              //             el.status!.name == "inFuture") ||
-                              //         (el.status!.name == "inFuture" &&
-                              //             statusIndex["inFuture"] == true) ||
-                              //         (el.status!.name == "pending" &&
-                              //             statusIndex["pending"] == true) ||
-                              //         (el.status!.name == "done" &&
-                              //             statusIndex["done"] == true) ||
-                              //         (el.status!.name == "cancelled" &&
-                              //             statusIndex["cancelled"] == true))
-                              //       SingleEvent(el),
+                                    SingleEvent(el,
+                                        sharedPref: widget.sharedPref),
                             ]),
                           ),
                         ),
@@ -472,7 +479,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Padding(
       padding: const EdgeInsets.only(left: 2.0, right: 2),
       child: MaterialButton(
-          padding: const EdgeInsets.only(left: 2.0, right: 2),
+          padding: const EdgeInsets.only(left: 4.0, right: 4),
           elevation: 0,
           onPressed: () {
             if (categoryIndex[response.data!.data![i].id] != true) {

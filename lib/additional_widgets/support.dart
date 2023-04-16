@@ -21,33 +21,50 @@ class SupportScreen extends StatelessWidget {
               margin: const EdgeInsets.only(top: 30),
               child: const Text(
                 "Contact with support",
+                style: TextStyle(fontSize: 20, color: Colors.white),
               ),
             ),
             Expanded(
                 child: Column(
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.only(right: 20.0, left: 20, top: 30.0),
-                  child: TextField(
-                    controller: textarea,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(1000),
-                    ],
-                    keyboardType: TextInputType.multiline,
-                    minLines: 3,
-                    maxLines: 10,
-                    decoration: InputDecoration(
-                        hintText: "What's happen?",
-                        border: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(width: 1, color: Colors.black)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(width: 1, color: PageColor.appBar))),
+                  padding: const EdgeInsets.only(
+                      right: 20.0, left: 20, top: 30.0, bottom: 3),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color:
+                          Colors.white, // Set the desired background color here
+                      borderRadius: BorderRadius.circular(
+                          20.0), // Set the desired border radius here
+                    ),
+                    child: TextField(
+                      cursorColor: PageColor.logo1,
+                      controller: textarea,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(1000),
+                      ],
+                      keyboardType: TextInputType.multiline,
+                      minLines: 3,
+                      maxLines: 10,
+                      decoration: InputDecoration(
+                          hintText: " What's happen?",
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(
+                                  width: 1, color: PageColor.singleEvent)),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20.0)),
+                              borderSide: BorderSide(
+                                  width: 1, color: PageColor.singleEvent))),
+                    ),
                   ),
                 ),
-                const Text("Limit 1000 characters!"),
+                const Text(
+                  "Limit 1000 characters!",
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SizedBox(

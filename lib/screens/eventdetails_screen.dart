@@ -1,7 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
-import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
-import 'package:eventapp_mobile/screens/reservation_screen.dart';
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
+import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -17,7 +17,10 @@ import 'dart:convert';
 
 class EventDetails extends StatefulWidget {
   final Event event;
-  const EventDetails(this.event, {Key? key}) : super(key: key);
+  final SaveAndDeleteReservation sharedPref;
+
+  const EventDetails(this.event, {Key? key, required this.sharedPref})
+      : super(key: key);
   @override
   State<EventDetails> createState() => _EventDetails();
 }
@@ -37,7 +40,10 @@ class _EventDetails extends State<EventDetails> {
         backgroundColor: PageColor.appBar,
         automaticallyImplyLeading: false,
         title: const Center(
-          child: Logo(),
+          child: Padding(
+            padding: EdgeInsets.only(right: 38.0),
+            child: Logo(),
+          ),
         ),
         leading: SizedBox(
           width: 60,
@@ -50,19 +56,17 @@ class _EventDetails extends State<EventDetails> {
                 color: Colors.white,
               )),
         ),
-        actions: <Widget>[
-          Buttonss.QrButton(context),
-        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           if (widget.event.status.name == "inFuture" &&
-              widget.event.freePlace != 0)
+              widget.event.freePlace != 0 &&
+              !widget.sharedPref.getAllKeys().contains("${widget.event.id}"))
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        MakeReservationWidget(widget.event))).then((value) {
+                    builder: (context) => MakeReservationWidget(widget.event,
+                        sharedPref: widget.sharedPref))).then((value) {
               if (value != null) {
                 Navigator.pop(context, value);
               }
@@ -77,7 +81,8 @@ class _EventDetails extends State<EventDetails> {
           size: 30,
         ),
         backgroundColor: widget.event.status.name == "inFuture" &&
-                widget.event.freePlace != 0
+                widget.event.freePlace != 0 &&
+                !widget.sharedPref.getAllKeys().contains("${widget.event.id}")
             ? PageColor.ticket
             : PageColor.doneCanceled,
         elevation: 10,
