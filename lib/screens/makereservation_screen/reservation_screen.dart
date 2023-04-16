@@ -1,5 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
@@ -7,7 +9,7 @@ import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:provider/provider.dart';
-
+import 'dart:convert';
 import '../../additional_widgets/saveanddelete_reservation.dart';
 import '../../api/api_provider.dart';
 
@@ -29,7 +31,6 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
   bool isReservationAccepted = false;
   bool _showFreePlaces = false;
   String? _selectedItem;
-
   Future<Response<EventWithPlaces>> freePlaces() async {
     return context
         .read<APIProvider>()
@@ -118,48 +119,32 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
               height: 12.0,
               thickness: 1.0,
             ),
-            Container(
-              width: 200, // Set the width of the container
-              height: 200, // Set the height of the container
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    10), // Set the border radius of the container
-                image: const DecorationImage(
-                  image: AssetImage(
-                      "images/place_schema.png"), // Use NetworkImage for loading image from URL
-                  fit: BoxFit
-                      .cover, // Set the fit property to cover to fill the container with the image
-                ),
-              ),
-            ),
+            showSchema(),
             Container(
               width: 400,
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Checkbox(
-                          value: _showFreePlaces,
-                          checkColor: PageColor.logo1,
-                          activeColor: PageColor.appBar,
-                          onChanged: (value) {
-                            setState(() {
-                              _showFreePlaces = value!;
-                            });
-                          },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _showFreePlaces,
+                        checkColor: PageColor.logo1,
+                        activeColor: PageColor.appBar,
+                        onChanged: (value) {
+                          setState(() {
+                            _showFreePlaces = value!;
+                          });
+                        },
+                      ),
+                      const Text(
+                        'Choose place',
+                        style: TextStyle(
+                          fontSize: 22.0,
+                          color: Colors.white,
                         ),
-                        const Text(
-                          'Choose place',
-                          style: TextStyle(
-                            fontSize: 22.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const Padding(
                     padding: EdgeInsets.only(bottom: 8.0),
@@ -269,7 +254,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                       // SaveAndDeleteReservation.
 
                       // shot to Api
-                      if (_showFreePlaces)
+                      if (_showFreePlaces && _selectedItem != null)
                         placeBooked(widget.event.id, _selectedItem!);
                       else
                         placeBooked(widget.event.id, null);
@@ -376,5 +361,34 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         }
       }).toList(),
     );
+  }
+
+  Widget showSchema() {
+    try {
+      if (widget.event.placeSchema != null && widget.event.placeSchema != "") {
+        Widget w = Container(
+          // Set the height of the container
+          child: Image.memory(base64.decode(widget.event.placeSchema!)),
+        );
+        return w;
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      return Container(
+        width: 200, // Set the width of the container
+        height: 200, // Set the height of the container
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+              10), // Set the border radius of the container
+          image: const DecorationImage(
+            image: AssetImage(
+                "images/place_schema.png"), // Use NetworkImage for loading image from URL
+            fit: BoxFit
+                .cover, // Set the fit property to cover to fill the container with the image
+          ),
+        ),
+      );
+    }
   }
 }

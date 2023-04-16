@@ -350,42 +350,6 @@ class _SingleEventReservated extends State<SingleEventReservated> {
     );
   }
 
-  ///
-  /// widget for button to book place on event
-  ///
-  Widget bookPlaceButton() {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 0.0, right: 10.0, left: 0.0),
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: 300,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: widget.event.status.name == "inFuture" &&
-                      widget.event.freePlace != 0
-                  ? Colors.red
-                  : PageColor.doneCanceled,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(80)),
-              ),
-            ),
-            onPressed: () {},
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                letterSpacing: 1.5,
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MyFont1',
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<String> getAddress(String latitude, String longitude) async {
     try {
       http.Response res = await http.get(Uri.parse(

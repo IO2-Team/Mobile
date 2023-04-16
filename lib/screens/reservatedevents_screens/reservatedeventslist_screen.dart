@@ -87,7 +87,9 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
                         builder: (context, response) {
                           if (response.hasData &&
                               response.data != null &&
-                              response.data!.data != null) {
+                              response.data!.data != null &&
+                              response.data!.data!.status ==
+                                  EventStatus.inFuture) {
                             return SingleEventReservated(
                                 response.data!.data!,
                                 widget.sharedPref.getRes(widget.sharedPref
@@ -95,7 +97,7 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
                                     .elementAt(i))!, // if never NULL (hym)
                                 widget.sharedPref);
                           } else {
-                            return SizedBox();
+                            return const SizedBox();
                           }
                         })
                 // Text(

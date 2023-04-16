@@ -166,6 +166,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   SizedBox(
                     height: double.infinity,
                     child: RefreshIndicator(
+                      key: const Key("mainScreenIndicator"),
                       color: PageColor.appBar,
                       onRefresh: refresh,
                       child: SlidingUpPanel(
@@ -214,24 +215,6 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                           statusIndex["cancelled"] == true))
                                     SingleEvent(el,
                                         sharedPref: widget.sharedPref),
-                              // if ((id == -1 ||
-                              //         id != -1 && eventsList.isEmpty) &&
-                              //     response.data!.data!.isNotEmpty)
-                              //   for (var el in response.data!.data!)
-                              //     if ((statusIndex["inFuture"] == false &&
-                              //             statusIndex["pending"] == false &&
-                              //             statusIndex["done"] == false &&
-                              //             statusIndex["cancelled"] == false &&
-                              //             el.status!.name == "inFuture") ||
-                              //         (el.status!.name == "inFuture" &&
-                              //             statusIndex["inFuture"] == true) ||
-                              //         (el.status!.name == "pending" &&
-                              //             statusIndex["pending"] == true) ||
-                              //         (el.status!.name == "done" &&
-                              //             statusIndex["done"] == true) ||
-                              //         (el.status!.name == "cancelled" &&
-                              //             statusIndex["cancelled"] == true))
-                              //       SingleEvent(el),
                             ]),
                           ),
                         ),
@@ -496,7 +479,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Padding(
       padding: const EdgeInsets.only(left: 2.0, right: 2),
       child: MaterialButton(
-          padding: const EdgeInsets.only(left: 2.0, right: 2),
+          padding: const EdgeInsets.only(left: 4.0, right: 4),
           elevation: 0,
           onPressed: () {
             if (categoryIndex[response.data!.data![i].id] != true) {
