@@ -35,28 +35,37 @@ class _EventDetails extends State<EventDetails> {
     final DateTime dateFinish =
         DateTime.fromMillisecondsSinceEpoch(widget.event.endTime * 1000);
     return Scaffold(
-      backgroundColor: PageColor.eventSearch,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: PageColor.appBar,
-        automaticallyImplyLeading: false,
-        title: const Center(
-          child: Padding(
-            padding: EdgeInsets.only(right: 38.0),
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          title: const Center(
             child: Logo(),
           ),
-        ),
-        leading: SizedBox(
-          width: 60,
-          child: MaterialButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                IconsInApp.arrowBack,
-                color: Colors.white,
-              )),
-        ),
-      ),
+          leading: SizedBox(
+            width: 60,
+            child: MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(
+                  IconsInApp.arrowBack,
+                  color: Colors.white,
+                )),
+          ),
+          actions: <Widget>[
+            SizedBox(
+              width: 65,
+              child: MaterialButton(
+                onPressed: () {},
+                child: const Icon(
+                  Icons.home_outlined,
+                  size: 37,
+                  color: Colors.transparent,
+                ),
+              ),
+            )
+          ]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           if (widget.event.status.name == "inFuture" &&
@@ -84,31 +93,63 @@ class _EventDetails extends State<EventDetails> {
                 widget.event.freePlace != 0 &&
                 !widget.sharedPref.getAllKeys().contains("${widget.event.id}")
             ? PageColor.ticket
-            : PageColor.doneCanceled,
+            : Color.fromARGB(146, 0, 0, 0),
         elevation: 10,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            viewTitle(widget.event.title),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
-                    IconsInApp.clockIcon, "Start date"),
-                freePlace(widget.event.freePlace),
-                columnWithInfoDates(IconsInApp.dateIcon1, dateFinish,
-                    IconsInApp.clockIcon, "End date"),
-              ],
-            ),
-            columnWithInfoLocation(IconsInApp.placeIcon,
-                getAddress(widget.event.latitude, widget.event.longitude)),
-            description(widget.event.name),
-          ],
+      body: Container(
+        constraints: BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("images/panels.jpg"), fit: BoxFit.cover),
+        ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 98.0, left: 20, right: 20),
+                child: Container(
+                  // decoration: BoxDecoration(
+                  //   color: PageColor.singleEvent,
+                  //   borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  //   border: Border.all(
+                  //     color: PageColor.eventSearch,
+                  //     width: 0.1,
+                  //   ),
+                  //),
+                  child: Column(
+                    children: [
+                      viewTitle(widget.event.title),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            columnWithInfoDates(IconsInApp.dateIcon0, dateStart,
+                                IconsInApp.clockIcon, "Start date"),
+                            freePlace(widget.event.freePlace),
+                            columnWithInfoDates(IconsInApp.dateIcon1,
+                                dateFinish, IconsInApp.clockIcon, "End date"),
+                          ],
+                        ),
+                      ),
+                      columnWithInfoLocation(
+                          IconsInApp.placeIcon,
+                          getAddress(
+                              widget.event.latitude, widget.event.longitude)),
+                      description(widget.event.name),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 70,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -123,16 +164,21 @@ class _EventDetails extends State<EventDetails> {
   Widget viewTitle(String eventTitle) {
     return Padding(
       padding:
-          const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
-      child: Center(
-        child: Text(
-          eventTitle,
-          overflow: TextOverflow.visible,
-          style: TextStyle(
-            fontSize: 30.0,
-            color: textscol,
+          const EdgeInsets.only(left: 15.0, right: 15.0, top: 20, bottom: 20),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 300,
+            child: Text(
+              eventTitle,
+              // overflow: TextOverflow.visible,
+              style: TextStyle(
+                fontSize: 30.0,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -144,18 +190,18 @@ class _EventDetails extends State<EventDetails> {
       IconData dateico, DateTime dateStart, IconData timeico, String text) {
     return Container(
       decoration: BoxDecoration(
-        color: PageColor.singleEvent,
+        color: PageColor.asActiveEvent,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(
-          color: PageColor.eventSearch,
+          color: PageColor.burger,
           width: 0.1,
         ),
       ),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+            left: 7.0, right: 7.0, top: 10.0, bottom: 10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 0.0),
@@ -164,7 +210,7 @@ class _EventDetails extends State<EventDetails> {
                   Icon(
                     timeico,
                     color: textscol2,
-                    size: 22.0,
+                    size: 21.0,
                   ),
                   const SizedBox(
                     width: 1,
@@ -184,17 +230,20 @@ class _EventDetails extends State<EventDetails> {
               children: [
                 Icon(
                   dateico,
-                  size: 18.0,
+                  size: 21.0,
                   color: textscol2,
                 ),
                 const SizedBox(
                   width: 2,
                 ),
-                Text(
-                  DateFormat('dd MMMM yyyy').format(dateStart),
-                  style: TextStyle(
-                    color: textscol,
-                    fontSize: 15,
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    DateFormat('dd.MM.yyyy').format(dateStart),
+                    style: TextStyle(
+                      color: textscol,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ],
@@ -229,10 +278,10 @@ class _EventDetails extends State<EventDetails> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: PageColor.singleEvent,
+              color: PageColor.asActiveEvent,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               border: Border.all(
-                color: PageColor.eventSearch,
+                color: PageColor.appBar,
                 width: 0.1,
               ),
             ),
@@ -276,7 +325,7 @@ class _EventDetails extends State<EventDetails> {
         Center(
           child: Padding(
             padding: const EdgeInsets.only(
-                left: 15.0, right: 15.0, top: 35.0, bottom: 8.0),
+                left: 15.0, right: 15.0, top: 35.0, bottom: 0.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -295,10 +344,10 @@ class _EventDetails extends State<EventDetails> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: PageColor.singleEvent,
+                    color: PageColor.asActiveEvent,
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     border: Border.all(
-                      color: PageColor.eventSearch,
+                      color: PageColor.appBar,
                       width: 0.1,
                     ),
                   ),
@@ -320,7 +369,7 @@ class _EventDetails extends State<EventDetails> {
           ),
         ),
         const SizedBox(
-          height: 70,
+          height: 20,
         )
       ],
     );
@@ -330,10 +379,10 @@ class _EventDetails extends State<EventDetails> {
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: PageColor.singleEvent,
+        color: PageColor.asActiveEvent,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(
-          color: PageColor.eventSearch,
+          color: PageColor.burger,
           width: 0.1,
         ),
       ),
@@ -351,7 +400,7 @@ class _EventDetails extends State<EventDetails> {
                   color: textscol,
                 ),
               ),
-              Icon(IconsInApp.freePlacesIcon2, size: 15, color: textscol2),
+              Icon(IconsInApp.freePlacesIcon2, size: 19, color: textscol2),
             ],
           ),
           Text(

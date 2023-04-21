@@ -11,7 +11,7 @@ class DrawerBurger extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       width: 260,
-      backgroundColor: PageColor.eventSearch,
+      backgroundColor: PageColor.burger,
       child: Column(children: <Widget>[
         Expanded(
           child: SafeArea(
@@ -29,7 +29,12 @@ class DrawerBurger extends StatelessWidget {
                               child: Text(
                             overflow: TextOverflow.clip,
                             "License & support",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'MyFont1',
+                            ),
                           )),
                         ),
                       ],
@@ -37,13 +42,13 @@ class DrawerBurger extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.picture_as_pdf_outlined,
-                    color: Colors.white,
+                    color: PageColor.texts,
                   ),
-                  title: const Text(
+                  title: Text(
                     'License',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(fontSize: 18, color: PageColor.texts),
                   ),
                   onTap: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -53,20 +58,21 @@ class DrawerBurger extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.contact_support,
-                    color: Colors.white,
+                    color: PageColor.texts,
                   ),
-                  title: const Text(
+                  title: Text(
                     'Support',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: PageColor.texts, fontSize: 18),
                   ),
                   onTap: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => Scaffold(
+                              extendBodyBehindAppBar: true,
                               appBar: AppBar(
-                                backgroundColor: PageColor.appBar,
+                                backgroundColor: Colors.transparent,
                                 title: Center(
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,

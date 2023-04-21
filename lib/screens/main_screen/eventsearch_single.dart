@@ -43,10 +43,10 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             color: widget.event.status.name == "inFuture"
                 ? PageColor.singleEventActive
-                : PageColor.singleEvent,
+                : PageColor.asActiveEvent,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
-              color: PageColor.eventSearch,
+              color: PageColor.burger,
               width: 0.1,
             ),
           ),
@@ -107,8 +107,8 @@ class _SingleEvent extends State<SingleEvent> {
                   ],
                 ),
               ),
-              const Divider(
-                color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+              Divider(
+                color: PageColor.filters, //Color.fromARGB(255, 149, 149, 254),
                 height: 12.0,
                 thickness: 1.0,
               ),
@@ -249,7 +249,25 @@ class _SingleEvent extends State<SingleEvent> {
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return const Text('Loading....');
+                        return Container(
+                            height: 90,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: PageColor.divider,
+                                  height: 12.0,
+                                  thickness: 1.0,
+                                ),
+                                Icon(
+                                  IconsInApp.placeIcon,
+                                  size: 18.0,
+                                  color: textsCol2,
+                                ),
+                                Expanded(
+                                    child: Center(
+                                        child: const Text('Loading....'))),
+                              ],
+                            ));
                       default:
                         if (snapshot.hasError)
                           return Text('Error: ${snapshot.error}');
