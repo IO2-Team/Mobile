@@ -18,8 +18,9 @@ class LicenseWebView extends StatelessWidget {
         Uri.parse(url),
       );
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: PageColor.appBar,
+        backgroundColor: Colors.transparent,
         title: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +33,19 @@ class LicenseWebView extends StatelessWidget {
           ),
         ),
       ),
-      body: WebViewWidget(controller: controller),
+      body: Container(
+        constraints: BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("images/slideup.jpg"), fit: BoxFit.cover),
+        ),
+        child: Stack(children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 105.0),
+            child: WebViewWidget(controller: controller),
+          )
+        ]),
+      ),
     );
   }
 }

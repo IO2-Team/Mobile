@@ -43,9 +43,10 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: PageColor.eventSearch,
+        extendBodyBehindAppBar: true,
+        backgroundColor: PageColor.burger,
         appBar: AppBar(
-          backgroundColor: PageColor.appBar,
+          backgroundColor: Color.fromARGB(125, 0, 0, 0),
           automaticallyImplyLeading: true,
           title: const Center(
             child: Logo(),
@@ -66,45 +67,54 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 30.0,
-              vertical: 10.0,
-            ),
-            child: Column(
-              children: [
-                if (widget.sharedPref.getAllKeys().isNotEmpty)
-                  for (int i = 0;
-                      i < widget.sharedPref.getAllKeys().length;
-                      i++)
-                    FutureBuilder<Response<EventWithPlaces>>(
-                        future: freePlaces(widget.sharedPref
-                            .getRes(
-                                widget.sharedPref.getAllKeys().elementAt(i))!
-                            .eventId!),
-                        builder: (context, response) {
-                          if (response.hasData &&
-                              response.data != null &&
-                              response.data!.data != null &&
-                              response.data!.data!.status ==
-                                  EventStatus.inFuture) {
-                            return SingleEventReservated(
-                                response.data!.data!,
-                                widget.sharedPref.getRes(widget.sharedPref
-                                    .getAllKeys()
-                                    .elementAt(i))!, // if never NULL (hym)
-                                widget.sharedPref);
-                          } else {
-                            return const SizedBox();
-                          }
-                        })
-                // Text(
-                //     "${widget.sharedPref.getRes(widget.sharedPref.getAllKeys().first)!.eventId}"), //response.data!.getKeys().first
-              ],
-            ),
+        body: Container(
+          constraints: BoxConstraints.expand(),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("images/ev4.jpg"), fit: BoxFit.cover),
           ),
+          child: Stack(children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 105.0, bottom: 15),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(
+                    left: 30.0, right: 30, top: 0.0, bottom: 10),
+                child: Column(
+                  children: [
+                    if (widget.sharedPref.getAllKeys().isNotEmpty)
+                      for (int i = 0;
+                          i < widget.sharedPref.getAllKeys().length;
+                          i++)
+                        FutureBuilder<Response<EventWithPlaces>>(
+                            future: freePlaces(widget.sharedPref
+                                .getRes(widget.sharedPref
+                                    .getAllKeys()
+                                    .elementAt(i))!
+                                .eventId!),
+                            builder: (context, response) {
+                              if (response.hasData &&
+                                  response.data != null &&
+                                  response.data!.data != null &&
+                                  response.data!.data!.status ==
+                                      EventStatus.inFuture) {
+                                return SingleEventReservated(
+                                    response.data!.data!,
+                                    widget.sharedPref.getRes(widget.sharedPref
+                                        .getAllKeys()
+                                        .elementAt(i))!, // if never NULL (hym)
+                                    widget.sharedPref);
+                              } else {
+                                return const SizedBox();
+                              }
+                            })
+                    // Text(
+                    //     "${widget.sharedPref.getRes(widget.sharedPref.getAllKeys().first)!.eventId}"), //response.data!.getKeys().first
+                  ],
+                ),
+              ),
+            ),
+          ]),
         ));
   }
 }
