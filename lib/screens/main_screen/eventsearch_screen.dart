@@ -293,8 +293,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       elevation: 0.0,
                       shadowColor: Colors.transparent,
                       backgroundColor: isFiltersChecked
-                          ? PageColor.categories
-                          : PageColor.filters,
+                          ? PageColor.filters
+                          : PageColor.categories,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(_radius),
@@ -322,8 +322,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       elevation: 0.0,
                       shadowColor: Colors.transparent,
                       backgroundColor: !isFiltersChecked
-                          ? PageColor.categories
-                          : PageColor.filters,
+                          ? PageColor.filters
+                          : PageColor.categories,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(_radius),
@@ -361,8 +361,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
       child: Column(children: <Widget>[
         slide(),
         Divider(
-          color: PageColor.burger, //Color.fromARGB(255, 149, 149, 254),
-          height: 0.0,
+          color: PageColor.filters, //Color.fromARGB(255, 149, 149, 254),
+          height: 3.0,
           thickness: 1.0,
         ),
         if (isFiltersChecked)
@@ -372,11 +372,11 @@ class _EventSearchWidget extends State<EventSearchWidget> {
               color: Colors.transparent,
               child: Column(
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 8.0),
                     child: Text(
                       "Categories",
-                      style: TextStyle(color: Colors.white, fontSize: 17),
+                      style: TextStyle(color: PageColor.filters, fontSize: 17),
                     ),
                   ),
                   FutureBuilder<Response<BuiltList<Category>>>(
@@ -423,14 +423,14 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   padding: const EdgeInsets.only(left: 18.0, right: 18),
                   child: Divider(
                     color:
-                        PageColor.burger, //Color.fromARGB(255, 149, 149, 254),
+                        PageColor.filters, //Color.fromARGB(255, 149, 149, 254),
                     height: 20.0,
                     thickness: 1.0,
                   ),
                 ),
-                const Text(
+                Text(
                   "Status",
-                  style: TextStyle(color: Colors.white, fontSize: 17),
+                  style: TextStyle(color: PageColor.filters, fontSize: 17),
                 ),
                 Center(
                   child: SingleChildScrollView(

@@ -8,8 +8,10 @@ import '../screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 class PageColor {
   static final burger = Color.fromARGB(232, 255, 255, 255);
   static final asActiveEvent = Color.fromARGB(232, 255, 255, 255);
-  static final categories = Color.fromARGB(98, 34, 34, 34);
-  static final categoriesAndStatus = Color.fromARGB(86, 0, 0, 0);
+  static final categories =
+      Color.fromARGB(45, 246, 197, 148); // Color.fromARGB(98, 34, 34, 34);
+  static final categoriesAndStatus =
+      Color.fromARGB(59, 241, 180, 119); // Color.fromARGB(86, 0, 0, 0);
   static final category = Color.fromARGB(255, 211, 211, 255);
 
   static final appBar =
@@ -21,14 +23,14 @@ class PageColor {
   static final logo1 = Color.fromARGB(255, 243, 190, 137);
   static final logo2 = Color.fromARGB(255, 50, 250, 50);
   static final singleEventActive =
-      Color.fromARGB(232, 255, 255, 255); // Color.fromARGB(255, 189, 249, 180);
+      Color.fromARGB(244, 255, 255, 255); // Color.fromARGB(255, 189, 249, 180);
 
   static final singleEventDeleted = Color.fromARGB(247, 255, 91, 91);
-  static final singleEventPending = Color.fromARGB(247, 252, 151, 255);
+  static final singleEventPending = Color.fromARGB(243, 247, 193, 140);
   static final singleEventDone = Color.fromARGB(247, 197, 197, 197);
 
   static final divider = Color.fromARGB(255, 0, 68, 123);
-  static final filters = Color.fromARGB(225, 241, 180, 119);
+  static final filters = Color.fromARGB(194, 241, 180, 119);
   //  Color.fromARGB(255, 120, 51, 79); //Color.fromARGB(255, 149, 149, 254);
   static final doneCanceled = Color.fromARGB(255, 176, 176, 198);
 }

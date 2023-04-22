@@ -43,7 +43,11 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             color: widget.event.status.name == "inFuture"
                 ? PageColor.singleEventActive
-                : PageColor.asActiveEvent,
+                : (widget.event.status.name == "pending"
+                    ? PageColor.singleEventPending
+                    : (widget.event.status.name == "done"
+                        ? PageColor.singleEventDone
+                        : PageColor.singleEventDeleted)),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: PageColor.burger,

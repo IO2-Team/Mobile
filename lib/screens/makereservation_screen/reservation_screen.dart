@@ -320,7 +320,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         padding: const EdgeInsets.only(left: 14, right: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: Color.fromARGB(117, 0, 0, 0),
+          color: Color.fromARGB(50, 0, 0, 0),
         ),
         elevation: 0,
       ),
