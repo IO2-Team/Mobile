@@ -78,12 +78,6 @@ flutter:
   assets:
     - images/place_schema.png
     - images/logo_v4.png
-    - images/logo_v1.png
-    - images/back_pic.png
-    - images/candles2.jpg
-    - images/candles3.jpg
-    - images/candles4.jpg
-    - images/filter.png
     - images/mainscreen.jpg
     - images/panels.jpg
     - images/panels2.jpg
