@@ -1,7 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
@@ -74,109 +73,122 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PageColor.eventSearch,
+      extendBodyBehindAppBar: true,
+      backgroundColor: PageColor.burger,
       appBar: AppBar(
-        backgroundColor: PageColor.appBar,
-        automaticallyImplyLeading: false,
-        title: const Center(
-          child: Padding(
-            padding: EdgeInsets.only(right: 38.0),
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          title: const Center(
             child: Logo(),
           ),
-        ),
-        leading: SizedBox(
-          width: 60,
-          child: MaterialButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: Icon(
-                IconsInApp.arrowBack,
-                color: Colors.white,
-              )),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(right: 10.0, left: 10),
-        child: Column(
-          children: [
-            viewTitle(widget.event.title),
-            Row(
-              children: const [
-                Text(
-                  textAlign: TextAlign.left,
-                  "Places schema:",
-                  style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 0.4,
-                    fontSize: 22.0,
-                  ),
+          leading: SizedBox(
+            width: 60,
+            child: MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context, isReservationAccepted);
+                },
+                child: Icon(
+                  IconsInApp.arrowBack,
+                  color: Colors.white,
+                )),
+          ),
+          actions: <Widget>[
+            SizedBox(
+              width: 65,
+              child: MaterialButton(
+                onPressed: () {},
+                child: const Icon(
+                  Icons.home_outlined,
+                  size: 37,
+                  color: Colors.transparent,
                 ),
-              ],
-            ),
-            const Divider(
-              color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-              height: 12.0,
-              thickness: 1.0,
-            ),
-            showSchema(),
-            Container(
-              width: 400,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: _showFreePlaces,
-                        checkColor: PageColor.logo1,
-                        activeColor: PageColor.appBar,
-                        onChanged: (value) {
-                          setState(() {
-                            _showFreePlaces = value!;
-                          });
-                        },
-                      ),
-                      const Text(
-                        'Choose place',
-                        style: TextStyle(
-                          fontSize: 22.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
-                    child: Divider(
-                      color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
-                      height: 1.0,
-                      thickness: 1.0,
-                    ),
-                  ),
-                  _showFreePlaces
-                      ? FutureBuilder<Response<EventWithPlaces>>(
-                          future: freePlaces(),
-                          builder: (context, response) {
-                            if (response.hasData &&
-                                response.data != null &&
-                                response.data!.data != null &&
-                                isReservationAccepted == false) {
-                              return Column(
-                                children: [
-                                  whenPlaceToSelect(response),
-                                ],
-                              );
-                            } else {
-                              return whileNoPlaceSelected();
-                            }
-                          })
-                      : whileNoPlaceSelected(),
-                ],
               ),
-            ),
-            bookPlaceButton(),
-          ],
+            )
+          ]),
+      body: Container(
+        constraints: BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("images/panels2.jpg"), fit: BoxFit.cover),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10.0, left: 10, top: 100),
+          child: !isReservationAccepted
+              ? FutureBuilder<Response<EventWithPlaces>>(
+                  future: freePlaces(),
+                  builder: (context, response) {
+                    if (response.hasData &&
+                        response.data != null &&
+                        response.data!.data != null &&
+                        isReservationAccepted == false) {
+                      return Column(children: [
+                        viewTitle(widget.event.title),
+                        Row(
+                          children: const [
+                            Text(
+                              textAlign: TextAlign.left,
+                              "Places schema:",
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 0.4,
+                                fontSize: 22.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          color: Colors
+                              .white, //Color.fromARGB(255, 149, 149, 254),
+                          height: 12.0,
+                          thickness: 1.0,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        showSchema(response),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Choose place',
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                          child: Divider(
+                            color: Colors
+                                .white, //Color.fromARGB(255, 149, 149, 254),
+                            height: 12.0,
+                            thickness: 1.0,
+                          ),
+                        ),
+                        whenPlaceToSelect(response),
+                        bookPlaceButton(),
+                      ]);
+                    } else {
+                      return const SizedBox();
+                    }
+                  })
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                      Text(
+                        'Reservation',
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      ),
+                      Text(
+                        'accepted',
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      )
+                    ]),
         ),
       ),
     );
@@ -191,16 +203,18 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
   Widget viewTitle(String eventTitle) {
     return Padding(
       padding:
-          const EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 20),
-      child: Center(
-        child: Text(
-          eventTitle,
-          overflow: TextOverflow.visible,
-          style: TextStyle(
-            fontSize: 30.0,
-            color: PageColor.texts,
+          const EdgeInsets.only(left: 0.0, right: 20.0, top: 20, bottom: 20),
+      child: Row(
+        children: [
+          Text(
+            eventTitle,
+            overflow: TextOverflow.visible,
+            style: TextStyle(
+              fontSize: 30.0,
+              color: Colors.white,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -224,13 +238,6 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                   color: Colors.red,
                 ),
               ),
-            Visibility(
-              visible: isReservationAccepted,
-              child: Text(
-                'Reservation Accepted',
-                style: TextStyle(fontSize: 20, color: PageColor.appBar),
-              ),
-            ),
             Visibility(
               visible: !isReservationAccepted,
               child: SizedBox(
@@ -292,10 +299,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         padding: const EdgeInsets.only(left: 14, right: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: PageColor.singleEvent,
-          ),
-          color: PageColor.singleEvent,
+          color: Color.fromARGB(50, 0, 0, 0),
         ),
         elevation: 0,
       ),
@@ -315,10 +319,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         padding: const EdgeInsets.only(left: 14, right: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: PageColor.singleEvent,
-          ),
-          color: PageColor.singleEvent,
+          color: Color.fromARGB(118, 0, 0, 0),
         ),
         elevation: 1,
       ),
@@ -327,7 +328,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
           width: 390,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: PageColor.singleEvent,
+            color: Color.fromARGB(116, 0, 0, 0),
           ),
           elevation: 1,
           scrollbarTheme: ScrollbarThemeData(
@@ -345,7 +346,13 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
         if (item.free) {
           return DropdownMenuItem<String>(
             value: "${item.id}",
-            child: Text("Place ${item.id}"),
+            child: Text(
+              "Place ${item.id}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+              ),
+            ),
           );
         } else {
           return DropdownMenuItem<String>(
@@ -363,14 +370,14 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
     );
   }
 
-  Widget showSchema() {
+  Widget showSchema(AsyncSnapshot<Response<EventWithPlaces>> response) {
     try {
-      if (widget.event.placeSchema != null && widget.event.placeSchema != "") {
-        Widget w = Container(
+      if (response.data!.data!.placeSchema != null &&
+          response.data!.data!.placeSchema != "") {
+        return Container(
           // Set the height of the container
-          child: Image.memory(base64.decode(widget.event.placeSchema!)),
+          child: Image.memory(base64.decode(response.data!.data!.placeSchema!)),
         );
-        return w;
       } else {
         throw Exception();
       }

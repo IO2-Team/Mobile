@@ -36,6 +36,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   bool isRest = true;
   // list with events to show
   List<Event> eventsList = new List.empty(growable: true);
+  // list with categories to show, only when screen is refreshed
+  List<Category> categoriesList = new List.empty(growable: true);
   // lists with different categories
   late Map<int, List<Event>> eventsListsbyCategories = new Map();
   // categories, probably useless in future
@@ -46,6 +48,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   int id = -1;
   // used for waiting for new data
   bool isNewData = false;
+  // radius for sliding up pannel
+  final double _radius = 60;
 
   final Map<String, bool> statusIndex = {
     "inFuture": false,
@@ -89,9 +93,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PageColor.eventSearch,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: PageColor.appBar,
+        backgroundColor: Color.fromARGB(125, 0, 0, 0),
         automaticallyImplyLeading: true,
         title: const Center(
           child: Logo(),
@@ -118,119 +122,140 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           )
         ],
       ),
-      drawer: const DrawerBurger(),
-      body: FutureBuilder<Response<BuiltList<Event>>>(
-          future: eventsWithApi(),
-          builder: (context, response) {
-            if (response.hasData) {
-              if (id != -1 && response.data!.data!.isNotEmpty) {
-                // if any category
-                if (!isNewData)
-                  isNewData = true; //wpp za malo czasu
-                else {
-                  isNewData = false;
-                  eventsList.clear();
+      drawer: DrawerBurger(sharedPref: widget.sharedPref),
+      body: Container(
+        constraints: BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("images/mainscreen.jpg"), fit: BoxFit.cover),
+        ),
+        child: FutureBuilder<Response<BuiltList<Event>>>(
+            future: eventsWithApi(),
+            builder: (context, response) {
+              if (response.hasData) {
+                if (id != -1 && response.data!.data!.isNotEmpty) {
+                  // if any category
+                  if (!isNewData)
+                    isNewData = true; //wpp za malo czasu
+                  else {
+                    isNewData = false;
+                    eventsList.clear();
 
-                  if (id !=
-                      -2) // adding events from selected category, -2 when category unchecked - then no data added
-                    for (var el in response.data!.data!)
-                      if (!eventsListsbyCategories[id]!.contains(el)) {
-                        eventsListsbyCategories[id]!.add(el);
-                        eventsList.add(el);
-                      }
-                  // adding categories if any more checked
-                  for (var eKey in categoryIndex.keys)
-                    if (categoryIndex[eKey] == true)
-                      for (var el in eventsListsbyCategories[eKey]!)
-                        if (!eventsList.contains(el)) eventsList.add(el);
-                  // if no category has been chosen
-                  if (eventsList.isEmpty)
-                    for (var el in response.data!.data!) eventsList.add(el);
+                    if (id !=
+                        -2) // adding events from selected category, -2 when category unchecked - then no data added
+                      for (var el in response.data!.data!)
+                        if (!eventsListsbyCategories[id]!.contains(el)) {
+                          eventsListsbyCategories[id]!.add(el);
+                          eventsList.add(el);
+                        }
+                    // adding categories if any more checked
+                    for (var eKey in categoryIndex.keys)
+                      if (categoryIndex[eKey] == true)
+                        for (var el in eventsListsbyCategories[eKey]!)
+                          if (!eventsList.contains(el)) eventsList.add(el);
+                    // if no category has been chosen
+                    if (eventsList.isEmpty)
+                      for (var el in response.data!.data!) eventsList.add(el);
+
+                    // sort by date
+                    if (eventsList.isNotEmpty)
+                      eventsList.sort(
+                          ((a, b) => (a.startTime).compareTo(b.startTime)));
+                  }
+                } else if (response.data!.data!.isNotEmpty) {
+                  eventsList.clear();
+                  for (var el in response.data!.data!) eventsList.add(el);
 
                   // sort by date
                   if (eventsList.isNotEmpty)
                     eventsList
                         .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
                 }
-              } else if (response.data!.data!.isNotEmpty) {
-                eventsList.clear();
-                for (var el in response.data!.data!) eventsList.add(el);
-
-                // sort by date
-                if (eventsList.isNotEmpty)
-                  eventsList
-                      .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
-              }
-              return Stack(
-                children: <Widget>[
-                  SizedBox(
-                    height: double.infinity,
-                    child: RefreshIndicator(
-                      key: const Key("mainScreenIndicator"),
-                      color: PageColor.appBar,
-                      onRefresh: refresh,
-                      child: SlidingUpPanel(
-                        maxHeight: 430,
-                        panel: Center(child: filter()),
-                        minHeight: 60.0,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                        collapsed: Container(
-                          decoration: BoxDecoration(
-                            color: PageColor.appBar,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
+                return Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 105.0),
+                      child: SizedBox(
+                        height: double.infinity,
+                        child: RefreshIndicator(
+                          key: const Key("mainScreenIndicator"),
+                          color: PageColor.appBar,
+                          onRefresh: refresh,
+                          child: SlidingUpPanel(
+                            maxHeight: 430,
+                            panel: Center(
+                                child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                          image:
+                                              AssetImage("images/slideup.jpg"),
+                                          fit: BoxFit.cover),
+                                    ),
+                                    child: filter())),
+                            minHeight: 60.0,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(_radius),
+                              topRight: Radius.circular(_radius),
                             ),
-                          ),
-                          child: Center(
-                            child: slide(),
-                          ),
-                        ),
-                        body: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30.0,
-                            vertical: 10.0,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 160.0),
-                            child: Column(children: <Widget>[
-                              if (eventsList.isNotEmpty)
-                                for (var el in eventsList)
-                                  if ((statusIndex["inFuture"] == false &&
-                                          statusIndex["pending"] == false &&
-                                          statusIndex["done"] == false &&
-                                          statusIndex["cancelled"] == false &&
-                                          el.status.name == "inFuture") ||
-                                      (el.status.name == "inFuture" &&
-                                          statusIndex["inFuture"] == true) ||
-                                      (el.status.name == "pending" &&
-                                          statusIndex["pending"] == true) ||
-                                      (el.status.name == "done" &&
-                                          statusIndex["done"] == true) ||
-                                      (el.status.name == "cancelled" &&
-                                          statusIndex["cancelled"] == true))
-                                    SingleEvent(el,
-                                        sharedPref: widget.sharedPref),
-                            ]),
+                            collapsed: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(_radius),
+                                  topRight: Radius.circular(_radius),
+                                ),
+                              ),
+                              child: Center(
+                                child: slide(),
+                              ),
+                            ),
+                            body: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30.0,
+                                vertical: 10.0,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 160.0),
+                                child: Column(children: <Widget>[
+                                  if (eventsList.isNotEmpty)
+                                    for (var el in eventsList)
+                                      if ((statusIndex["inFuture"] == false &&
+                                              statusIndex["pending"] == false &&
+                                              statusIndex["done"] == false &&
+                                              statusIndex["cancelled"] ==
+                                                  false &&
+                                              el.status.name == "inFuture") ||
+                                          (el.status.name == "inFuture" &&
+                                              statusIndex["inFuture"] ==
+                                                  true) ||
+                                          (el.status.name == "pending" &&
+                                              statusIndex["pending"] == true) ||
+                                          (el.status.name == "done" &&
+                                              statusIndex["done"] == true) ||
+                                          (el.status.name == "cancelled" &&
+                                              statusIndex["cancelled"] == true))
+                                        SingleEvent(el,
+                                            sharedPref: widget.sharedPref),
+                                ]),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-              //
-            } else {
-              return Center(
-                  child: CircularProgressIndicator(
-                color: PageColor.appBar,
-              ));
-            }
-          }),
+                  ],
+                );
+                //
+              } else {
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.white,
+                ));
+              }
+            }),
+      ),
     );
   }
 
@@ -270,12 +295,12 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       elevation: 0.0,
                       shadowColor: Colors.transparent,
                       backgroundColor: isFiltersChecked
-                          ? PageColor.divider
-                          : PageColor.appBar,
-                      shape: const RoundedRectangleBorder(
+                          ? PageColor.filters
+                          : Color.fromARGB(134, 15, 50, 90),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
+                            topLeft: Radius.circular(_radius),
+                            topRight: Radius.circular(_radius)),
                       )),
                   child: Container(
                     padding: EdgeInsets.only(left: 45, right: 45),
@@ -299,12 +324,12 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       elevation: 0.0,
                       shadowColor: Colors.transparent,
                       backgroundColor: !isFiltersChecked
-                          ? PageColor.divider
-                          : PageColor.appBar,
-                      shape: const RoundedRectangleBorder(
+                          ? PageColor.filters
+                          : Color.fromARGB(134, 15, 50, 90),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
+                            topLeft: Radius.circular(_radius),
+                            topRight: Radius.circular(_radius)),
                       )),
                   child: Container(
                     padding: const EdgeInsets.only(left: 45, right: 45),
@@ -329,63 +354,73 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     return Container(
       width: 1000, // nieogranicz
       decoration: BoxDecoration(
-        color: PageColor.appBar,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(_radius),
+          topRight: Radius.circular(_radius),
         ),
       ),
       child: Column(children: <Widget>[
         slide(),
         Divider(
-          color: PageColor.eventSearch, //Color.fromARGB(255, 149, 149, 254),
-          height: 0.0,
+          color: PageColor.filters, //Color.fromARGB(255, 149, 149, 254),
+          height: 3.0,
           thickness: 1.0,
         ),
         if (isFiltersChecked)
           Expanded(
             child: Container(
               width: 1000,
-              color: PageColor.divider,
+              color: Colors.transparent,
               child: Column(
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 8.0),
                     child: Text(
                       "Categories",
-                      style: TextStyle(color: Colors.white, fontSize: 17),
+                      style: TextStyle(color: PageColor.filters, fontSize: 17),
                     ),
                   ),
-                  FutureBuilder<Response<BuiltList<Category>>>(
-                      future: categoriesWithApi(),
-                      builder: (context, response) {
-                        if (response.hasData) {
-                          if (response.data != null &&
-                              response.data!.data != null) {
-                            countCategories = response.data!.data!.length;
-                            if (id == -1 && isRest == true) {
-                              // only on start and when resstart button it check if element is new
-                              isRest = false;
-                              categoryIndex.clear();
-                              eventsListsbyCategories.clear();
-                              for (var el in response.data!.data!) {
-                                categoryIndex.addAll({el.id: false});
-                                eventsListsbyCategories.addAll({
-                                  el.id: new List.empty(growable: true)
-                                }); // new empty lists added
-                              } // only when new category, map is updated
-                            }
-                          }
+                  isRest
+                      ? FutureBuilder<Response<BuiltList<Category>>>(
+                          future: categoriesWithApi(),
+                          builder: (context, response) {
+                            if (response.hasData) {
+                              if (response.data != null &&
+                                  response.data!.data != null) {
+                                countCategories = response.data!.data!.length;
+                                if (id == -1 && isRest == true) {
+                                  // only on start and when resstart button it check if element is new
+                                  isRest = false;
+                                  categoryIndex.clear();
+                                  eventsListsbyCategories.clear();
+                                  categoriesList.clear();
 
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            child: showCategories(response),
-                          );
-                        } else {
-                          return const Center();
-                        }
-                      }),
+                                  // adding new categories to categoriesList
+                                  for (var el in response.data!.data!) {
+                                    categoryIndex.addAll({el.id: false});
+                                    eventsListsbyCategories.addAll({
+                                      el.id: new List.empty(growable: true)
+                                    }); // new empty lists added
+                                    categoriesList.add(el);
+                                  } // only when new category, map is updated
+                                }
+                              }
+
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: showCategories(),
+                              );
+                            } else {
+                              return const Center();
+                            }
+                          })
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: showCategories(),
+                        ),
                 ],
               ),
             ),
@@ -393,21 +428,21 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         if (isFiltersChecked)
           Container(
             width: 1000,
-            color: PageColor.divider,
+            color: Colors.transparent,
             child: Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 18.0, right: 18),
                   child: Divider(
-                    color: PageColor
-                        .eventSearch, //Color.fromARGB(255, 149, 149, 254),
+                    color:
+                        PageColor.filters, //Color.fromARGB(255, 149, 149, 254),
                     height: 20.0,
                     thickness: 1.0,
                   ),
                 ),
-                const Text(
+                Text(
                   "Status",
-                  style: TextStyle(color: Colors.white, fontSize: 17),
+                  style: TextStyle(color: PageColor.filters, fontSize: 17),
                 ),
                 Center(
                   child: SingleChildScrollView(
@@ -423,13 +458,13 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           Expanded(
               child: Container(
                   width: 1000,
-                  color: PageColor.divider,
+                  color: Colors.transparent,
                   child: Center(
                       child: Text(
                     "so far only by date available",
                     style: TextStyle(color: Colors.white, fontSize: 17),
                   )))),
-        Container(width: 1000, color: PageColor.divider, child: resetButton()),
+        Container(width: 1000, color: Colors.transparent, child: resetButton()),
       ]),
     );
   }
@@ -437,34 +472,29 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   ///widget shows list with available categories
   ///
-  Widget showCategories(AsyncSnapshot<Response<BuiltList<Category>>> response) {
+  Widget showCategories() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = 0; i <= countCategories ~/ 3; i++)
-                categoryButton(response, i),
+            for (int i = 0; i <= countCategories ~/ 3; i++)
+              categoryButton(categoriesList, i),
           ],
         ),
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = countCategories ~/ 3 + 1;
-                  i <= countCategories * 2 ~/ 3;
-                  i++)
-                categoryButton(response, i),
+            for (int i = countCategories ~/ 3 + 1;
+                i <= countCategories * 2 ~/ 3;
+                i++)
+              categoryButton(categoriesList, i),
           ],
         ),
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = countCategories * 2 ~/ 3 + 1;
-                  i < countCategories;
-                  i++)
-                categoryButton(response, i),
+            for (int i = countCategories * 2 ~/ 3 + 1; i < countCategories; i++)
+              categoryButton(categoriesList, i),
           ],
         ),
       ],
@@ -474,35 +504,39 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   /// Widget which shows single category
   ///
-  Widget categoryButton(
-      AsyncSnapshot<Response<BuiltList<Category>>> response, int i) {
+  Widget categoryButton(List<Category> categoriesList, int i) {
     return Padding(
       padding: const EdgeInsets.only(left: 2.0, right: 2),
       child: MaterialButton(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(80)),
+          ),
           padding: const EdgeInsets.only(left: 4.0, right: 4),
           elevation: 0,
           onPressed: () {
-            if (categoryIndex[response.data!.data![i].id] != true) {
+            if (categoryIndex[categoriesList[i].id] != true) {
               setState(() {
-                id = response.data!.data![i].id;
+                id = categoriesList[i].id;
                 categoryIndex[id] = true;
               });
             } else {
               setState(() {
                 id = -2;
-                eventsListsbyCategories[response.data!.data![i].id]!.clear();
-                categoryIndex[response.data!.data![i].id] = false;
+                eventsListsbyCategories[categoriesList[i].id]!.clear();
+                categoryIndex[categoriesList[i].id] = false;
               });
             }
           },
-          color: PageColor.eventSearch,
+          color: PageColor.categories, //change
           child: Text(
-            response.data!.data![i].name,
+            categoriesList[i].name,
             style: TextStyle(
               fontSize: 18.0,
-              color: categoryIndex[response.data!.data![i].id] == true
+              color: categoryIndex[categoriesList[i].id] == true
                   ? PageColor.logo1
-                  : PageColor.appBar,
+                  : Colors.white,
+              fontFamily: 'MyFont1',
+              fontWeight: FontWeight.bold,
             ),
           )),
     );
@@ -519,9 +553,12 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           Padding(
             padding: const EdgeInsets.only(left: 2.0, right: 2),
             child: MaterialButton(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(80)),
+                ),
                 padding: const EdgeInsets.only(left: 2.0, right: 2),
                 elevation: 0,
-                color: PageColor.eventSearch,
+                color: PageColor.categoriesAndStatus,
                 onPressed: () {
                   if (statusIndex[el] != true) {
                     setState(() {
@@ -539,7 +576,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     fontSize: 18.0,
                     color: statusIndex[el] == true
                         ? PageColor.logo1
-                        : PageColor.appBar,
+                        : Colors.white,
+                    fontFamily: 'MyFont1',
+                    fontWeight: FontWeight.bold,
                   ),
                 )),
           ),
@@ -558,7 +597,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         width: 300.0,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: PageColor.eventSearch,
+            backgroundColor: PageColor.filters,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(80)),
             ),

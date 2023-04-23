@@ -10,11 +10,17 @@ class Logo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GradientText(
-          'Dionizos',
-          style: const TextStyle(fontSize: 35),
-          gradient: LinearGradient(
-            colors: [PageColor.logo1, PageColor.logo2],
+        Container(
+          width: 200, // Set the width of the container
+          height: 60, // Set the height of the container
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+                10), // Set the border radius of the container
+            image: const DecorationImage(
+              image: AssetImage(
+                  "images/logo_v4.png"), // Use NetworkImage for loading image from URL
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ],
