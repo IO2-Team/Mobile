@@ -26,7 +26,7 @@ class SingleEvent extends StatefulWidget {
 class _SingleEvent extends State<SingleEvent> {
   final Color textsCol = PageColor.texts;
   final Color textsCol2 = PageColor.textsLight;
-
+  bool isReservation = false;
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
@@ -126,7 +126,7 @@ class _SingleEvent extends State<SingleEvent> {
                   if (widget.event.status.name == "inFuture" &&
                       !widget.sharedPref
                           .getAllKeys()
-                          .contains("${widget.event.id}"))
+                          .contains('${widget.event.id}'))
                     bookPlaceButton(),
                 ],
               ),
@@ -381,8 +381,10 @@ class _SingleEvent extends State<SingleEvent> {
                             widget.event,
                             sharedPref: widget.sharedPref,
                           ))).then((value) {
-                if (value != null) {
-                  setState(() {});
+                if (value != null && value == true) {
+                  setState(() {
+                    isReservation = true;
+                  });
                 }
               });
             },
@@ -429,7 +431,13 @@ class _SingleEvent extends State<SingleEvent> {
                     MaterialPageRoute(
                         builder: (context) => MakeReservationWidget(
                             widget.event,
-                            sharedPref: widget.sharedPref)));
+                            sharedPref: widget.sharedPref))).then((value) {
+                  if (value != null && value == true) {
+                    setState(() {
+                      isReservation = true;
+                    });
+                  }
+                });
             },
             child: const Text(
               'Reservate',

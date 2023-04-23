@@ -36,6 +36,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   bool isRest = true;
   // list with events to show
   List<Event> eventsList = new List.empty(growable: true);
+  // list with categories to show, only when screen is refreshed
+  List<Category> categoriesList = new List.empty(growable: true);
   // lists with different categories
   late Map<int, List<Event>> eventsListsbyCategories = new Map();
   // categories, probably useless in future
@@ -120,7 +122,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           )
         ],
       ),
-      drawer: const DrawerBurger(),
+      drawer: DrawerBurger(sharedPref: widget.sharedPref),
       body: Container(
         constraints: BoxConstraints.expand(),
         decoration: const BoxDecoration(
@@ -294,7 +296,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       shadowColor: Colors.transparent,
                       backgroundColor: isFiltersChecked
                           ? PageColor.filters
-                          : PageColor.categories,
+                          : Color.fromARGB(134, 15, 50, 90),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(_radius),
@@ -323,7 +325,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       shadowColor: Colors.transparent,
                       backgroundColor: !isFiltersChecked
                           ? PageColor.filters
-                          : PageColor.categories,
+                          : Color.fromARGB(134, 15, 50, 90),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(_radius),
@@ -379,36 +381,46 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                       style: TextStyle(color: PageColor.filters, fontSize: 17),
                     ),
                   ),
-                  FutureBuilder<Response<BuiltList<Category>>>(
-                      future: categoriesWithApi(),
-                      builder: (context, response) {
-                        if (response.hasData) {
-                          if (response.data != null &&
-                              response.data!.data != null) {
-                            countCategories = response.data!.data!.length;
-                            if (id == -1 && isRest == true) {
-                              // only on start and when resstart button it check if element is new
-                              isRest = false;
-                              categoryIndex.clear();
-                              eventsListsbyCategories.clear();
-                              for (var el in response.data!.data!) {
-                                categoryIndex.addAll({el.id: false});
-                                eventsListsbyCategories.addAll({
-                                  el.id: new List.empty(growable: true)
-                                }); // new empty lists added
-                              } // only when new category, map is updated
-                            }
-                          }
+                  isRest
+                      ? FutureBuilder<Response<BuiltList<Category>>>(
+                          future: categoriesWithApi(),
+                          builder: (context, response) {
+                            if (response.hasData) {
+                              if (response.data != null &&
+                                  response.data!.data != null) {
+                                countCategories = response.data!.data!.length;
+                                if (id == -1 && isRest == true) {
+                                  // only on start and when resstart button it check if element is new
+                                  isRest = false;
+                                  categoryIndex.clear();
+                                  eventsListsbyCategories.clear();
+                                  categoriesList.clear();
 
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            child: showCategories(response),
-                          );
-                        } else {
-                          return const Center();
-                        }
-                      }),
+                                  // adding new categories to categoriesList
+                                  for (var el in response.data!.data!) {
+                                    categoryIndex.addAll({el.id: false});
+                                    eventsListsbyCategories.addAll({
+                                      el.id: new List.empty(growable: true)
+                                    }); // new empty lists added
+                                    categoriesList.add(el);
+                                  } // only when new category, map is updated
+                                }
+                              }
+
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: showCategories(),
+                              );
+                            } else {
+                              return const Center();
+                            }
+                          })
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: showCategories(),
+                        ),
                 ],
               ),
             ),
@@ -460,34 +472,29 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   ///widget shows list with available categories
   ///
-  Widget showCategories(AsyncSnapshot<Response<BuiltList<Category>>> response) {
+  Widget showCategories() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = 0; i <= countCategories ~/ 3; i++)
-                categoryButton(response, i),
+            for (int i = 0; i <= countCategories ~/ 3; i++)
+              categoryButton(categoriesList, i),
           ],
         ),
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = countCategories ~/ 3 + 1;
-                  i <= countCategories * 2 ~/ 3;
-                  i++)
-                categoryButton(response, i),
+            for (int i = countCategories ~/ 3 + 1;
+                i <= countCategories * 2 ~/ 3;
+                i++)
+              categoryButton(categoriesList, i),
           ],
         ),
         Row(
           children: [
-            if (response.data!.data!.isNotEmpty)
-              for (int i = countCategories * 2 ~/ 3 + 1;
-                  i < countCategories;
-                  i++)
-                categoryButton(response, i),
+            for (int i = countCategories * 2 ~/ 3 + 1; i < countCategories; i++)
+              categoryButton(categoriesList, i),
           ],
         ),
       ],
@@ -497,8 +504,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   ///
   /// Widget which shows single category
   ///
-  Widget categoryButton(
-      AsyncSnapshot<Response<BuiltList<Category>>> response, int i) {
+  Widget categoryButton(List<Category> categoriesList, int i) {
     return Padding(
       padding: const EdgeInsets.only(left: 2.0, right: 2),
       child: MaterialButton(
@@ -508,27 +514,29 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           padding: const EdgeInsets.only(left: 4.0, right: 4),
           elevation: 0,
           onPressed: () {
-            if (categoryIndex[response.data!.data![i].id] != true) {
+            if (categoryIndex[categoriesList[i].id] != true) {
               setState(() {
-                id = response.data!.data![i].id;
+                id = categoriesList[i].id;
                 categoryIndex[id] = true;
               });
             } else {
               setState(() {
                 id = -2;
-                eventsListsbyCategories[response.data!.data![i].id]!.clear();
-                categoryIndex[response.data!.data![i].id] = false;
+                eventsListsbyCategories[categoriesList[i].id]!.clear();
+                categoryIndex[categoriesList[i].id] = false;
               });
             }
           },
           color: PageColor.categories, //change
           child: Text(
-            response.data!.data![i].name,
+            categoriesList[i].name,
             style: TextStyle(
               fontSize: 18.0,
-              color: categoryIndex[response.data!.data![i].id] == true
+              color: categoryIndex[categoriesList[i].id] == true
                   ? PageColor.logo1
                   : Colors.white,
+              fontFamily: 'MyFont1',
+              fontWeight: FontWeight.bold,
             ),
           )),
     );
@@ -569,6 +577,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     color: statusIndex[el] == true
                         ? PageColor.logo1
                         : Colors.white,
+                    fontFamily: 'MyFont1',
+                    fontWeight: FontWeight.bold,
                   ),
                 )),
           ),
@@ -587,7 +597,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
         width: 300.0,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: PageColor.categoriesAndStatus,
+            backgroundColor: PageColor.filters,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(80)),
             ),

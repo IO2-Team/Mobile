@@ -3,16 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:eventapp_mobile/screens/main_screen/eventsearch_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(
-      ChangeNotifierProvider<APIProvider>(
-        create: (context) => APIProvider(),
-        child: MyApp(),
-      ),
-    );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  var prefs = await SharedPreferences.getInstance();
+
+  SaveAndDeleteReservation sharedPref =
+      SaveAndDeleteReservation(sharedPreferences: prefs);
+
+  runApp(
+    ChangeNotifierProvider<APIProvider>(
+      create: (context) => APIProvider(sharedPref),
+      child: MyApp(sharedPref: sharedPref),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  MyApp({required this.sharedPref, super.key});
+  final SaveAndDeleteReservation sharedPref;
   //final apiProvider = APIProvider();
   @override
   Widget build(BuildContext context) {
@@ -22,7 +32,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: EventSearchWidget(
-        sharedPref: SaveAndDeleteReservation(),
+        sharedPref: sharedPref,
         title: 'Home page with events',
       ),
     );
