@@ -1,12 +1,14 @@
+import 'package:eventapp_mobile/additional_widgets/api_change.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/license.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
+import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
 import 'package:eventapp_mobile/additional_widgets/support.dart';
 import 'package:flutter/material.dart';
 
 class DrawerBurger extends StatelessWidget {
-  const DrawerBurger({Key? key}) : super(key: key);
-
+  const DrawerBurger({required this.sharedPref, Key? key}) : super(key: key);
+  final SaveAndDeleteReservation sharedPref;
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -89,6 +91,7 @@ class DrawerBurger extends StatelessWidget {
                             )));
                   },
                 ),
+                ChangeApi().changeApi(sharedPref)
               ],
             ),
           ),

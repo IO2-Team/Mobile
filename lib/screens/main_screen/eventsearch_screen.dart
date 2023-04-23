@@ -122,7 +122,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           )
         ],
       ),
-      drawer: const DrawerBurger(),
+      drawer: DrawerBurger(sharedPref: widget.sharedPref),
       body: Container(
         constraints: BoxConstraints.expand(),
         decoration: const BoxDecoration(

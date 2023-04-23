@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -30,19 +31,16 @@ class JsonEvent {
 
 // saving, retrieving and deleating data
 class SaveAndDeleteReservation {
-  late SharedPreferences _sharedPreferences;
-  SaveAndDeleteReservation() {
-    SharedPreferences.getInstance().then((prefs) => _sharedPreferences = prefs);
-  }
-  // Store data
+  final SharedPreferences sharedPreferences;
+  SaveAndDeleteReservation({required this.sharedPreferences});
   Future<void> saveRes(JsonEvent event) async {
     String eventJson = json.encode(event.toJson());
-    await _sharedPreferences.setString('${event.eventId}', eventJson);
+    await sharedPreferences.setString('${event.eventId}', eventJson);
   }
 
   // Retrieve data
   JsonEvent? getRes(String eventId) {
-    String? eventJson = _sharedPreferences.getString(eventId);
+    String? eventJson = sharedPreferences.getString(eventId);
     if (eventJson != null) {
       Map<String, dynamic> eventMap = json.decode(eventJson);
       return JsonEvent.fromJson(eventMap);
@@ -53,10 +51,27 @@ class SaveAndDeleteReservation {
 
 // Remove data
   Future<void> removeRes(int eventId) async {
-    _sharedPreferences.remove('$eventId');
+    sharedPreferences.remove('$eventId');
+  }
+
+// Remove all
+  Future<void> removeAll() async {
+    sharedPreferences.clear();
   }
 
   Set<String> getAllKeys() {
-    return _sharedPreferences.getKeys();
+    return sharedPreferences.getKeys();
+  }
+
+  // change API
+  Future<void> apiChange(String APIUrl) async {
+    await sharedPreferences.setString('UrlAddress', APIUrl);
+  }
+
+// Retrieve API data
+  String? getApi() {
+    String? url = sharedPreferences.getString('UrlAddress');
+
+    return url;
   }
 }

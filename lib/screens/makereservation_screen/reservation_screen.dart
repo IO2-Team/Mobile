@@ -85,7 +85,7 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
             width: 60,
             child: MaterialButton(
                 onPressed: () {
-                  Navigator.pop(context, true);
+                  Navigator.pop(context, isReservationAccepted);
                 },
                 child: Icon(
                   IconsInApp.arrowBack,
@@ -177,16 +177,18 @@ class _MakeReservationWidget extends State<MakeReservationWidget> {
                       return const SizedBox();
                     }
                   })
-              : Column(children: const [
-                  Text(
-                    'Reservation',
-                    style: TextStyle(fontSize: 50, color: Colors.white),
-                  ),
-                  Text(
-                    'accepted',
-                    style: TextStyle(fontSize: 50, color: Colors.white),
-                  )
-                ]),
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                      Text(
+                        'Reservation',
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      ),
+                      Text(
+                        'accepted',
+                        style: TextStyle(fontSize: 50, color: Colors.white),
+                      )
+                    ]),
         ),
       ),
     );
