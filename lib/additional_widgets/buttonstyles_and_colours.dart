@@ -17,7 +17,7 @@ class PageColor {
   static final appBar =
       Color.fromARGB(255, 0, 68, 123); // Color.fromARGB(255, 97, 97, 233);
   static final texts = Color.fromARGB(255, 22, 22, 100);
-  static final textsLight = Color.fromARGB(255, 97, 97, 233);
+  static final textsLight = Color.fromARGB(255, 35, 80, 131);
   static final ticket = Color.fromARGB(197, 95, 227,
       148); //  Color.fromARGB(255, 209, 83, 167);  Color.fromARGB(255, 254, 193, 4);
   static final logo1 = Color.fromARGB(255, 243, 190, 137);
