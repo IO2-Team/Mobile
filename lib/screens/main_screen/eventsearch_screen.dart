@@ -67,7 +67,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     "done": false,
     "cancelled": false
   };
-  final Set<String> statusArray = {"inFuture", "pending", "done", "cancelled"};
+  final Set<String> statusArray = {"in Future", "pending", "done", "cancelled"};
 
 // to refresh the screen
   Future refresh() async {
@@ -185,19 +185,20 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     eventsList
                         .sort(((a, b) => (b.startTime).compareTo(a.startTime)));
                   } else if (sortIndex['distance'] == true) {
-                    try{
-                    Future<Position> position =
-                        MyLocalization.getCurrentLocation();
-                    position.then((value) => eventsList.sort(((a, b) => ((double.parse(a.longitude) -
-                                    value.longitude) *
-                                (double.parse(a.longitude) - value.longitude) +
-                            (double.parse(a.latitude) - value.latitude) *
-                                (double.parse(a.latitude) - value.latitude))
-                        .compareTo((double.parse(b.longitude) - value.longitude) *
-                                (double.parse(b.longitude) - value.longitude) +
-                            (double.parse(b.latitude) - value.latitude) *
-                                (double.parse(b.latitude) - value.latitude)))));
-                    }catch (e){
+                    try {
+                      Future<Position> position =
+                          MyLocalization.getCurrentLocation();
+                      position.then((value) => eventsList.sort(((a, b) =>
+                          ((double.parse(a.longitude) - value.longitude) * (double.parse(a.longitude) - value.longitude) +
+                                  (double.parse(a.latitude) - value.latitude) *
+                                      (double.parse(a.latitude) -
+                                          value.latitude))
+                              .compareTo((double.parse(b.longitude) - value.longitude) *
+                                      (double.parse(b.longitude) -
+                                          value.longitude) +
+                                  (double.parse(b.latitude) - value.latitude) *
+                                      (double.parse(b.latitude) - value.latitude)))));
+                    } catch (e) {
                       // TODO so far nothing, just not working localizayion
                     }
                   }
@@ -533,7 +534,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(200),
                                 ],
-                                keyboardType: TextInputType.text,
+                                keyboardType: TextInputType.name,
                                 minLines: 1,
                                 //maxLines: 2,
                                 decoration: InputDecoration(
