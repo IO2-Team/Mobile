@@ -2,11 +2,14 @@
 
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/drawer_mainscreen.dart';
+import 'package:eventapp_mobile/additional_widgets/localization.dart';
 import 'package:eventapp_mobile/screens/reservatedevents_screens/reservatedeventslist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/screens/main_screen/eventsearch_single.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +33,7 @@ class EventSearchWidget extends StatefulWidget {
 }
 
 class _EventSearchWidget extends State<EventSearchWidget> {
+  TextEditingController textarea = TextEditingController();
   // list for events for summary
   bool isFiltersChecked = true;
   // to add categories when isReset == true
@@ -50,6 +54,11 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   bool isNewData = false;
   // radius for sliding up pannel
   final double _radius = 60;
+  // for sorting
+  final Map<String, bool> sortIndex = {
+    "distance": false,
+    "date": true,
+  };
 
   final Map<String, bool> statusIndex = {
     "inFuture": false,
@@ -167,9 +176,22 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   for (var el in response.data!.data!) eventsList.add(el);
 
                   // sort by date
-                  if (eventsList.isNotEmpty)
+                  if (eventsList.isNotEmpty) if (sortIndex['date'] == true) {
                     eventsList
                         .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
+                  } else if (sortIndex['distance'] == true) {
+                    Future<Position> position =
+                        MyLocalization.getCurrentLocation();
+                    position.then((value) => eventsList.sort(((a, b) => ((double.parse(a.longitude) -
+                                    value.longitude) *
+                                (double.parse(a.longitude) - value.longitude) +
+                            (double.parse(a.latitude) - value.latitude) *
+                                (double.parse(a.latitude) - value.latitude))
+                        .compareTo((double.parse(b.longitude) - value.longitude) *
+                                (double.parse(b.longitude) - value.longitude) +
+                            (double.parse(b.latitude) - value.latitude) *
+                                (double.parse(b.latitude) - value.latitude)))));
+                  }
                 }
                 return Stack(
                   children: <Widget>[
@@ -221,21 +243,29 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 child: Column(children: <Widget>[
                                   if (eventsList.isNotEmpty)
                                     for (var el in eventsList)
-                                      if ((statusIndex["inFuture"] == false &&
-                                              statusIndex["pending"] == false &&
-                                              statusIndex["done"] == false &&
-                                              statusIndex["cancelled"] ==
-                                                  false &&
-                                              el.status.name == "inFuture") ||
-                                          (el.status.name == "inFuture" &&
-                                              statusIndex["inFuture"] ==
-                                                  true) ||
-                                          (el.status.name == "pending" &&
-                                              statusIndex["pending"] == true) ||
-                                          (el.status.name == "done" &&
-                                              statusIndex["done"] == true) ||
-                                          (el.status.name == "cancelled" &&
-                                              statusIndex["cancelled"] == true))
+                                      if (((statusIndex["inFuture"] == false &&
+                                                  statusIndex["pending"] ==
+                                                      false &&
+                                                  statusIndex["done"] ==
+                                                      false &&
+                                                  statusIndex["cancelled"] ==
+                                                      false &&
+                                                  el.status.name ==
+                                                      "inFuture") ||
+                                              (el.status.name == "inFuture" &&
+                                                  statusIndex["inFuture"] ==
+                                                      true) ||
+                                              (el.status.name == "pending" &&
+                                                  statusIndex["pending"] ==
+                                                      true) ||
+                                              (el.status.name == "done" &&
+                                                  statusIndex["done"] ==
+                                                      true) ||
+                                              (el.status.name == "cancelled" &&
+                                                  statusIndex["cancelled"] ==
+                                                      true)) &&
+                                          (textarea.text.isEmpty ||
+                                              el.title.contains(textarea.text)))
                                         SingleEvent(el,
                                             sharedPref: widget.sharedPref),
                                 ]),
@@ -332,9 +362,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                             topRight: Radius.circular(_radius)),
                       )),
                   child: Container(
-                    padding: const EdgeInsets.only(left: 45, right: 45),
+                    padding: const EdgeInsets.only(left: 17, right: 17),
                     child: const Text(
-                      "SortBy",
+                      "SortBy&Search",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -451,6 +481,10 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                     child: showStatus(),
                   ),
                 ),
+                Container(
+                    width: 1000,
+                    color: Colors.transparent,
+                    child: resetButton()),
               ],
             ),
           ),
@@ -460,11 +494,145 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   width: 1000,
                   color: Colors.transparent,
                   child: Center(
-                      child: Text(
-                    "so far only by date available",
-                    style: TextStyle(color: Colors.white, fontSize: 17),
-                  )))),
-        Container(width: 1000, color: Colors.transparent, child: resetButton()),
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Search by name",
+                            style: TextStyle(
+                                color: PageColor.filters, fontSize: 17),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 0.0),
+                          child: SizedBox(
+                            width: 300,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors
+                                    .white, // Set the desired background color here
+                                borderRadius: BorderRadius.circular(
+                                    30.0), // Set the desired border radius here
+                              ),
+                              child: TextField(
+                                cursorColor: PageColor.logo1,
+                                controller: textarea,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(200),
+                                ],
+                                keyboardType: TextInputType.text,
+                                minLines: 1,
+                                //maxLines: 2,
+                                decoration: InputDecoration(
+                                    icon: Icon(
+                                      IconData(0xe567,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: PageColor.appBar,
+                                      size: 35,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            color: PageColor.asActiveEvent))),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                            width: 1000,
+                            color: Colors.transparent,
+                            child: searchButton()),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              right: 18.0, left: 18, top: 30),
+                          child: Divider(
+                            color: PageColor
+                                .filters, //Color.fromARGB(255, 149, 149, 254),
+                            height: 20.0,
+                            thickness: 1.0,
+                          ),
+                        ),
+                        Text(
+                          "Sort by",
+                          style:
+                              TextStyle(color: PageColor.filters, fontSize: 17),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0, right: 12),
+                          child: SizedBox(
+                            width: 280,
+                            child: MaterialButton(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                ),
+                                padding: const EdgeInsets.only(
+                                    left: 45.0, right: 45),
+                                elevation: 0,
+                                color: PageColor.categoriesAndStatus,
+                                onPressed: () {
+                                  if (sortIndex['date'] != true) {
+                                    setState(() {
+                                      sortIndex['date'] = true;
+                                      sortIndex['distance'] = false;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "Date",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: sortIndex['date'] == true
+                                        ? PageColor.logo1
+                                        : Colors.white,
+                                    fontFamily: 'MyFont1',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 2.0, right: 2),
+                          child: SizedBox(
+                            width: 280,
+                            child: MaterialButton(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                ),
+                                padding: const EdgeInsets.only(
+                                    left: 30.0, right: 30),
+                                elevation: 0,
+                                color: PageColor.categoriesAndStatus,
+                                onPressed: () {
+                                  if (sortIndex['distance'] != true) {
+                                    setState(() {
+                                      sortIndex['distance'] = true;
+                                      sortIndex['date'] = false;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  'Distance',
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: sortIndex['distance'] == true
+                                        ? PageColor.logo1
+                                        : Colors.white,
+                                    fontFamily: 'MyFont1',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))),
       ]),
     );
   }
@@ -611,6 +779,38 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           },
           child: const Text(
             'Reset',
+            style: TextStyle(
+              letterSpacing: 1.5,
+              fontSize: 19.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'MyFont1',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  ///Button to search
+  ///
+  Widget searchButton() {
+    return Container(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: 150.0,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: PageColor.filters,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(80)),
+            ),
+          ),
+          onPressed: () {
+            setState(() {});
+          },
+          child: const Text(
+            'Search',
             style: TextStyle(
               letterSpacing: 1.5,
               fontSize: 19.0,
