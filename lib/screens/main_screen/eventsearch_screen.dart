@@ -528,8 +528,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 //maxLines: 2,
                                 decoration: InputDecoration(
                                     icon: Icon(
-                                      IconData(0xe567,
-                                          fontFamily: 'MaterialIcons'),
+                                      Icons.add_location,
                                       color: PageColor.appBar,
                                       size: 35,
                                     ),
