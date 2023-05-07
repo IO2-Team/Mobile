@@ -1,8 +1,5 @@
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
-import 'package:eventapp_mobile/additional_widgets/license.dart';
-import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
-import 'package:eventapp_mobile/additional_widgets/support.dart';
 import 'package:flutter/material.dart';
 import 'package:restart_app/restart_app.dart';
 

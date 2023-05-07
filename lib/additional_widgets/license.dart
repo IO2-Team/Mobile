@@ -1,4 +1,3 @@
-import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';

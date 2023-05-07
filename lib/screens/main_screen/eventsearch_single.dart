@@ -124,10 +124,7 @@ class _SingleEvent extends State<SingleEvent> {
                           .getAllKeys()
                           .contains('${widget.event.id}'))
                     bookPlaceButton(),
-                  if (widget.event.status.name != "inFuture" ||
-                      widget.sharedPref
-                          .getAllKeys()
-                          .contains('${widget.event.id}'))
+                  if (widget.event.status.name != "inFuture")
                     Expanded(
                       child: Center(
                         child: Text(
