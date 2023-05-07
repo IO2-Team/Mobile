@@ -57,7 +57,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   // for sorting
   final Map<String, bool> sortIndex = {
     "distance": false,
-    "date": true,
+    "dateoldest": false,
+    "daterecent": true,
   };
 
   final Map<String, bool> statusIndex = {
@@ -176,10 +177,15 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   for (var el in response.data!.data!) eventsList.add(el);
 
                   // sort by date
-                  if (eventsList.isNotEmpty) if (sortIndex['date'] == true) {
+                  if (eventsList.isNotEmpty) if (sortIndex['daterecent'] ==
+                      true) {
                     eventsList
                         .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
+                  } else if (sortIndex['dateoldest'] == true) {
+                    eventsList
+                        .sort(((a, b) => (b.startTime).compareTo(a.startTime)));
                   } else if (sortIndex['distance'] == true) {
+                    try{
                     Future<Position> position =
                         MyLocalization.getCurrentLocation();
                     position.then((value) => eventsList.sort(((a, b) => ((double.parse(a.longitude) -
@@ -191,6 +197,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 (double.parse(b.longitude) - value.longitude) +
                             (double.parse(b.latitude) - value.latitude) *
                                 (double.parse(b.latitude) - value.latitude)))));
+                    }catch (e){
+                      // TODO so far nothing, just not working localizayion
+                    }
                   }
                 }
                 return Stack(
@@ -235,7 +244,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                             body: SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 30.0,
+                                horizontal: 20.0,
                                 vertical: 10.0,
                               ),
                               child: Padding(
@@ -265,7 +274,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                                   statusIndex["cancelled"] ==
                                                       true)) &&
                                           (textarea.text.isEmpty ||
-                                              el.title.contains(textarea.text)))
+                                              el.title.toLowerCase().contains(
+                                                  textarea.text.toLowerCase())))
                                         SingleEvent(el,
                                             sharedPref: widget.sharedPref),
                                 ]),
@@ -575,18 +585,54 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 elevation: 0,
                                 color: PageColor.categoriesAndStatus,
                                 onPressed: () {
-                                  if (sortIndex['date'] != true) {
+                                  if (sortIndex['daterecent'] != true) {
                                     setState(() {
-                                      sortIndex['date'] = true;
+                                      sortIndex['daterecent'] = true;
                                       sortIndex['distance'] = false;
+                                      sortIndex['dateoldest'] = false;
                                     });
                                   }
                                 },
                                 child: Text(
-                                  "Date",
+                                  "BY DATE (most recent)",
                                   style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: sortIndex['date'] == true
+                                    fontSize: 16.0,
+                                    color: sortIndex['daterecent'] == true
+                                        ? PageColor.logo1
+                                        : Colors.white,
+                                    fontFamily: 'MyFont1',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0, right: 12),
+                          child: SizedBox(
+                            width: 280,
+                            child: MaterialButton(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80)),
+                                ),
+                                padding: const EdgeInsets.only(
+                                    left: 45.0, right: 45),
+                                elevation: 0,
+                                color: PageColor.categoriesAndStatus,
+                                onPressed: () {
+                                  if (sortIndex['dateoldest'] != true) {
+                                    setState(() {
+                                      sortIndex['daterecent'] = false;
+                                      sortIndex['distance'] = false;
+                                      sortIndex['dateoldest'] = true;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "BY DATE (oldest)",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: sortIndex['dateoldest'] == true
                                         ? PageColor.logo1
                                         : Colors.white,
                                     fontFamily: 'MyFont1',
@@ -611,15 +657,16 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 onPressed: () {
                                   if (sortIndex['distance'] != true) {
                                     setState(() {
+                                      sortIndex['daterecent'] = false;
                                       sortIndex['distance'] = true;
-                                      sortIndex['date'] = false;
+                                      sortIndex['dateoldest'] = false;
                                     });
                                   }
                                 },
                                 child: Text(
-                                  'Distance',
+                                  'BY DISTANCE',
                                   style: TextStyle(
-                                    fontSize: 18.0,
+                                    fontSize: 16.0,
                                     color: sortIndex['distance'] == true
                                         ? PageColor.logo1
                                         : Colors.white,
@@ -696,9 +743,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           },
           color: PageColor.categories, //change
           child: Text(
-            categoriesList[i].name,
+            categoriesList[i].name.toUpperCase(),
             style: TextStyle(
-              fontSize: 18.0,
+              fontSize: 15.0,
               color: categoryIndex[categoriesList[i].id] == true
                   ? PageColor.logo1
                   : Colors.white,
@@ -723,7 +770,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(80)),
                 ),
-                padding: const EdgeInsets.only(left: 2.0, right: 2),
+                padding: const EdgeInsets.only(left: 3.0, right: 3),
                 elevation: 0,
                 color: PageColor.categoriesAndStatus,
                 onPressed: () {
@@ -738,9 +785,9 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   }
                 },
                 child: Text(
-                  el,
+                  el.toUpperCase(),
                   style: TextStyle(
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     color: statusIndex[el] == true
                         ? PageColor.logo1
                         : Colors.white,

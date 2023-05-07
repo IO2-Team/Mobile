@@ -79,7 +79,7 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(
-                    left: 30.0, right: 30, top: 0.0, bottom: 10),
+                    left: 20.0, right: 20, top: 0.0, bottom: 10),
                 child: Column(
                   children: [
                     if (widget.sharedPref.getAllKeys().isNotEmpty)
