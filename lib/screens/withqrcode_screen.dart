@@ -37,7 +37,7 @@ class _InspectionScreenState extends State<InspectionScreen>
     )..repeat(reverse: true);
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.1, 0.0),
-      end: const Offset(4.5, 0.0),
+      end: const Offset(4.0, 0.0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.linear,
@@ -80,185 +80,193 @@ class _InspectionScreenState extends State<InspectionScreen>
           image: DecorationImage(
               image: AssetImage("images/ev4.jpg"), fit: BoxFit.cover),
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 115.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: PageColor.singleEventActive,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.burger,
-                  width: 0.1,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 125.0, right: 20, left: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: PageColor.singleEventActive,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                    color: PageColor.burger,
+                    width: 0.1,
+                  ),
                 ),
+                child: FittedBox(
+                    fit: BoxFit.fill,
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 34, horizontal: 34.0),
+                      child: QrImage(
+                        //TO DO: if not null -- check it!!!!
+                        data: widget.jsonEvet.toJson().toString(),
+                        size: 300,
+                        foregroundColor: Colors.black,
+                      ),
+                    )),
               ),
-              child: FittedBox(
-                  fit: BoxFit.fill,
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 34, horizontal: 34.0),
-                    child: QrImage(
-                      //TO DO: if not null -- check it!!!!
-                      data: widget.jsonEvet.toJson().toString(),
-                      size: 300,
-                      foregroundColor: Colors.black,
-                    ),
-                  )),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: PageColor.singleEventActive,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                  color: PageColor.burger,
-                  width: 0.1,
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: PageColor.singleEventActive,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                    color: PageColor.burger,
+                    width: 0.1,
+                  ),
                 ),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Ticket info",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.bold,
-                                color: PageColor.texts,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 40,
-                              child: SlideTransition(
-                                position: _offsetAnimation,
-                                child: Icon(
-                                  IconsInApp.freePlacesIcon2,
-                                  color: PageColor.appBar,
-                                  size: 40,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              Text(
+                                "Ticket info",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: PageColor.texts,
                                 ),
                               ),
-                            ),
-                          ],
-                        )),
-                  ),
-                  Divider(
-                    color: PageColor.divider,
-                    height: 12.0,
-                    thickness: 1.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 35, top: 7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Ticket ID:",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 17.0,
-                                color: PageColor.texts,
-                              ),
-                            )),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "${widget.jsonEvet.placeId}",
-                                  style: TextStyle(
-                                    letterSpacing: 0.4,
-                                    fontSize: 17.0,
-                                    color: PageColor.texts,
+                              SizedBox(
+                                height: 40,
+                                child: SlideTransition(
+                                  position: _offsetAnimation,
+                                  child: Icon(
+                                    IconsInApp.freePlacesIcon2,
+                                    color: PageColor.appBar,
+                                    size: 40,
                                   ),
-                                )))
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 35, top: 7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Event ID:",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 17.0,
-                                color: PageColor.texts,
+                                ),
                               ),
-                            )),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "${widget.jsonEvet.eventId}",
-                                  style: TextStyle(
-                                    letterSpacing: 0.3,
-                                    fontSize: 17.0,
-                                    color: PageColor.texts,
-                                  ),
-                                )))
-                      ],
+                            ],
+                          )),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Divider(
+                    Divider(
                       color: PageColor.divider,
                       height: 12.0,
                       thickness: 1.0,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 35, top: 7),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: Text(
-                              "Token:",
-                              style: TextStyle(
-                                letterSpacing: 0.4,
-                                fontSize: 17.0,
-                                color: PageColor.texts,
-                              ),
-                            )),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  widget.jsonEvet.reservationToken ?? "Unknown",
-                                  style: TextStyle(
-                                    letterSpacing: 0.3,
-                                    fontSize: 17.0,
-                                    color: PageColor.texts,
-                                  ),
-                                ))),
-                      ],
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 25, right: 35, top: 7),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: Text(
+                                "Ticket ID:",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 17.0,
+                                  color: PageColor.texts,
+                                ),
+                              )),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    "${widget.jsonEvet.placeId}",
+                                    style: TextStyle(
+                                      letterSpacing: 0.4,
+                                      fontSize: 17.0,
+                                      color: PageColor.texts,
+                                    ),
+                                  )))
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 25, right: 35, top: 7),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: Text(
+                                "Event ID:",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 17.0,
+                                  color: PageColor.texts,
+                                ),
+                              )),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    "${widget.jsonEvet.eventId}",
+                                    style: TextStyle(
+                                      letterSpacing: 0.3,
+                                      fontSize: 17.0,
+                                      color: PageColor.texts,
+                                    ),
+                                  )))
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Divider(
+                        color: PageColor.divider,
+                        height: 12.0,
+                        thickness: 1.0,
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 25, right: 35, top: 7),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: Text(
+                                "Token:",
+                                style: TextStyle(
+                                  letterSpacing: 0.4,
+                                  fontSize: 17.0,
+                                  color: PageColor.texts,
+                                ),
+                              )),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    widget.jsonEvet.reservationToken ??
+                                        "Unknown",
+                                    style: TextStyle(
+                                      letterSpacing: 0.3,
+                                      fontSize: 17.0,
+                                      color: PageColor.texts,
+                                    ),
+                                  ))),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          DeleteButton(),
-        ]),
+            DeleteButton(),
+          ]),
+        ),
       ),
     );
   }
@@ -300,15 +308,15 @@ class _InspectionScreenState extends State<InspectionScreen>
         'Delete reservation',
         style: TextStyle(
           fontSize: 20,
-          color: Colors.red,
+          color: Colors.black,
         ),
       ),
       icon: const Icon(
         Icons.delete_forever_rounded,
         size: 50,
-        color: Colors.red,
+        color: Colors.black,
       ),
-      backgroundColor: Color.fromARGB(189, 0, 0, 0),
+      backgroundColor: Color.fromARGB(186, 227, 12, 12),
       elevation: 10,
     );
   }

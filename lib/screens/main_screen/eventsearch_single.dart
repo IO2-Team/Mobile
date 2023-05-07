@@ -43,11 +43,7 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             color: widget.event.status.name == "inFuture"
                 ? PageColor.singleEventActive
-                : (widget.event.status.name == "pending"
-                    ? PageColor.singleEventPending
-                    : (widget.event.status.name == "done"
-                        ? PageColor.singleEventDone
-                        : PageColor.singleEventDeleted)),
+                : PageColor.singleEventNotActive,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: PageColor.burger,
@@ -128,6 +124,27 @@ class _SingleEvent extends State<SingleEvent> {
                           .getAllKeys()
                           .contains('${widget.event.id}'))
                     bookPlaceButton(),
+                  if (widget.event.status.name != "inFuture" ||
+                      widget.sharedPref
+                          .getAllKeys()
+                          .contains('${widget.event.id}'))
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.event.status.toString(),
+                          style: TextStyle(
+                              letterSpacing: 1.0,
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'MyFont1',
+                              color: widget.event.status.name == "pending"
+                                  ? PageColor.singleEventPending
+                                  : (widget.event.status.name == "done"
+                                      ? PageColor.singleEventDone
+                                      : PageColor.singleEventDeleted)),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -440,7 +457,7 @@ class _SingleEvent extends State<SingleEvent> {
                 });
             },
             child: const Text(
-              'Reservate',
+              'Reserve',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,

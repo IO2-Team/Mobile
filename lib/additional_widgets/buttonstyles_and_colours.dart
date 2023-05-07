@@ -25,10 +25,10 @@ class PageColor {
   static final singleEventActive =
       Color.fromARGB(244, 255, 255, 255); // Color.fromARGB(255, 189, 249, 180);
 
-  static final singleEventDeleted = Color.fromARGB(247, 255, 91, 91);
-  static final singleEventPending = Color.fromARGB(243, 247, 193, 140);
-  static final singleEventDone = Color.fromARGB(247, 197, 197, 197);
-
+  static final singleEventDeleted = Color.fromARGB(255, 255, 51, 51);
+  static final singleEventPending = Color.fromARGB(255, 255, 144, 32);
+  static final singleEventNotActive = Color.fromARGB(221, 255, 255, 255);
+  static final singleEventDone = Color.fromARGB(255, 39, 39, 39);
   static final divider = Color.fromARGB(255, 0, 68, 123);
   static final filters = Color.fromARGB(194, 241, 180, 119);
   //  Color.fromARGB(255, 120, 51, 79); //Color.fromARGB(255, 149, 149, 254);

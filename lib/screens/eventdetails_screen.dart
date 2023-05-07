@@ -82,7 +82,7 @@ class _EventDetails extends State<EventDetails> {
             });
         },
         label: const Text(
-          'Reservate',
+          'Reserve',
           style: TextStyle(fontSize: 20),
         ),
         icon: const Icon(
@@ -124,7 +124,7 @@ class _EventDetails extends State<EventDetails> {
                     children: [
                       viewTitle(widget.event.title),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(left: 2, right: 2.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -199,7 +199,7 @@ class _EventDetails extends State<EventDetails> {
       ),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 7.0, right: 7.0, top: 10.0, bottom: 10.0),
+            left: 7.0, right: 5.0, top: 10.0, bottom: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
