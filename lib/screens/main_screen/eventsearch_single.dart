@@ -59,6 +59,41 @@ class _SingleEvent extends State<SingleEvent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (widget.event.status.name != "inFuture")
+                      Container(
+                        margin: const EdgeInsets.only(
+                            bottom: 0.0, right: 10.0, left: 0.0),
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0.5,
+                              backgroundColor:
+                                  widget.event.status.name == "pending"
+                                      ? PageColor.singleEventPending
+                                      : (widget.event.status.name == "done"
+                                          ? PageColor.singleEventDone
+                                          : PageColor.singleEventDeleted),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(80),
+                                    bottomRight: Radius.circular(80)),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              widget.event.status.toString(),
+                              style: TextStyle(
+                                  letterSpacing: 1.0,
+                                  fontSize: 19.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'MyFont1',
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: eventTitle(),
@@ -124,24 +159,6 @@ class _SingleEvent extends State<SingleEvent> {
                           .getAllKeys()
                           .contains('${widget.event.id}'))
                     bookPlaceButton(),
-                  if (widget.event.status.name != "inFuture")
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          widget.event.status.toString(),
-                          style: TextStyle(
-                              letterSpacing: 1.0,
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'MyFont1',
-                              color: widget.event.status.name == "pending"
-                                  ? PageColor.singleEventPending
-                                  : (widget.event.status.name == "done"
-                                      ? PageColor.singleEventDone
-                                      : PageColor.singleEventDeleted)),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ],
