@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 
+// if there is no permissions - then what?
 class MyLocalization {
   static Future<Position> getCurrentLocation() async {
     // bool serviceEnabled;
