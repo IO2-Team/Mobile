@@ -103,6 +103,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key('Appbarr'),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Color.fromARGB(125, 0, 0, 0),
@@ -215,6 +216,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           color: PageColor.appBar,
                           onRefresh: refresh,
                           child: SlidingUpPanel(
+                            key: const Key('slidingup_panel'),
                             maxHeight: 430,
                             panel: Center(
                                 child: Container(

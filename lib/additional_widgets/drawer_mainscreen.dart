@@ -12,6 +12,7 @@ class DrawerBurger extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      key: Key("drawer"),
       width: 260,
       backgroundColor: PageColor.burger,
       child: Column(children: <Widget>[
