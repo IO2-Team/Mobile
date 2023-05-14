@@ -392,6 +392,7 @@ class _SingleEvent extends State<SingleEvent> {
                 ? Text(
                     "${(dist * 1000).toInt()} m away",
                     style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       color: textsCol,
                       fontSize: 16.5,
                     ),
@@ -399,6 +400,7 @@ class _SingleEvent extends State<SingleEvent> {
                 : Text(
                     "${dist.toInt()} km away",
                     style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       color: textsCol,
                       fontSize: 16.5,
                     ),
