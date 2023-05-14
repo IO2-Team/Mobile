@@ -74,7 +74,8 @@ class ChangeApi {
             style: TextStyle(fontSize: 18, color: PageColor.texts),
           ),
           onTap: () {
-            //TODO when ready
+            sharedPref.apiChange('https://biletmajster.azurewebsites.net');
+            Restart.restartApp();
           },
         ),
       ],

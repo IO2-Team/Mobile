@@ -77,6 +77,10 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     });
   }
 
+  Future<Position> getDist() async {
+    return MyLocalization.getCurrentLocation();
+  }
+
   Future<Response<BuiltList<Event>>> eventsWithApi() async {
     if (id == -1 || id == -2)
       return context
@@ -140,11 +144,13 @@ class _EventSearchWidget extends State<EventSearchWidget> {
           image: DecorationImage(
               image: AssetImage("images/mainscreen.jpg"), fit: BoxFit.cover),
         ),
-        child: FutureBuilder<Response<BuiltList<Event>>>(
-            future: eventsWithApi(),
-            builder: (context, response) {
-              if (response.hasData) {
-                if (id != -1 && response.data!.data!.isNotEmpty) {
+        child: FutureBuilder(
+            future: Future.wait([eventsWithApi(), getDist()]),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+              //  future: eventsWithApi(),
+              //builder: (context, response) {
+              if (snapshot.data != null) {
+                if (id != -1 && snapshot.data![0].data!.isNotEmpty) {
                   // if any category
                   if (!isNewData)
                     isNewData = true; //wpp za malo czasu
@@ -154,7 +160,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
 
                     if (id !=
                         -2) // adding events from selected category, -2 when category unchecked - then no data added
-                      for (var el in response.data!.data!)
+                      for (var el in snapshot.data![0].data!)
                         if (!eventsListsbyCategories[id]!.contains(el)) {
                           eventsListsbyCategories[id]!.add(el);
                           eventsList.add(el);
@@ -166,16 +172,17 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           if (!eventsList.contains(el)) eventsList.add(el);
                     // if no category has been chosen
                     if (eventsList.isEmpty)
-                      for (var el in response.data!.data!) eventsList.add(el);
+                      for (var el in snapshot.data![0].data!)
+                        eventsList.add(el);
 
                     // sort by date
                     if (eventsList.isNotEmpty)
                       eventsList.sort(
                           ((a, b) => (a.startTime).compareTo(b.startTime)));
                   }
-                } else if (response.data!.data!.isNotEmpty) {
+                } else if (snapshot.data![0].data!.isNotEmpty) {
                   eventsList.clear();
-                  for (var el in response.data!.data!) eventsList.add(el);
+                  for (var el in snapshot.data![0].data!) eventsList.add(el);
 
                   // sort by date
                   if (eventsList.isNotEmpty) {
@@ -187,18 +194,24 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           ((a, b) => (b.startTime).compareTo(a.startTime)));
                     } else if (sortIndex['distance'] == true) {
                       try {
-                        Future<Position> position =
-                            MyLocalization.getCurrentLocation();
-                        position.then((value) => eventsList.sort(((a, b) =>
-                            ((double.parse(b.longitude) - value.longitude) * (double.parse(b.longitude) - value.longitude) +
-                                    (double.parse(b.latitude) - value.latitude) *
-                                        (double.parse(b.latitude) -
-                                            value.latitude))
-                                .compareTo((double.parse(a.longitude) - value.longitude) *
-                                        (double.parse(a.longitude) -
-                                            value.longitude) +
-                                    (double.parse(a.latitude) - value.latitude) *
-                                        (double.parse(a.latitude) - value.latitude)))));
+                        // MyLocalization.getCurrentLocation().then((value) =>
+
+                        eventsList.sort(((a,
+                                b) => // (b.startTime).compareTo(a.startTime)));
+
+                            ((((double.parse(a.longitude) * 10000 -
+                                                snapshot.data![1].longitude *
+                                                    10000) *
+                                            (double.parse(a.longitude) * 10000 -
+                                                snapshot.data![1].longitude *
+                                                    10000) +
+                                        (double.parse(a.latitude) * 10000 -
+                                                snapshot.data![1].latitude *
+                                                    10000) *
+                                            (double.parse(a.latitude) * 10000 -
+                                                snapshot.data![1].latitude * 10000)))
+                                    .toInt())
+                                .compareTo((((double.parse(b.longitude) * 10000 - snapshot.data![1].longitude * 10000) * (double.parse(b.longitude) * 10000 - snapshot.data![1].longitude * 10000) + (double.parse(b.latitude) * 10000 - snapshot.data![1].latitude * 10000) * (double.parse(b.latitude) * 10000 - snapshot.data![1].latitude * 10000))).toInt())));
                       } catch (e) {
                         // TODO so far nothing, just not working localizayion
                       }
