@@ -5,9 +5,7 @@ import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:dio/dio.dart';
 import 'package:openapi/openapi.dart';
 import 'package:provider/provider.dart';
-
 import 'reservatedevent_single.dart';
-import '../../additional_widgets/saveanddelete_reservation.dart';
 import '../../api/api_provider.dart';
 ///////////////////////////////////////////////////////////////
 /// Widget which shows reservated events list
@@ -32,12 +30,13 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
   };
   final Set<String> statusArray = {"inFuture", "pending", "done", "cancelled"};
 
-  Future<Response<EventWithPlaces>> freePlaces(int eventId) async {
+  Future<Response<EventWithPlaces>> freePlaces(JsonEvent? event) async {
+    if (event == null) throw Exception("it is not even event"); // TODO
     return context
         .read<APIProvider>()
         .api
         .getEventApi()
-        .getEventById(id: eventId);
+        .getEventById(id: event.eventId!);
   }
 
   @override
@@ -87,11 +86,14 @@ class _ReservatedListEventsWidget extends State<ReservatedListEventsWidget> {
                           i < widget.sharedPref.getAllKeys().length;
                           i++)
                         FutureBuilder<Response<EventWithPlaces>>(
-                            future: freePlaces(widget.sharedPref
-                                .getRes(widget.sharedPref
+                            future: freePlaces(widget.sharedPref.getRes(widget
+                                    .sharedPref
                                     .getAllKeys()
-                                    .elementAt(i))!
-                                .eventId!),
+                                    .elementAt(i)))
+                                .catchError((e) {
+                              // TODO - okienko dla usera w apce i ominiecie eventu
+                              // Future completes with 42.
+                            }),
                             builder: (context, response) {
                               if (response.hasData &&
                                   response.data != null &&

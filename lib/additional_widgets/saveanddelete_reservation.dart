@@ -41,8 +41,12 @@ class SaveAndDeleteReservation {
   JsonEvent? getRes(String eventId) {
     String? eventJson = sharedPreferences.getString(eventId);
     if (eventJson != null) {
-      Map<String, dynamic> eventMap = json.decode(eventJson);
-      return JsonEvent.fromJson(eventMap);
+      try {
+        Map<String, dynamic> eventMap = json.decode(eventJson);
+        return JsonEvent.fromJson(eventMap);
+      } catch (e) {
+        return null;
+      }
     } else {
       return null;
     }

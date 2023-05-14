@@ -67,7 +67,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
     "done": false,
     "cancelled": false
   };
-  final Set<String> statusArray = {"in Future", "pending", "done", "cancelled"};
+  final Set<String> statusArray = {"inFuture", "pending", "done", "cancelled"};
 
 // to refresh the screen
   Future refresh() async {
@@ -103,6 +103,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key('Appbarr'),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Color.fromARGB(125, 0, 0, 0),
@@ -177,29 +178,30 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                   for (var el in response.data!.data!) eventsList.add(el);
 
                   // sort by date
-                  if (eventsList.isNotEmpty) if (sortIndex['daterecent'] ==
-                      true) {
-                    eventsList
-                        .sort(((a, b) => (a.startTime).compareTo(b.startTime)));
-                  } else if (sortIndex['dateoldest'] == true) {
-                    eventsList
-                        .sort(((a, b) => (b.startTime).compareTo(a.startTime)));
-                  } else if (sortIndex['distance'] == true) {
-                    try {
-                      Future<Position> position =
-                          MyLocalization.getCurrentLocation();
-                      position.then((value) => eventsList.sort(((a, b) =>
-                          ((double.parse(a.longitude) - value.longitude) * (double.parse(a.longitude) - value.longitude) +
-                                  (double.parse(a.latitude) - value.latitude) *
-                                      (double.parse(a.latitude) -
-                                          value.latitude))
-                              .compareTo((double.parse(b.longitude) - value.longitude) *
-                                      (double.parse(b.longitude) -
-                                          value.longitude) +
-                                  (double.parse(b.latitude) - value.latitude) *
-                                      (double.parse(b.latitude) - value.latitude)))));
-                    } catch (e) {
-                      // TODO so far nothing, just not working localizayion
+                  if (eventsList.isNotEmpty) {
+                    if (sortIndex['daterecent'] == true) {
+                      eventsList.sort(
+                          ((a, b) => (a.startTime).compareTo(b.startTime)));
+                    } else if (sortIndex['dateoldest'] == true) {
+                      eventsList.sort(
+                          ((a, b) => (b.startTime).compareTo(a.startTime)));
+                    } else if (sortIndex['distance'] == true) {
+                      try {
+                        Future<Position> position =
+                            MyLocalization.getCurrentLocation();
+                        position.then((value) => eventsList.sort(((a, b) =>
+                            ((double.parse(b.longitude) - value.longitude) * (double.parse(b.longitude) - value.longitude) +
+                                    (double.parse(b.latitude) - value.latitude) *
+                                        (double.parse(b.latitude) -
+                                            value.latitude))
+                                .compareTo((double.parse(a.longitude) - value.longitude) *
+                                        (double.parse(a.longitude) -
+                                            value.longitude) +
+                                    (double.parse(a.latitude) - value.latitude) *
+                                        (double.parse(a.latitude) - value.latitude)))));
+                      } catch (e) {
+                        // TODO so far nothing, just not working localizayion
+                      }
                     }
                   }
                 }
@@ -214,6 +216,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                           color: PageColor.appBar,
                           onRefresh: refresh,
                           child: SlidingUpPanel(
+                            key: const Key('slidingup_panel'),
                             maxHeight: 430,
                             panel: Center(
                                 child: Container(
@@ -539,7 +542,7 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                 //maxLines: 2,
                                 decoration: InputDecoration(
                                     icon: Icon(
-                                      Icons.add_location,
+                                      Icons.search,
                                       color: PageColor.appBar,
                                       size: 35,
                                     ),
