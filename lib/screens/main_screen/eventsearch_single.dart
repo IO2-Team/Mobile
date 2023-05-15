@@ -114,7 +114,6 @@ class _SingleEvent extends State<SingleEvent> {
                           ),
                         ),
                       ),
-
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: eventTitle(),
@@ -153,7 +152,7 @@ class _SingleEvent extends State<SingleEvent> {
                         ),
                       ],
                     ),
-                    //    showPlaceCordinates(),
+                    showPlaceCordinates(),
                     Divider(
                       color: PageColor.divider,
                       height: 12.0,
