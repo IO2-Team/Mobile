@@ -5,12 +5,17 @@ import 'package:eventapp_mobile/api/api_provider.dart';
 import 'package:eventapp_mobile/screens/main_screen/eventsearch_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/blob.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var prefs = await SharedPreferences.getInstance();
 
   SaveAndDeleteReservation sharedPref =
       SaveAndDeleteReservation(sharedPreferences: prefs);
+
+  Blob blob = new Blob();
+  blob.delete("layouts/test.txt");
 
   runApp(
     ChangeNotifierProvider<APIProvider>(

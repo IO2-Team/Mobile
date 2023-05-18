@@ -62,10 +62,5 @@ void main() {
       // TODO
     });
 
-    // String placeSchema
-    test('to test the property `placeSchema`', () async {
-      // TODO
-    });
-
   });
 }

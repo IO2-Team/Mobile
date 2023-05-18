@@ -124,7 +124,6 @@ class EventOrganizerApi {
   /// 
   ///
   /// Parameters:
-  /// * [sessionToken] - session Token
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -135,7 +134,6 @@ class EventOrganizerApi {
   /// Returns a [Future] containing a [Response] with a [Organizer] as data
   /// Throws [DioError] if API call or serialization fails
   Future<Response<Organizer>> getOrganizer({ 
-    required String sessionToken,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -147,7 +145,6 @@ class EventOrganizerApi {
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
-        r'sessionToken': sessionToken,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -165,13 +162,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Organizer _responseData;
+    Organizer? _responseData;
 
     try {
-      const _responseType = FullType(Organizer);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(Organizer),
       ) as Organizer;
 
     } catch (error, stackTrace) {
@@ -244,13 +241,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    LoginOrganizer200Response _responseData;
+    LoginOrganizer200Response? _responseData;
 
     try {
-      const _responseType = FullType(LoginOrganizer200Response);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(LoginOrganizer200Response),
       ) as LoginOrganizer200Response;
 
     } catch (error, stackTrace) {
@@ -351,6 +348,7 @@ class EventOrganizerApi {
   /// 
   ///
   /// Parameters:
+  /// * [sessionToken] - session Token
   /// * [organizerForm] - Add event
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -362,6 +360,7 @@ class EventOrganizerApi {
   /// Returns a [Future] containing a [Response] with a [Organizer] as data
   /// Throws [DioError] if API call or serialization fails
   Future<Response<Organizer>> signUp({ 
+    required String sessionToken,
     OrganizerForm? organizerForm,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -374,6 +373,7 @@ class EventOrganizerApi {
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        r'sessionToken': sessionToken,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -411,13 +411,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Organizer _responseData;
+    Organizer? _responseData;
 
     try {
-      const _responseType = FullType(Organizer);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(Organizer),
       ) as Organizer;
 
     } catch (error, stackTrace) {

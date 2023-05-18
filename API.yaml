@@ -7,7 +7,7 @@ info:
     email: XXX@pw.edu.pl
   version: 1.0.0
 servers:
-  - url: https://pw.edu.pl/api/v3
+  - url: https://yourbackenhosting.edu.pl
 tags:
   - name: Event organizer
     description: API for web organizer portal
@@ -46,68 +46,12 @@ paths:
           schema:
             type: string
             example: 3424bn3b3tii3t4ibt43in
-        - name: title
-          in: query
-          description: title of Event
-          required: true
-          schema:
-            type: string
-            example: Short description of Event
-        - name: name
-          in: query
-          description: title of Event
-          required: true
-          schema:
-            type: string
-            example: Long description of Event
-        - name: freePlace
-          in: query
-          description: No of free places
-          required: true
-          schema:
-            type: integer
-        - name: placeSchema
-          in: query
-          description: seralized place schema
-          required: false
-          schema:
-            type: string
-        - name: startTime
-          in: query
-          description: Unix time stamp of begin of event
-          required: true
-          schema:
-            type: integer
-            example: 1683034164
-        - name: endTime
-          in: query
-          description: Unix time stamp of end of event
-          required: true
-          schema:
-            type: integer
-            example: 1683034164
-        - name: latitude
-          in: query
-          description: Latitude of event
-          required: true
-          schema:
-            type: string
-            example: '40.4775315'
-        - name: longitude
-          in: query
-          description: Longitude of event
-          required: true
-          schema:
-            type: string
-            example: '-3.7051359'
-        - name: categories
-          in: query
-          description: Array of id of categories that event belong to.
-          required: true
-          schema:
-            type: array
-            items:
-              type: integer
+      requestBody:
+        description: Add event
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventForm'
       responses:
         '201':
           description: event created
@@ -116,7 +60,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
         '400':
-          description: event can not be created
+          description: event can not be created, field invalid
+        '403':
+          description: invalid session
   /events/my:
     get:
       tags:
@@ -140,6 +86,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
+        '403':
+          description: invalid session
   /events/{id}:
     get:
       tags:
@@ -161,7 +109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                $ref: '#/components/schemas/EventWithPlaces'
         '400':
           description: Invalid ID supplied
         '404':
@@ -188,6 +136,8 @@ paths:
       responses:
         '204':
           description: deleted
+        '403':
+          description: invalid session
         '404':
           description: id not found
     patch:
@@ -214,10 +164,111 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/EventPatch'
       responses:
+        '200':
+          description: nothing to do, no field to patch
         '202':
           description: patched
+        '400':
+          description: invalid id or fields in body
+        '403':
+          description: invalid session
+        '404':
+          description: id not found
+  /events/{id}/photos:
+    get:
+      tags:
+        - Event
+      summary: Get list of photo of event
+      description: Returns a list of photo paths
+      operationId: getPhoto
+      parameters:
+        - name: id
+          in: path
+          description: ID of event to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example: ['path_to_photo1', 'path_to_photo2', 'path_to_photo3']
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Event not found
+    delete:
+      tags:
+        - Event
+      summary: Cancel event
+      operationId: deletePhoto
+      parameters:
+        - name: sessionToken
+          in: header
+          description: session Token
+          required: true
+          schema:
+            type: string
+            example: 3424bn3b3tii3t4ibt43in
+        - name: id
+          in: path
+          description: id of Event
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: header
+          description: path of photo
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: deleted
+        '403':
+          description: invalid session
+        '404':
+          description: id or path not found
+    post:
+      tags:
+        - Event
+      summary: patch existing event
+      operationId: putPhoto
+      parameters:
+        - name: sessionToken
+          in: header
+          description: session Token
+          required: true
+          schema:
+            type: string
+            example: 3424bn3b3tii3t4ibt43in
+        - name: id
+          in: path
+          description: id of Event
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: header
+          description: path of photo
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: path added
+        '400':
+          description: path already exist
+        '403':
+          description: invalid session
         '404':
           description: id not found
   /events/getByCategory:
@@ -228,7 +279,7 @@ paths:
       operationId: getByCategory
       parameters:
         - name: categoryId
-          in: query
+          in: header
           description: ID of category
           required: true
           schema:
@@ -274,7 +325,7 @@ paths:
             type: string
             example: 3424bn3b3tii3t4ibt43in
         - name: categoryName
-          in: query
+          in: header
           description: name of category
           required: true
           schema:
@@ -288,6 +339,8 @@ paths:
                 $ref: '#/components/schemas/Category'
         '400':
           description: category already exist
+        '403':
+          description: invalid session
   /reservation:
     post:
       tags:
@@ -296,14 +349,14 @@ paths:
       operationId: makeReservation
       parameters:
         - name: eventId
-          in: query
+          in: header
           description: ID of event
           required: true
           schema:
             type: integer
             format: int64
         - name: placeID
-          in: query
+          in: header
           description: ID of place
           required: false
           schema:
@@ -317,7 +370,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReservationDTO'
         '400':
-          description: no free place
+          description: no free place or place taken
         '404':
           description: event not exist or done
     delete:
@@ -327,7 +380,7 @@ paths:
       operationId: deleteReservation
       parameters:
         - name: reservationToken
-          in: query
+          in: header
           description: token of reservation
           required: true
           schema:
@@ -345,24 +398,19 @@ paths:
       summary: Create orginizer account
       operationId: signUp
       parameters:
-        - name: name
-          in: query
-          description: name of Organizer
+        - name: sessionToken
+          in: header
+          description: session Token
           required: true
           schema:
             type: string
-        - name: email
-          in: query
-          description: email of Organizer
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: password of Organizer
-          required: true
-          schema:
-            type: string
+            example: 3424bn3b3tii3t4ibt43in
+      requestBody:
+        description: Add event
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerForm'
       responses:
         '201':
           description: successful operation
@@ -371,20 +419,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Organizer'
         '400':
-          description: organizer already exist
+          description: email already in use
     get:
       tags:
         - Event organizer
       summary: Get organizer account (my account)
       operationId: getOrganizer
-      parameters:
-        - name: sessionToken
-          in: header
-          description: session Token
-          required: true
-          schema:
-            type: string
-            example: 3424bn3b3tii3t4ibt43in
       responses:
         '200':
           description: successful operation
@@ -392,7 +432,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Organizer'
-        '400':
+        '403':
           description: invalid session
   /organizer/{id}:
     post:
@@ -408,20 +448,20 @@ paths:
           schema:
             type: string
         - name: code
-          in: query
+          in: header
           description: code from email
           required: true
           schema:
             type: string
       responses:
-        '201':
+        '200':
+          description: nothing to do, account already confirmed
+        '202':
           description: account confirmed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Organizer'
         '400':
           description: code wrong
+        '404':
+          description: organizer id not found 
     delete:
       tags:
         - Event organizer
@@ -444,6 +484,8 @@ paths:
       responses:
         '204':
           description: deleted
+        '403':
+          description: invalid session
         '404':
           description: id not found
     patch:
@@ -470,10 +512,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Organizer'
+              $ref: '#/components/schemas/OrganizerPatch'
       responses:
+        '200':
+          description: nothing to do, no field to patch
         '202':
           description: patched
+        '400':
+          description: invalid email or password
+        '403':
+          description: invalid session
         '404':
           description: id not found
   /organizer/login:
@@ -485,13 +533,13 @@ paths:
       operationId: loginOrganizer
       parameters:
         - name: email
-          in: query
+          in: header
           description: The organizer email for login
           required: true
           schema:
             type: string
         - name: password
-          in: query
+          in: header
           description: the password
           required: true
           schema:
@@ -508,12 +556,23 @@ paths:
                     type: string
                     description: The session token.
         '400':
-          description: Invalid email/password supplied
+          description: Invalid email or password
+          
 components:
   schemas:
     Event:
       required:
         - id
+        - title
+        - name
+        - startTime
+        - endTime
+        - latitude
+        - longitude
+        - maxPlace
+        - categories
+        - status
+        - freePlace
       type: object
       properties:
         id:
@@ -540,9 +599,61 @@ components:
         name:
           type: string
           example: Long description of Event
-        placeSchema:
+        status:
+          $ref: '#/components/schemas/EventStatus'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        freePlace:
+          type: integer
+          format: int64
+          example: 2
+        maxPlace:
+          type: integer
+          format: int64
+          example: 100
+  
+    EventWithPlaces:
+      required:
+        - id
+        - title
+        - name
+        - startTime
+        - endTime
+        - latitude
+        - longitude
+        - maxPlace
+        - categories
+        - status
+        - freePlace
+        - places
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        title:
           type: string
-          example: Seralized place schema
+          example: Short description of Event
+        startTime:
+          type: integer
+          format: int64
+          example: 1673034164
+        endTime:
+          type: integer
+          format: int64
+          example: 1683034164
+        latitude:
+          type: string
+          example: '40.4775315'
+        longitude:
+          type: string
+          example: '-3.7051359'
+        name:
+          type: string
+          example: Long description of Event
         status:
           $ref: '#/components/schemas/EventStatus'
         categories:
@@ -561,9 +672,100 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Place'
+        placeSchema:
+          type: string
+          example: Seralized place schema
+
+    EventForm:
+      type: object
+      required:
+        - title
+        - name
+        - startTime
+        - endTime
+        - latitude
+        - longitude
+        - maxPlace
+        - categoriesIds
+      properties:
+        title:
+          type: string
+          example: Short description of Event
+        name:
+          type: string
+          example: Long description of Event
+        startTime:
+          type: integer
+          format: int64
+          example: 1673034164
+        endTime:
+          type: integer
+          format: int64
+          example: 1683034164
+        latitude:
+          type: string
+          example: '40.4775315'
+        longitude:
+          type: string
+          example: '-3.7051359'
+        placeSchema:
+          type: string
+          example: Seralized place schema
+        maxPlace:
+          type: integer
+          format: int64
+          example: 2 
+        categoriesIds:
+          type: array
+          items:
+            type: integer
+            example: [1,2,3]
+          minItems: 0
+    
+    EventPatch:
+    #All field are optional
+      type: object
+      properties:
+        title:
+          type: string
+          example: Short description of Event
+        name:
+          type: string
+          example: Long description of Event
+        startTime:
+          type: integer
+          format: int64
+          example: 1673034164
+        endTime:
+          type: integer
+          format: int64
+          example: 1683034164
+        latitude:
+          type: string
+          example: '40.4775315'
+        longitude:
+          type: string
+          example: '-3.7051359'
+        placeSchema:
+          type: string
+          example: Seralized place schema
+        maxPlace:
+          type: integer
+          format: int64
+          example: 2 
+        categoriesIds:
+          type: array
+          items:
+            type: integer
+            example: [1,2,3]
+          minItems: 0
+      
           
     Place:
       type: object
+      required:
+       - id
+       - free
       properties:
         id:
           type: integer
@@ -572,10 +774,12 @@ components:
         free:
           type: boolean
           example: true
-      
           
     Category:
       type: object
+      required:
+       - id
+       - name
       properties:
         id:
           type: integer
@@ -584,6 +788,7 @@ components:
         name:
           type: string
           example: Sport
+          
     EventStatus:
       type: string
       description: event status
@@ -593,8 +798,13 @@ components:
         - done
         - cancelled
       example: done
+      
     ReservationDTO:
       type: object
+      required:
+        - eventId
+        - placeId
+        - reservationToken
       properties:
         eventId:
           type: integer
@@ -607,8 +817,14 @@ components:
         reservationToken:
           type: string
           example: df0d69cbe68fb6e2b27aa88f6f94497e
+
     Organizer:
       type: object
+      required:
+        - id
+        - name
+        - email
+        - status
       properties:
         id:
           type: integer
@@ -620,16 +836,36 @@ components:
         email:
           type: string
           example: john@email.com
-        password:
-          type: string
-          example: '12345'
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
         status:
           type: string
           description: User Status
           enum:
             - pending
             - confirmed
+ 
+    OrganizerForm:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: theUser
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+    
+    OrganizerPatch:
+      type: object
+      properties:
+        name:
+          type: string
+          example: NewUserName
+        password:
+          type: string
+          example: 'myNewPassword'
