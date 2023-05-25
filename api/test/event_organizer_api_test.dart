@@ -23,7 +23,7 @@ void main() {
 
     // Get organizer account (my account)
     //
-    //Future<Organizer> getOrganizer() async
+    //Future<Organizer> getOrganizer(String sessionToken) async
     test('test getOrganizer', () async {
       // TODO
     });
@@ -46,7 +46,7 @@ void main() {
 
     // Create orginizer account
     //
-    //Future<Organizer> signUp(String sessionToken, { OrganizerForm organizerForm }) async
+    //Future<Organizer> signUp({ OrganizerForm organizerForm }) async
     test('test signUp', () async {
       // TODO
     });

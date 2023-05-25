@@ -15,7 +15,8 @@ void main() async {
       SaveAndDeleteReservation(sharedPreferences: prefs);
 
   Blob blob = new Blob();
-  blob.delete("layouts/test.txt");
+  await blob.put("layouts/test.txt","ABC");
+  print(await blob.get("layouts/test.txt"));
 
   runApp(
     ChangeNotifierProvider<APIProvider>(

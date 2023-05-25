@@ -397,14 +397,6 @@ paths:
         - Event organizer
       summary: Create orginizer account
       operationId: signUp
-      parameters:
-        - name: sessionToken
-          in: header
-          description: session Token
-          required: true
-          schema:
-            type: string
-            example: 3424bn3b3tii3t4ibt43in
       requestBody:
         description: Add event
         content:
@@ -425,6 +417,14 @@ paths:
         - Event organizer
       summary: Get organizer account (my account)
       operationId: getOrganizer
+      parameters:
+        - name: sessionToken
+          in: header
+          description: session Token
+          required: true
+          schema:
+            type: string
+            example: 3424bn3b3tii3t4ibt43in
       responses:
         '200':
           description: successful operation

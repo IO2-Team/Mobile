@@ -124,6 +124,7 @@ class EventOrganizerApi {
   /// 
   ///
   /// Parameters:
+  /// * [sessionToken] - session Token
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -134,6 +135,7 @@ class EventOrganizerApi {
   /// Returns a [Future] containing a [Response] with a [Organizer] as data
   /// Throws [DioError] if API call or serialization fails
   Future<Response<Organizer>> getOrganizer({ 
+    required String sessionToken,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -145,6 +147,7 @@ class EventOrganizerApi {
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
+        r'sessionToken': sessionToken,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -348,7 +351,6 @@ class EventOrganizerApi {
   /// 
   ///
   /// Parameters:
-  /// * [sessionToken] - session Token
   /// * [organizerForm] - Add event
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -360,7 +362,6 @@ class EventOrganizerApi {
   /// Returns a [Future] containing a [Response] with a [Organizer] as data
   /// Throws [DioError] if API call or serialization fails
   Future<Response<Organizer>> signUp({ 
-    required String sessionToken,
     OrganizerForm? organizerForm,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -373,7 +374,6 @@ class EventOrganizerApi {
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
-        r'sessionToken': sessionToken,
         ...?headers,
       },
       extra: <String, dynamic>{

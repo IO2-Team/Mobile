@@ -102,7 +102,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getOrganizer**
-> Organizer getOrganizer()
+> Organizer getOrganizer(sessionToken)
 
 Get organizer account (my account)
 
@@ -111,9 +111,10 @@ Get organizer account (my account)
 import 'package:openapi/api.dart';
 
 final api = Openapi().getEventOrganizerApi();
+final String sessionToken = 3424bn3b3tii3t4ibt43in; // String | session Token
 
 try {
-    final response = api.getOrganizer();
+    final response = api.getOrganizer(sessionToken);
     print(response);
 } catch on DioError (e) {
     print('Exception when calling EventOrganizerApi->getOrganizer: $e\n');
@@ -121,7 +122,10 @@ try {
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **sessionToken** | **String**| session Token | 
 
 ### Return type
 
@@ -228,7 +232,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **signUp**
-> Organizer signUp(sessionToken, organizerForm)
+> Organizer signUp(organizerForm)
 
 Create orginizer account
 
@@ -237,11 +241,10 @@ Create orginizer account
 import 'package:openapi/api.dart';
 
 final api = Openapi().getEventOrganizerApi();
-final String sessionToken = 3424bn3b3tii3t4ibt43in; // String | session Token
 final OrganizerForm organizerForm = ; // OrganizerForm | Add event
 
 try {
-    final response = api.signUp(sessionToken, organizerForm);
+    final response = api.signUp(organizerForm);
     print(response);
 } catch on DioError (e) {
     print('Exception when calling EventOrganizerApi->signUp: $e\n');
@@ -252,7 +255,6 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **sessionToken** | **String**| session Token | 
  **organizerForm** | [**OrganizerForm**](OrganizerForm.md)| Add event | [optional] 
 
 ### Return type
