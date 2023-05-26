@@ -21,6 +21,13 @@ void main() {
       // TODO
     });
 
+    // Cancel event
+    //
+    //Future deletePhoto(String sessionToken, String id, String path) async
+    test('test deletePhoto', () async {
+      // TODO
+    });
+
     // Return list of all events in category
     //
     //Future<BuiltList<Event>> getByCategory(int categoryId) async
@@ -51,10 +58,26 @@ void main() {
       // TODO
     });
 
+    // Get list of photo of event
+    //
+    // Returns a list of photo paths
+    //
+    //Future<BuiltList<String>> getPhoto(int id) async
+    test('test getPhoto', () async {
+      // TODO
+    });
+
     // patch existing event
     //
     //Future patchEvent(String sessionToken, String id, { EventPatch eventPatch }) async
     test('test patchEvent', () async {
+      // TODO
+    });
+
+    // patch existing event
+    //
+    //Future putPhoto(String sessionToken, String id, String path) async
+    test('test putPhoto', () async {
       // TODO
     });
 

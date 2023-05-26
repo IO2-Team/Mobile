@@ -113,13 +113,13 @@ class ReservationApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    ReservationDTO _responseData;
+    ReservationDTO? _responseData;
 
     try {
-      const _responseType = FullType(ReservationDTO);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(ReservationDTO),
       ) as ReservationDTO;
 
     } catch (error, stackTrace) {

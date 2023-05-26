@@ -25,7 +25,6 @@ part 'event.g.dart';
 /// * [categories] 
 /// * [freePlace] 
 /// * [maxPlace] 
-/// * [placeSchema] 
 @BuiltValue()
 abstract class Event implements Built<Event, EventBuilder> {
   @BuiltValueField(wireName: r'id')
@@ -61,9 +60,6 @@ abstract class Event implements Built<Event, EventBuilder> {
 
   @BuiltValueField(wireName: r'maxPlace')
   int get maxPlace;
-
-  @BuiltValueField(wireName: r'placeSchema')
-  String? get placeSchema;
 
   Event._();
 
@@ -143,13 +139,6 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
       object.maxPlace,
       specifiedType: const FullType(int),
     );
-    if (object.placeSchema != null) {
-      yield r'placeSchema';
-      yield serializers.serialize(
-        object.placeSchema,
-        specifiedType: const FullType(String),
-      );
-    }
   }
 
   @override
@@ -249,13 +238,6 @@ class _$EventSerializer implements PrimitiveSerializer<Event> {
             specifiedType: const FullType(int),
           ) as int;
           result.maxPlace = valueDes;
-          break;
-        case r'placeSchema':
-          final valueDes = serializers.deserialize(
-            value,
-            specifiedType: const FullType(String),
-          ) as String;
-          result.placeSchema = valueDes;
           break;
         default:
           unhandled.add(key);
