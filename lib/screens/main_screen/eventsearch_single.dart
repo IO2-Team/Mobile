@@ -4,12 +4,16 @@ import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dar
 import 'package:eventapp_mobile/screens/eventdetails_screen.dart';
 import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' show cos, sqrt, asin;
+
+import '../../additional_widgets/localization.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
@@ -26,7 +30,23 @@ class SingleEvent extends StatefulWidget {
 class _SingleEvent extends State<SingleEvent> {
   final Color textsCol = PageColor.texts;
   final Color textsCol2 = PageColor.textsLight;
+  final meters = 1.0;
   bool isReservation = false;
+
+  //TO REMOVE
+  Future<Position> getDist() async {
+    return MyLocalization.getCurrentLocation();
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
   @override
   Widget build(BuildContext context) {
     // conversion - start and end time of event
@@ -43,11 +63,7 @@ class _SingleEvent extends State<SingleEvent> {
           decoration: BoxDecoration(
             color: widget.event.status.name == "inFuture"
                 ? PageColor.singleEventActive
-                : (widget.event.status.name == "pending"
-                    ? PageColor.singleEventPending
-                    : (widget.event.status.name == "done"
-                        ? PageColor.singleEventDone
-                        : PageColor.singleEventDeleted)),
+                : PageColor.singleEventNotActive,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             border: Border.all(
               color: PageColor.burger,
@@ -63,6 +79,41 @@ class _SingleEvent extends State<SingleEvent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (widget.event.status.name != "inFuture")
+                      Container(
+                        margin: const EdgeInsets.only(
+                            bottom: 0.0, right: 10.0, left: 0.0),
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0.5,
+                              backgroundColor:
+                                  widget.event.status.name == "pending"
+                                      ? PageColor.singleEventPending
+                                      : (widget.event.status.name == "done"
+                                          ? PageColor.singleEventDone
+                                          : PageColor.singleEventDeleted),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(80),
+                                    bottomRight: Radius.circular(80)),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              widget.event.status.toString(),
+                              style: TextStyle(
+                                  letterSpacing: 1.0,
+                                  fontSize: 19.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'MyFont1',
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: eventTitle(),
@@ -107,7 +158,12 @@ class _SingleEvent extends State<SingleEvent> {
                       height: 12.0,
                       thickness: 1.0,
                     ),
-                    showCountPlaces(),
+                    Row(
+                      children: [
+                        Expanded(child: showCountPlaces()),
+                        Expanded(child: showDistance()),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -177,7 +233,7 @@ class _SingleEvent extends State<SingleEvent> {
             DateFormat('dd.MM.yyyy').format(dateStart),
             style: TextStyle(
               color: textsCol,
-              fontSize: 15.5,
+              fontSize: 16.5,
             ),
           ),
         ],
@@ -227,7 +283,7 @@ class _SingleEvent extends State<SingleEvent> {
           Text(
             DateFormat('Hm').format(dateStart),
             style: TextStyle(
-              fontSize: 13.0,
+              fontSize: 14.0,
               color: textsCol,
             ),
           ),
@@ -319,6 +375,42 @@ class _SingleEvent extends State<SingleEvent> {
   }
 
   ///
+  /// widget shows distance between our localization and event localization
+  ///
+  Widget showDistance() {
+    return FutureBuilder<Position>(
+        future: getDist(),
+        builder: (context, response) {
+          if (response.hasData) {
+            double dist = calculateDistance(
+                double.parse(widget.event.longitude),
+                double.parse(widget.event.latitude),
+                response.data!.longitude,
+                response.data!.latitude);
+            return dist < 1
+                ? Text(
+                    "${(dist * 1000).toInt()} m away",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: textsCol,
+                      fontSize: 16.5,
+                    ),
+                  )
+                : Text(
+                    "${dist.toInt()} km away",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: textsCol,
+                      fontSize: 16.5,
+                    ),
+                  );
+          } else {
+            return Text(""); //When no localization
+          }
+        });
+  }
+
+  ///
   /// widget shows how many places are free
   ///
   Widget showCountPlaces() {
@@ -340,7 +432,7 @@ class _SingleEvent extends State<SingleEvent> {
               "${widget.event.freePlace} places left",
               style: TextStyle(
                 color: textsCol,
-                fontSize: 15.5,
+                fontSize: 16.5,
               ),
             )
           else
@@ -440,7 +532,7 @@ class _SingleEvent extends State<SingleEvent> {
                 });
             },
             child: const Text(
-              'Reservate',
+              'Reserve',
               style: TextStyle(
                 letterSpacing: 1.5,
                 fontSize: 19.0,

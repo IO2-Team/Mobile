@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
 
 class Logo extends StatelessWidget {
   const Logo({Key? key}) : super(key: key);

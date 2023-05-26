@@ -2,6 +2,7 @@
 
 import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
 import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
+import 'package:eventapp_mobile/screens/withphotos_screen/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -82,7 +83,7 @@ class _EventDetails extends State<EventDetails> {
             });
         },
         label: const Text(
-          'Reservate',
+          'Reserve',
           style: TextStyle(fontSize: 20),
         ),
         icon: const Icon(
@@ -124,7 +125,7 @@ class _EventDetails extends State<EventDetails> {
                     children: [
                       viewTitle(widget.event.title),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(left: 2, right: 2.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -141,6 +142,7 @@ class _EventDetails extends State<EventDetails> {
                           getAddress(
                               widget.event.latitude, widget.event.longitude)),
                       description(widget.event.name),
+                      gallery(),
                     ],
                   ),
                 ),
@@ -199,7 +201,7 @@ class _EventDetails extends State<EventDetails> {
       ),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 7.0, right: 7.0, top: 10.0, bottom: 10.0),
+            left: 7.0, right: 5.0, top: 10.0, bottom: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -373,6 +375,56 @@ class _EventDetails extends State<EventDetails> {
         )
       ],
     );
+  }
+
+  Widget gallery() {
+    return Column(children: [
+      Center(
+          child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 15.0, bottom: 0.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Photos:",
+                      style: TextStyle(
+                        color: Colors.white,
+                        letterSpacing: 0.4,
+                        fontSize: 22.0,
+                      ),
+                    ),
+                    const Divider(
+                      color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                      height: 12.0,
+                      thickness: 1.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PageColor.divider,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(80)),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    GalleryPage(widget.event)));
+                      },
+                      child: const Text(
+                        'Show more',
+                        style: TextStyle(
+                          letterSpacing: 1.5,
+                          fontSize: 19.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'MyFont1',
+                        ),
+                      ),
+                    ),
+                  ])))
+    ]);
   }
 
   Widget freePlace(int? places) {
