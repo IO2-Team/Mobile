@@ -12,6 +12,8 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../api/blob.dart';
+
 ///////////////////////////////////////////////////////////////
 /// Widget which shows chosen event
 ///////////////////////////////////////////////////////////////
@@ -19,9 +21,13 @@ import 'dart:convert';
 class EventDetails extends StatefulWidget {
   final Event event;
   final SaveAndDeleteReservation sharedPref;
-
-  const EventDetails(this.event, {Key? key, required this.sharedPref})
-      : super(key: key);
+  final Blob blob;
+  const EventDetails(
+    this.event, {
+    Key? key,
+    required this.sharedPref,
+    required this.blob,
+  }) : super(key: key);
   @override
   State<EventDetails> createState() => _EventDetails();
 }
@@ -401,7 +407,7 @@ class _EventDetails extends State<EventDetails> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: PageColor.divider,
+                        backgroundColor: PageColor.filters,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(80)),
                         ),
@@ -410,11 +416,13 @@ class _EventDetails extends State<EventDetails> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    GalleryPage(widget.event)));
+                                builder: (context) => GalleryPage(
+                                      widget.event,
+                                      blob: widget.blob,
+                                    )));
                       },
                       child: const Text(
-                        'Show more',
+                        'Show gallery',
                         style: TextStyle(
                           letterSpacing: 1.5,
                           fontSize: 19.0,

@@ -17,6 +17,7 @@ import 'package:eventapp_mobile/additional_widgets/logo.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import '../../additional_widgets/saveanddelete_reservation.dart';
+import '../../api/blob.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows events list
@@ -24,9 +25,10 @@ import '../../additional_widgets/saveanddelete_reservation.dart';
 
 class EventSearchWidget extends StatefulWidget {
   const EventSearchWidget(
-      {super.key, required this.title, required this.sharedPref});
+      {super.key, required this.title,  required this.blob, required this.sharedPref});
   final String title;
   final SaveAndDeleteReservation sharedPref;
+   final Blob blob;
   // final APIProvider apiProvider;
   @override
   State<EventSearchWidget> createState() => _EventSearchWidget();
@@ -294,7 +296,8 @@ class _EventSearchWidget extends State<EventSearchWidget> {
                                               el.title.toLowerCase().contains(
                                                   textarea.text.toLowerCase())))
                                         SingleEvent(el,
-                                            sharedPref: widget.sharedPref),
+                                            sharedPref: widget.sharedPref,
+                                            blob:widget.blob),
                                 ]),
                               ),
                             ),

@@ -1,8 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:azblob/azblob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
-
-
 
 const connectionString = String.fromEnvironment(
   'BLOB_KEY',
@@ -15,7 +15,8 @@ class Blob {
   var storage = AzureStorage.parse(connectionString);
 
   Future<void> put(String path, String content) async {
-    await storage.putBlob(container + path, body: content);
+    await storage.putBlob(container + path,
+        bodyBytes: Uint8List.fromList(content.codeUnits));
   }
 
   Future<void> delete(String path) async {
@@ -24,7 +25,7 @@ class Blob {
 
   Future<String> get(String path) async {
     var content = await storage.getBlob(container + path);
-    var response = await content.stream.bytesToString();
-    return response;
+    var response = await content.stream.toBytes();
+    return String.fromCharCodes(response);
   }
 }

@@ -54,7 +54,8 @@ dependencies:
   restart_app: ^1.1.1
   azblob: ^2.3.0
   geolocator: ^9.0.2
-  
+  path_provider: ^2.0.15
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,6 +88,7 @@ flutter:
     - images/slideup.jpg
     - images/ev4.jpg
     - images/ev3.jpg
+    - assets/photo.jpg
 
   #   - images/a_dot_ham.jpeg
 
