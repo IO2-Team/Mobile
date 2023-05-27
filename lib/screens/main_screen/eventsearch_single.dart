@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
 
 import '../../additional_widgets/localization.dart';
+import '../../api/blob.dart';
 
 ///////////////////////////////////////////////////////////////
 /// Widget which shows single event (in event search screen)
@@ -21,8 +22,13 @@ import '../../additional_widgets/localization.dart';
 class SingleEvent extends StatefulWidget {
   final Event event;
   final SaveAndDeleteReservation sharedPref;
-
-  const SingleEvent(this.event, {super.key, required this.sharedPref});
+  final Blob blob;
+  const SingleEvent(
+    this.event, {
+    super.key,
+    required this.sharedPref,
+    required this.blob,
+  });
   @override
   State<SingleEvent> createState() => _SingleEvent();
 }
@@ -469,10 +475,9 @@ class _SingleEvent extends State<SingleEvent> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => EventDetails(
-                            widget.event,
-                            sharedPref: widget.sharedPref,
-                          ))).then((value) {
+                      builder: (context) => EventDetails(widget.event,
+                          sharedPref: widget.sharedPref,
+                          blob: widget.blob))).then((value) {
                 if (value != null && value == true) {
                   setState(() {
                     isReservation = true;

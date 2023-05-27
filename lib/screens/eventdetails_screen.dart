@@ -2,6 +2,7 @@
 
 import 'package:eventapp_mobile/additional_widgets/saveanddelete_reservation.dart';
 import 'package:eventapp_mobile/screens/makereservation_screen/reservation_screen.dart';
+import 'package:eventapp_mobile/screens/withphotos_screen/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:openapi/openapi.dart';
 import 'package:eventapp_mobile/additional_widgets/buttonstyles_and_colours.dart';
@@ -11,6 +12,8 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../api/blob.dart';
+
 ///////////////////////////////////////////////////////////////
 /// Widget which shows chosen event
 ///////////////////////////////////////////////////////////////
@@ -18,9 +21,13 @@ import 'dart:convert';
 class EventDetails extends StatefulWidget {
   final Event event;
   final SaveAndDeleteReservation sharedPref;
-
-  const EventDetails(this.event, {Key? key, required this.sharedPref})
-      : super(key: key);
+  final Blob blob;
+  const EventDetails(
+    this.event, {
+    Key? key,
+    required this.sharedPref,
+    required this.blob,
+  }) : super(key: key);
   @override
   State<EventDetails> createState() => _EventDetails();
 }
@@ -141,6 +148,7 @@ class _EventDetails extends State<EventDetails> {
                           getAddress(
                               widget.event.latitude, widget.event.longitude)),
                       description(widget.event.name),
+                      gallery(),
                     ],
                   ),
                 ),
@@ -373,6 +381,58 @@ class _EventDetails extends State<EventDetails> {
         )
       ],
     );
+  }
+
+  Widget gallery() {
+    return Column(children: [
+      Center(
+          child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 15.0, bottom: 0.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Photos:",
+                      style: TextStyle(
+                        color: Colors.white,
+                        letterSpacing: 0.4,
+                        fontSize: 22.0,
+                      ),
+                    ),
+                    const Divider(
+                      color: Colors.white, //Color.fromARGB(255, 149, 149, 254),
+                      height: 12.0,
+                      thickness: 1.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PageColor.filters,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(80)),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GalleryPage(
+                                      widget.event,
+                                      blob: widget.blob,
+                                    )));
+                      },
+                      child: const Text(
+                        'Show gallery',
+                        style: TextStyle(
+                          letterSpacing: 1.5,
+                          fontSize: 19.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'MyFont1',
+                        ),
+                      ),
+                    ),
+                  ])))
+    ]);
   }
 
   Widget freePlace(int? places) {

@@ -165,13 +165,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Organizer _responseData;
+    Organizer? _responseData;
 
     try {
-      const _responseType = FullType(Organizer);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(Organizer),
       ) as Organizer;
 
     } catch (error, stackTrace) {
@@ -244,13 +244,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    LoginOrganizer200Response _responseData;
+    LoginOrganizer200Response? _responseData;
 
     try {
-      const _responseType = FullType(LoginOrganizer200Response);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(LoginOrganizer200Response),
       ) as LoginOrganizer200Response;
 
     } catch (error, stackTrace) {
@@ -411,13 +411,13 @@ class EventOrganizerApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Organizer _responseData;
+    Organizer? _responseData;
 
     try {
-      const _responseType = FullType(Organizer);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(Organizer),
       ) as Organizer;
 
     } catch (error, stackTrace) {

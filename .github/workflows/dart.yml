@@ -31,7 +31,7 @@ jobs:
       run: flutter test
       
     - name: Build APK
-      run: flutter build apk
+      run: flutter build apk --dart-define=BLOB_KEY=${{ secrets.BLOB_KEY }}
       
     - name: Save APK
       uses: actions/upload-artifact@v1

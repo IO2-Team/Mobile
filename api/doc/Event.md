@@ -19,7 +19,6 @@ Name | Type | Description | Notes
 **categories** | [**BuiltList&lt;Category&gt;**](Category.md) |  | 
 **freePlace** | **int** |  | 
 **maxPlace** | **int** |  | 
-**placeSchema** | **String** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

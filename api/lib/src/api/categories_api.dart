@@ -66,13 +66,13 @@ class CategoriesApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    Category _responseData;
+    Category? _responseData;
 
     try {
-      const _responseType = FullType(Category);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(Category),
       ) as Category;
 
     } catch (error, stackTrace) {
@@ -139,13 +139,13 @@ class CategoriesApi {
       onReceiveProgress: onReceiveProgress,
     );
 
-    BuiltList<Category> _responseData;
+    BuiltList<Category>? _responseData;
 
     try {
-      const _responseType = FullType(BuiltList, [FullType(Category)]);
-      _responseData = _serializers.deserialize(
-        _response.data!,
-        specifiedType: _responseType,
+      final rawResponse = _response.data;
+      _responseData = rawResponse == null ? null : _serializers.deserialize(
+        rawResponse,
+        specifiedType: const FullType(BuiltList, [FullType(Category)]),
       ) as BuiltList<Category>;
 
     } catch (error, stackTrace) {

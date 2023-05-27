@@ -69,11 +69,14 @@ Class | Method | HTTP request | Description
 [*CategoriesApi*](doc\CategoriesApi.md) | [**getCategories**](doc\CategoriesApi.md#getcategories) | **GET** /categories | Return list of all categories
 [*EventApi*](doc\EventApi.md) | [**addEvent**](doc\EventApi.md#addevent) | **POST** /events | Add new event
 [*EventApi*](doc\EventApi.md) | [**cancelEvent**](doc\EventApi.md#cancelevent) | **DELETE** /events/{id} | Cancel event
+[*EventApi*](doc\EventApi.md) | [**deletePhoto**](doc\EventApi.md#deletephoto) | **DELETE** /events/{id}/photos | Cancel event
 [*EventApi*](doc\EventApi.md) | [**getByCategory**](doc\EventApi.md#getbycategory) | **GET** /events/getByCategory | Return list of all events in category
 [*EventApi*](doc\EventApi.md) | [**getEventById**](doc\EventApi.md#geteventbyid) | **GET** /events/{id} | Find event by ID
 [*EventApi*](doc\EventApi.md) | [**getEvents**](doc\EventApi.md#getevents) | **GET** /events | Return list of all events
 [*EventApi*](doc\EventApi.md) | [**getMyEvents**](doc\EventApi.md#getmyevents) | **GET** /events/my | Return list of events made by organizer, according to session
+[*EventApi*](doc\EventApi.md) | [**getPhoto**](doc\EventApi.md#getphoto) | **GET** /events/{id}/photos | Get list of photo of event
 [*EventApi*](doc\EventApi.md) | [**patchEvent**](doc\EventApi.md#patchevent) | **PATCH** /events/{id} | patch existing event
+[*EventApi*](doc\EventApi.md) | [**putPhoto**](doc\EventApi.md#putphoto) | **POST** /events/{id}/photos | patch existing event
 [*EventOrganizerApi*](doc\EventOrganizerApi.md) | [**confirm**](doc\EventOrganizerApi.md#confirm) | **POST** /organizer/{id} | Confirm orginizer account
 [*EventOrganizerApi*](doc\EventOrganizerApi.md) | [**deleteOrganizer**](doc\EventOrganizerApi.md#deleteorganizer) | **DELETE** /organizer/{id} | Confirm orginizer account
 [*EventOrganizerApi*](doc\EventOrganizerApi.md) | [**getOrganizer**](doc\EventOrganizerApi.md#getorganizer) | **GET** /organizer | Get organizer account (my account)
@@ -102,7 +105,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Authorization
 
- All endpoints do not require authorization.
+Endpoints do not require authorization.
 
 
 ## Author

@@ -29,8 +29,6 @@ class _$Event extends Event {
   final int freePlace;
   @override
   final int maxPlace;
-  @override
-  final String? placeSchema;
 
   factory _$Event([void Function(EventBuilder)? updates]) =>
       (new EventBuilder()..update(updates))._build();
@@ -46,8 +44,7 @@ class _$Event extends Event {
       required this.status,
       required this.categories,
       required this.freePlace,
-      required this.maxPlace,
-      this.placeSchema})
+      required this.maxPlace})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(id, r'Event', 'id');
     BuiltValueNullFieldError.checkNotNull(title, r'Event', 'title');
@@ -83,8 +80,7 @@ class _$Event extends Event {
         status == other.status &&
         categories == other.categories &&
         freePlace == other.freePlace &&
-        maxPlace == other.maxPlace &&
-        placeSchema == other.placeSchema;
+        maxPlace == other.maxPlace;
   }
 
   @override
@@ -101,7 +97,6 @@ class _$Event extends Event {
     _$hash = $jc(_$hash, categories.hashCode);
     _$hash = $jc(_$hash, freePlace.hashCode);
     _$hash = $jc(_$hash, maxPlace.hashCode);
-    _$hash = $jc(_$hash, placeSchema.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -119,8 +114,7 @@ class _$Event extends Event {
           ..add('status', status)
           ..add('categories', categories)
           ..add('freePlace', freePlace)
-          ..add('maxPlace', maxPlace)
-          ..add('placeSchema', placeSchema))
+          ..add('maxPlace', maxPlace))
         .toString();
   }
 }
@@ -174,10 +168,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
   int? get maxPlace => _$this._maxPlace;
   set maxPlace(int? maxPlace) => _$this._maxPlace = maxPlace;
 
-  String? _placeSchema;
-  String? get placeSchema => _$this._placeSchema;
-  set placeSchema(String? placeSchema) => _$this._placeSchema = placeSchema;
-
   EventBuilder() {
     Event._defaults(this);
   }
@@ -196,7 +186,6 @@ class EventBuilder implements Builder<Event, EventBuilder> {
       _categories = $v.categories.toBuilder();
       _freePlace = $v.freePlace;
       _maxPlace = $v.maxPlace;
-      _placeSchema = $v.placeSchema;
       _$v = null;
     }
     return this;
@@ -240,8 +229,7 @@ class EventBuilder implements Builder<Event, EventBuilder> {
               freePlace: BuiltValueNullFieldError.checkNotNull(
                   freePlace, r'Event', 'freePlace'),
               maxPlace: BuiltValueNullFieldError.checkNotNull(
-                  maxPlace, r'Event', 'maxPlace'),
-              placeSchema: placeSchema);
+                  maxPlace, r'Event', 'maxPlace'));
     } catch (_) {
       late String _$failedField;
       try {
